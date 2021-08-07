@@ -4,6 +4,7 @@ public class Expression {
     private final double value;
     private static final String FUNCTION = "2 * x^4 - 3 * x^3 + 4 * x^2 - 5 * x + 6";
 
+    // TODO: 03.08.2021 a1,a2,.. 
     public Expression(double value){
         this.value = value;
     }
