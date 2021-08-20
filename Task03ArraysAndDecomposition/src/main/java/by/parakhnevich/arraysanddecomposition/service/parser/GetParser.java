@@ -1,11 +1,11 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 /**
  * Class {@code Object} return parser proceeding of
  * its name
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.controller.parser.Parse <--there are commands that use this class
+ * @see by.parakhnevich.arraysanddecomposition.service.parser.Parse <--there are commands that use this class
  */
 public class GetParser {
     public Parser getParser(String type){

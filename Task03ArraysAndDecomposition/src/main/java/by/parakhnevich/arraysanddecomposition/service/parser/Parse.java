@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import java.util.List;
 

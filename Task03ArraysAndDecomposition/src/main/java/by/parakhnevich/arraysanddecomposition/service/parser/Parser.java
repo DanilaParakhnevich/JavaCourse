@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * @autor Danila Parakhnevich
  * @version 1.0
  * @see by.parakhnevich.arraysanddecomposition.controller.command
- * @see by.parakhnevich.arraysanddecomposition.controller.parser <--there are all parsers that return need info
+ * @see by.parakhnevich.arraysanddecomposition.service.parser <--there are all parsers that return need info
  */
 public interface Parser {
     public List<Number> parse(List<String> list);

@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import by.parakhnevich.arraysanddecomposition.bean.Array;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.controller.parser.GetParser
+ * @see by.parakhnevich.arraysanddecomposition.service.parser.GetParser
  */
 public class ParseArray {
     private ParseArray() {}

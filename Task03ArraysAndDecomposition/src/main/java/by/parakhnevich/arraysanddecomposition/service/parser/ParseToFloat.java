@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +7,14 @@ import java.util.List;
  * Check Interface Parser
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.controller.parser.Parser
+ * @see by.parakhnevich.arraysanddecomposition.service.parser.Parser
  */
-public class ParseToInteger implements Parser {
+public class ParseToFloat implements Parser {
     @Override
     public List<Number> parse(List<String> list) {
         List<Number> result = new ArrayList<>();
         for (String line : list){
-            result.add(Integer.parseInt(line.trim()));
+            result.add(Float.parseFloat(line.trim()));
         }
         return result;
     }

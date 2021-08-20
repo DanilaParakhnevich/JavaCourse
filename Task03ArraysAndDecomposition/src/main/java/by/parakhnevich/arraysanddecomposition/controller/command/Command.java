@@ -12,7 +12,7 @@ import java.util.List;
  * @version 1.0
  * @see by.parakhnevich.arraysanddecomposition.controller.Controller
  * @see by.parakhnevich.arraysanddecomposition.controller.command <--there are all commands
- * @see by.parakhnevich.arraysanddecomposition.controller.parser <--there are all parsers that return need info
+ * @see by.parakhnevich.arraysanddecomposition.service.parser <--there are all parsers that return need info
  */
 public interface Command {
 

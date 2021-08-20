@@ -68,12 +68,7 @@ public class View {
             index = 2;
         }
         String numberOfType;
-        if (number1 == 1) {
-            numberOfType = printType();
-        }
-        else {
-            numberOfType = "int";
-        }
+        numberOfType = printType();
         System.out.println(new Controller(number2, number1, numberOfType)
                 .doRequest(listOfReaders.get(index).read(scanner, flags)));
         view();

@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import by.parakhnevich.arraysanddecomposition.bean.Matrix;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * ParserMatrix that can parse 2 matrices
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.controller.parser.ParseMatrix
+ * @see by.parakhnevich.arraysanddecomposition.service.parser.ParseMatrix
  */
 public class ParseTwoMatrices {
     private ParseTwoMatrices() {}

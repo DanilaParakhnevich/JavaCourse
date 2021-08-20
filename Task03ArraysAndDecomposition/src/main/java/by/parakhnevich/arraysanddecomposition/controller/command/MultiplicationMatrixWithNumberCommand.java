@@ -1,7 +1,7 @@
 package by.parakhnevich.arraysanddecomposition.controller.command;
 
 import by.parakhnevich.arraysanddecomposition.bean.Matrix;
-import by.parakhnevich.arraysanddecomposition.controller.parser.ParseMatrix;
+import by.parakhnevich.arraysanddecomposition.service.parser.ParseMatrix;
 import by.parakhnevich.arraysanddecomposition.service.utilmatrix.MatrixCalculator;
 import by.parakhnevich.arraysanddecomposition.view.locale.LocaleSingleton;
 

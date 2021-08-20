@@ -19,55 +19,56 @@ public class MatrixCalculator<T extends Number> {
     private final Logger logger = LogManager.getLogger(MatrixCalculator.class.getName());
     private static final MatrixValidator validator = new MatrixValidator();
 
-    public Matrix<Integer> sum (Matrix<Number> matrix1 , Matrix<Number> matrix2) {
-        if(!validator.compareTwoMatrix(matrix1, matrix2)) {
+    public Matrix<T> sum (Matrix<T> matrix1 , Matrix<T> matrix2) {
+        if(!validator.compareTwoMatrix((Matrix<Number>)matrix1, (Matrix<Number>)matrix2)) {
             throw new ArrayIndexOutOfBoundsException();
         }
-
-        Matrix<Integer> matrix = new Matrix<>(matrix1.getRows(), matrix1.getColumns());
+        Matrix<T> matrix = new Matrix<>(matrix1.getRows(), matrix1.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {
             for (int index2 = 0; index2 < matrix1.getColumns(); index2++){
-                matrix.put(index1, index2, matrix1.getIntegerValue(index1,index2) +
-                        matrix2.getIntegerValue(index1, index2));
+                matrix.put(index1, index2, (T)(Double)(matrix1.get(index1,index2).doubleValue() +
+                       matrix2.get(index1, index2).doubleValue()));
             }
         }
         return matrix;
     }
 
     public Matrix<Number> difference(Matrix<Number> matrix1 , Matrix<Number> matrix2) {
-        if (validator.compareTwoMatrix(matrix1, matrix2)){
+        if (!validator.compareTwoMatrix(matrix1, matrix2)){
             throw new IndexOutOfBoundsException();
         }
         Matrix<Number> matrix = new Matrix<>(matrix1.getRows(), matrix1.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {
             for (int index2 = 0; index2 < matrix1.getColumns(); index2++){
-                matrix.put(index1, index2, matrix1.getIntegerValue(index1,index2) -
-                        matrix2.getIntegerValue(index1, index2));
+                matrix.put(index1, index2, (T)(Double)(matrix1.get(index1,index2).doubleValue() -
+                        matrix2.get(index1, index2).doubleValue()));
             }
         }
         return matrix;
     }
 
-    public Matrix<Number> multiply(Matrix<Number> matrix, int value){
+    public Matrix<T> multiply(Matrix<T> matrix, int value){
         for (int index1 = 0; index1 < matrix.getRows(); index1++) {
             for (int index2 = 0; index2 < matrix.getColumns(); index2++) {
-                matrix.put(index1, index2 , value * matrix.getIntegerValue(index1, index2));
+                matrix.put(index1, index2 , (T) (Double)(value *
+                       matrix.get(index1, index2).doubleValue()));
             }
         }
         return matrix;
     }
 
-    public Matrix<Integer> multiply(Matrix<T> matrix1,Matrix<T> matrix2){
+    public Matrix<T> multiply(Matrix<T> matrix1,Matrix<T> matrix2){
         if (matrix1.getColumns() != matrix2.getRows()) {
             throw new ArrayIndexOutOfBoundsException();
         }
-        Matrix<Integer> matrix = new Matrix<>(matrix1.getRows(), matrix2.getColumns());
+        Matrix<T> matrix = new Matrix<>(matrix1.getRows(), matrix2.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {
             for (int index2 = 0; index2 < matrix2.getColumns(); index2++) {
-                matrix.put(index1, index2, 0);
+                matrix.put(index1, index2, (T)(Integer)0);
                 for (int index3 = 0; index3 < matrix1.getColumns(); index3++) {
-                     matrix.put(index1, index2,matrix.getIntegerValue(index1,index2) +
-                             matrix1.getIntegerValue(index1, index3) * matrix2.getIntegerValue(index3, index2));
+                     matrix.put(index1, index2,(T)(Double)(matrix.get(index1,index2).doubleValue() +
+                             matrix1.get(index1, index3).doubleValue() *
+                                     matrix2.get(index3, index2).doubleValue()));
                 }
             }
         }

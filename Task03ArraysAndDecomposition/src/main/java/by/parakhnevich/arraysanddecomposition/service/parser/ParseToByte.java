@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.controller.parser;
+package by.parakhnevich.arraysanddecomposition.service.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  * Check Interface Parser
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.controller.parser.Parser
+ * @see by.parakhnevich.arraysanddecomposition.service.parser.Parser
  */
 public class ParseToByte implements Parser {
     @Override
