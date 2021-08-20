@@ -1,7 +1,13 @@
 package by.parakhnevich.arraysanddecomposition.utilarrays;
 
-import by.parakhnevich.arraysanddecomposition.entity.Array;
+import by.parakhnevich.arraysanddecomposition.bean.Array;
 
+/**
+ * Merge sorting
+ * @autor Danila Parakhnevich
+ * @version 1.0
+ * @see by.parakhnevich.arraysanddecomposition.utilarrays.Sorting
+ */
 public class MergeSorting extends Sorting{
     public void sort(Array<Number> array) {
         int middle = array.getLength()/2;
@@ -13,7 +19,7 @@ public class MergeSorting extends Sorting{
         int secondIndex = 0;
         for (int index = 0 ; index < array.getLength() ; index++){
             if (secondIndex >= secondPart.getLength() || firstIndex < firstPart.getLength() &&
-                    firstPart.getDoubleValue(firstIndex) < secondPart.getDoubleValue(secondIndex))
+                    CompareTwoNumbers.compare(secondPart.get(secondIndex),firstPart.get(firstIndex)))
             {
                 array.put(index,firstPart.get(firstIndex));
                 firstIndex++;
