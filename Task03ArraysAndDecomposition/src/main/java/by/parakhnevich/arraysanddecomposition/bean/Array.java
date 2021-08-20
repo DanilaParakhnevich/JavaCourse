@@ -1,7 +1,7 @@
 package by.parakhnevich.arraysanddecomposition.bean;
 
 
-import by.parakhnevich.arraysanddecomposition.utilarrays.ArrayComparator;
+import by.parakhnevich.arraysanddecomposition.service.utilarrays.ArrayValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,16 +16,9 @@ import java.util.List;
  */
 public class Array <T extends Number>{
     private T[] arr;
+    private static final ArrayValidator validator = new ArrayValidator();
     private final Logger logger = LogManager.getLogger(Array.class.getName());
-    //this constructor copy object Array *from begin to *end
-    public Array(int begin,int end,Array<T> array){
-        this.arr = (T[]) new Number[end - begin];
-        if (begin > array.getLength() || end > array.getLength() ||
-        begin > end || begin < 0) throw new ArrayIndexOutOfBoundsException();
-        for (int index = 0; index < this.arr.length ; index++){
-            this.put(index, array.get(begin + index));
-        }
-    }
+
     //initialization of array of necessary size
     public Array(int number){
         this.arr = (T[]) new Number[number];
@@ -48,7 +41,7 @@ public class Array <T extends Number>{
     }
     //this constructor copy array from another object Array
     public Array(Array<T> array){
-        copyArray(array);
+        copyArray(array.arr);
     }
 
     public int getLength(){
@@ -56,13 +49,11 @@ public class Array <T extends Number>{
     }
 
     public void put(int index,T element) throws ArrayIndexOutOfBoundsException{
-        try {
-            new ArrayComparator().checkingBounds(index, (Array<Number>) this);
+        if (validator.checkingBounds(index,(Array<Number>) this)) {
+            arr[index] = element;
+            return;
         }
-        catch (ArrayIndexOutOfBoundsException e){
-            logger.error(e);
-        }
-        arr[index] = element;
+        throw new ArrayIndexOutOfBoundsException();
     }
 
     public int getIntValue(int index) throws  ArrayIndexOutOfBoundsException{
@@ -70,24 +61,16 @@ public class Array <T extends Number>{
     }
     //return object from array under necessary index
     public T get(int index) throws ArrayIndexOutOfBoundsException{
-        try {
-           new ArrayComparator().checkingBounds(index,(Array<Number>) this);
+        if (validator.checkingBounds(index,(Array<Number>) this)) {
+            return arr[index];
         }
-        catch (ArrayIndexOutOfBoundsException e){
-            logger.error(e);
-        }
-        return arr[index];
+        throw new ArrayIndexOutOfBoundsException();
     }
 
 
     private void copyArray(T[] array){
         this.arr = (T[]) new Number[array.length];
         this.arr = Arrays.copyOf(array, array.length);
-    }
-
-    private void copyArray(Array<T> array){
-        this.arr = (T[]) new Number[array.getLength()];
-        this.arr = Arrays.copyOf(arr, array.arr.length);
     }
 
     public String getInfo(){

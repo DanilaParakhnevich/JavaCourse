@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.utilarrays;
+package by.parakhnevich.arraysanddecomposition.service.utilarrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

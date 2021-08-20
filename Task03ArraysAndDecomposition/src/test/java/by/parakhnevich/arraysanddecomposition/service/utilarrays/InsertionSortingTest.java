@@ -1,24 +1,22 @@
-package by.parakhnevich.arraysanddecomposition.utilarrays;
+package by.parakhnevich.arraysanddecomposition.service.utilarrays;
 
 import by.parakhnevich.arraysanddecomposition.bean.Array;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
-
-public class CocktailSortingTest {
+public class InsertionSortingTest {
     @DataProvider(name = "positiveDataForSorting")
     public Object[][] createPositiveDataForSorting() {
         return new Object[][]{
                 {new Array<Number>(new Integer[]{
-                        2, 1, 3, -2, -3, 1 ,6
+                        6, 5, 4, 3, 2, -1
                 }),
                 new Array<Number>(new Integer[]{
-                        -3, -2, 1, 1, 2, 3, 6
+                        -1, 2, 3, 4, 5, 6
                 })},
                 {new Array<Number>(new Integer[]{
-                        Integer.MIN_VALUE, Integer.MAX_VALUE, 0
+                        Integer.MIN_VALUE, 0, Integer.MAX_VALUE
                 }),
                 new Array<Number>(new Integer[]{
                         Integer.MIN_VALUE, 0, Integer.MAX_VALUE
@@ -35,13 +33,20 @@ public class CocktailSortingTest {
                 new Array<Number>(new Integer[]{
                         0, 1, 3, 4
                 })},
+                {new Array<Number>(new Integer[]{
+                        1
+                }),
+                new Array<Number>(new Integer[]{
+                        1
+                })}
         };
     }
+
 
     @Test(description = "Test with positive scenario for sorting",
             dataProvider = "positiveDataForSorting")
     public void testSort(Array<Number> array, Array<Number> result) {
-        new CocktailSorting().sort(array);
+        new InsertionSorting().sort(array);
         Assert.assertEquals(array, result);
     }
 }

@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.utilarrays;
+package by.parakhnevich.arraysanddecomposition.service.utilarrays;
 
 /**
  * This comparator help to compare 2 numbers

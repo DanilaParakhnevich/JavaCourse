@@ -19,7 +19,7 @@ import java.util.Scanner;
  * task
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.runner.Runner
+ * @see by.parakhnevich.arraysanddecomposition.controller.runner.Runner
  */
 public class View {
     Scanner scanForListener = new Scanner(System.in);
@@ -52,7 +52,7 @@ public class View {
             scanner = createScanner();
         }
         else {
-            scanner = new Scanner(System.in);
+            scanner = scanForListener;
         }
         int index;
         if (number1 == 1 && number2 != 7) {
@@ -145,8 +145,10 @@ public class View {
             flags[0] = true;
             flags[1] = false;
             System.out.println(LocaleSingleton.getResourceBundle().getString("CHOOSE_FILE"));
-            File file = new File("src/main/java/by/parakhnevich/arraysanddecomposition/files/" +
-                    scanForListener.next());
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("files/" + scanForListener.next()).getFile());
+            String absolutePath = file.getAbsolutePath();
+            file = new File(absolutePath);
             try {
                 return new Scanner(file);
             } catch (FileNotFoundException e) {
@@ -157,11 +159,11 @@ public class View {
         else if (number == 2){
             flags[0] = false;
             flags[1] = false;
-            return new Scanner(System.in);
+            return scanForListener;
         }
         flags[0] = false;
         flags[1] = true;
-        return new Scanner(System.in);
+        return scanForListener;
     }
 
     //use singleton class and create localisation

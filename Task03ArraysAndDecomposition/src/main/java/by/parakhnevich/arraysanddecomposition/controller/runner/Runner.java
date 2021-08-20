@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.runner;
+package by.parakhnevich.arraysanddecomposition.controller.runner;
 
 
 import by.parakhnevich.arraysanddecomposition.view.View;

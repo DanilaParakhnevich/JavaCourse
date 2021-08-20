@@ -1,6 +1,6 @@
 package by.parakhnevich.arraysanddecomposition.bean;
 
-import by.parakhnevich.arraysanddecomposition.utilmatrix.MatrixComparator;
+import by.parakhnevich.arraysanddecomposition.service.utilmatrix.MatrixValidator;
 
 import java.util.Arrays;
 
@@ -12,6 +12,7 @@ import java.util.Arrays;
  */
 public class Matrix<T extends Number> {
     private T[][] array;
+    MatrixValidator validator = new MatrixValidator();
 
     public Matrix(int n, int m){
         this.array = (T[][]) new Number[n][m];
@@ -27,7 +28,10 @@ public class Matrix<T extends Number> {
     }
     //this constructor copy matrix from another matrix
     public Matrix(T[][] array) {
-        this.copyArray(array);
+        this.array = (T[][])new Number[array.length][array[0].length];
+        for(int i = 0 ; i < array.length; ++i) {
+            System.arraycopy(array[i], 0, this.array[i], 0, array[i].length);
+        }
     }
     //this constructor copy Object Matrix from another Object Matrix
     public Matrix(Matrix<T> matrix) {
@@ -35,21 +39,15 @@ public class Matrix<T extends Number> {
     }
 
     public void put(int n, int m, T element) throws ArrayIndexOutOfBoundsException{
-        try {
-            new MatrixComparator().checkingBounds(n, m, (Matrix<Number>) this);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
-            e.printStackTrace();
+        if(!validator.checkingBounds(n, m, (Matrix<Number>) this)) {
+            throw new ArrayIndexOutOfBoundsException();
         }
         array[n][m] = element;
     }
     //return object from array under necessary index
     public T get(int n, int m) throws ArrayIndexOutOfBoundsException{
-        try {
-            new MatrixComparator().checkingBounds(n ,m, (Matrix<Number>) this);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
-            e.printStackTrace();
+        if (!validator.checkingBounds(n ,m, (Matrix<Number>) this)) {
+            throw new ArrayIndexOutOfBoundsException();
         }
         return array[n][m];
     }
@@ -67,7 +65,7 @@ public class Matrix<T extends Number> {
 
     public int getIntegerValue(int n, int m) throws ArrayIndexOutOfBoundsException{
         try {
-            new MatrixComparator().checkingBounds(n ,m, (Matrix<Number>) this);
+            new MatrixValidator().checkingBounds(n ,m, (Matrix<Number>) this);
         }
         catch (ArrayIndexOutOfBoundsException e){
             e.printStackTrace();

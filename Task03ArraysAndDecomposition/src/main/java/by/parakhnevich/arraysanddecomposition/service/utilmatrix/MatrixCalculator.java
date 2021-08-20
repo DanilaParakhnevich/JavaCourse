@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.utilmatrix;
+package by.parakhnevich.arraysanddecomposition.service.utilmatrix;
 
 import by.parakhnevich.arraysanddecomposition.bean.Matrix;
 import org.apache.logging.log4j.LogManager;
@@ -13,18 +13,17 @@ import org.apache.logging.log4j.Logger;
  * 5.Transposition of matrix
  * @autor Danila Parakhnevich
  * @version 1.0
- * @see by.parakhnevich.arraysanddecomposition.utilarrays.Sorting
+ * @see by.parakhnevich.arraysanddecomposition.service.utilarrays.Sorting
  */
 public class MatrixCalculator<T extends Number> {
     private final Logger logger = LogManager.getLogger(MatrixCalculator.class.getName());
+    private static final MatrixValidator validator = new MatrixValidator();
 
     public Matrix<Integer> sum (Matrix<Number> matrix1 , Matrix<Number> matrix2) {
-        try {
-            new MatrixComparator().compareTwoMatrix(matrix1, matrix2);
+        if(!validator.compareTwoMatrix(matrix1, matrix2)) {
+            throw new ArrayIndexOutOfBoundsException();
         }
-        catch (ArrayIndexOutOfBoundsException e) {
-            logger.error(e);
-        }
+
         Matrix<Integer> matrix = new Matrix<>(matrix1.getRows(), matrix1.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {
             for (int index2 = 0; index2 < matrix1.getColumns(); index2++){
@@ -36,11 +35,8 @@ public class MatrixCalculator<T extends Number> {
     }
 
     public Matrix<Number> difference(Matrix<Number> matrix1 , Matrix<Number> matrix2) {
-        try {
-            new MatrixComparator().compareTwoMatrix(matrix1, matrix2);
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-            logger.error(e);
+        if (validator.compareTwoMatrix(matrix1, matrix2)){
+            throw new IndexOutOfBoundsException();
         }
         Matrix<Number> matrix = new Matrix<>(matrix1.getRows(), matrix1.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {
@@ -62,13 +58,8 @@ public class MatrixCalculator<T extends Number> {
     }
 
     public Matrix<Integer> multiply(Matrix<T> matrix1,Matrix<T> matrix2){
-        try {
-            if (matrix1.getColumns() != matrix2.getRows()) {
-                throw new ArrayIndexOutOfBoundsException();
-            }
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-            logger.error(e);
+        if (matrix1.getColumns() != matrix2.getRows()) {
+            throw new ArrayIndexOutOfBoundsException();
         }
         Matrix<Integer> matrix = new Matrix<>(matrix1.getRows(), matrix2.getColumns());
         for (int index1 = 0; index1 < matrix1.getRows(); index1++) {

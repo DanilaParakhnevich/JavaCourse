@@ -2,7 +2,7 @@ package by.parakhnevich.arraysanddecomposition.controller.command;
 
 import by.parakhnevich.arraysanddecomposition.bean.Array;
 import by.parakhnevich.arraysanddecomposition.controller.parser.ParseArray;
-import by.parakhnevich.arraysanddecomposition.utilarrays.MergeSorting;
+import by.parakhnevich.arraysanddecomposition.service.utilarrays.MergeSorting;
 import by.parakhnevich.arraysanddecomposition.view.locale.LocaleSingleton;
 
 import java.util.List;

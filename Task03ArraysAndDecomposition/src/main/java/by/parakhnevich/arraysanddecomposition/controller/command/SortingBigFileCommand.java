@@ -1,7 +1,7 @@
 package by.parakhnevich.arraysanddecomposition.controller.command;
 
 
-import by.parakhnevich.arraysanddecomposition.utilarrays.SortingOfBigFile;
+import by.parakhnevich.arraysanddecomposition.service.utilarrays.SortingOfBigFile;
 import by.parakhnevich.arraysanddecomposition.view.locale.LocaleSingleton;
 
 import java.io.File;

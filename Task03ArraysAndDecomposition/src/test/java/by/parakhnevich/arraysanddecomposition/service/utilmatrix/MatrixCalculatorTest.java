@@ -1,4 +1,4 @@
-package by.parakhnevich.arraysanddecomposition.utilmatrix;
+package by.parakhnevich.arraysanddecomposition.service.utilmatrix;
 
 import by.parakhnevich.arraysanddecomposition.bean.Matrix;
 import org.testng.Assert;
