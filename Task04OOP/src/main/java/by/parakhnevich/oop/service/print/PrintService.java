@@ -2,6 +2,11 @@ package by.parakhnevich.oop.service.print;
 
 import java.util.Map;
 
+/**
+ * Print all the elements of Map
+ * @autor Danila Parakhnevich
+ * @version 1.1
+ */
 public class PrintService {
     public String get(Map<Integer, String> map) {
         int index = 1;

@@ -1,10 +1,14 @@
 package by.parakhnevich.oop.controller.command;
 
-import by.parakhnevich.oop.bean.voucher.Voucher;
-
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * This interface is part of command pattern
+ * @autor Danila Parakhnevich
+ * @version 1.1
+ * @see by.parakhnevich.oop.controller.Controller
+ */
 public interface Command {
-    public String execute(List<Voucher> list) throws IOException;
+    public java.lang.String execute(List<String> list) throws IOException;
 }

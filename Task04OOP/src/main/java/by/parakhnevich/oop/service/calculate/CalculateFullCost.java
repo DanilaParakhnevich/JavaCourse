@@ -3,26 +3,34 @@ package by.parakhnevich.oop.service.calculate;
 import by.parakhnevich.oop.bean.voucher.CruiseVoucher;
 import by.parakhnevich.oop.bean.voucher.Voucher;
 
+/**
+ * Class return full cost of service of voucher
+ * @autor Danila Parakhnevich
+ * @version 1.1
+ */
 public class CalculateFullCost {
     double costPerTransport;
     double costPerFood;
 
     public double calculate(Voucher voucher) {
-       switch (voucher.getTypeOfFood()){
+        switch (voucher.getTypeOfFood()){
            case ("AI"):
                costPerFood = 50;
                break;
            case ("BF"):
                costPerFood = 30;
                break;
-           case ("No food"):
-               costPerFood = 0;
-               break;
            case("Breakfasts"):
                costPerFood = 10;
                break;
-       }
-       switch (voucher.getTypeOfTransport()){
+            default:
+                costPerFood = 0;
+        }
+        if (voucher instanceof CruiseVoucher) {
+            return (voucher.getCostPerDay() + costPerFood)
+                    * voucher.getCountOfDays();
+        }
+        switch (voucher.getTypeOfTransport()){
            case ("Ship"):
                costPerTransport = 100;
                break;
@@ -32,10 +40,8 @@ public class CalculateFullCost {
            case ("Plain"):
                costPerTransport = 150;
                break;
-       }
-        if (voucher instanceof CruiseVoucher) {
-            return (voucher.getCostPerDay() + costPerFood)
-                    * voucher.getCountOfDays();
+            default:
+                costPerTransport = 0;
         }
         return (costPerTransport + costPerFood + voucher.getCostPerDay()) *
                 voucher.getCountOfDays();

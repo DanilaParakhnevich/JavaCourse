@@ -1,10 +1,20 @@
 package by.parakhnevich.oop.bean.voucher;
 
-import java.util.Map;
+import by.parakhnevich.oop.view.locale.LocaleSingleton;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Class Voucher is a class from which are inherited other
+ * certain classes - Vouchers . Voucher is a class-body.
+ * @autor Danila Parakhnevich
+ * @version 1.1
+ */
 public class Voucher {
-    Map<Integer, String> listOfAcceptedTransports;
-    Map<Integer, String> listOfAcceptedFood;
+    protected final Map<Integer, String> listOfAcceptedTransports = new HashMap<>();
+    protected final Map<Integer, String> listOfAcceptedFood = new HashMap<>();
 
     private final String country;
     private final String typeOfVoucher;
@@ -15,45 +25,15 @@ public class Voucher {
     private String typeOfFood;
 
 
-    public static class Passport {
-        private String country;
-        private String typeOfVoucher;
-        private int maxCountOfDays;
-        private double costPerDay;
-
-        public Passport costPerDay(double value) {
-            this.costPerDay = value;
-            return this;
-        }
-
-        public Passport country(String value) {
-            this.country = value;
-            return this;
-        }
-        public Passport typeOfVoucher(String value) {
-            this.typeOfVoucher = value;
-            return this;
-        }
-        public Passport maxCountOfDays(int value) {
-            this.maxCountOfDays = value;
-            return this;
-        }
-
-        public Voucher built() {
-            return new Voucher(this);
-        }
-
-        public double getCostPerDay() {
-            return costPerDay;
-        }
+    public Voucher(String country, String typeOfVoucher,
+                   double costPerDay, int maxCountOfDays){
+        this.maxCountOfDays = maxCountOfDays;
+        this.typeOfVoucher = typeOfVoucher;
+        this.country = country;
+        this.costPerDay = costPerDay;
     }
 
-    protected Voucher(Passport passport) {
-        maxCountOfDays = passport.maxCountOfDays;
-        typeOfVoucher = passport.typeOfVoucher;
-        country = passport.country;
-        costPerDay = passport.costPerDay;
-    }
+
 
     public String getCountry() {
         return country;
@@ -94,11 +74,56 @@ public class Voucher {
         return typeOfFood;
     }
 
-    public void setTypeOfFood(String typeOfFood) {
+    public void setTypeOfFood(java.lang.String typeOfFood) {
         this.typeOfFood = typeOfFood;
     }
 
     public String get(){
-        return country + " " + typeOfVoucher + " " + costPerDay + " " + maxCountOfDays;
+        return country + ", " + typeOfVoucher + ", " + costPerDay + " $, " + maxCountOfDays +
+              " " + LocaleSingleton.getResourceBundle().getString("DAYS");
+    }
+
+    public Map<Integer, String> getListOfAcceptedTransports() {
+        return listOfAcceptedTransports;
+    }
+
+    public Map<Integer, String> getListOfAcceptedFood() {
+        return listOfAcceptedFood;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Voucher voucher = (Voucher) o;
+        return maxCountOfDays == voucher.maxCountOfDays &&
+            countOfDays == voucher.countOfDays &&
+            Double.compare(voucher.costPerDay, costPerDay) == 0 &&
+            Objects.equals(listOfAcceptedTransports, voucher.listOfAcceptedTransports) &&
+            Objects.equals(listOfAcceptedFood, voucher.listOfAcceptedFood) &&
+            Objects.equals(country, voucher.country) &&
+            Objects.equals(typeOfVoucher, voucher.typeOfVoucher) &&
+            Objects.equals(typeOfTransport, voucher.typeOfTransport) &&
+            Objects.equals(typeOfFood, voucher.typeOfFood);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(listOfAcceptedTransports, listOfAcceptedFood, country, typeOfVoucher, maxCountOfDays, countOfDays, costPerDay, typeOfTransport, typeOfFood);
+    }
+
+    @Override
+    public String toString() {
+        return "Voucher{" +
+                "listOfAcceptedTransports=" + listOfAcceptedTransports +
+                ", listOfAcceptedFood=" + listOfAcceptedFood +
+                ", country='" + country + '\'' +
+                ", typeOfVoucher='" + typeOfVoucher + '\'' +
+                ", maxCountOfDays=" + maxCountOfDays +
+                ", countOfDays=" + countOfDays +
+                ", costPerDay=" + costPerDay +
+                ", typeOfTransport='" + typeOfTransport + '\'' +
+                ", typeOfFood='" + typeOfFood + '\'' +
+                '}';
     }
 }

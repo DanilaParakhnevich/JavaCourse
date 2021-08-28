@@ -1,10 +1,15 @@
 package by.parakhnevich.oop.bean.voucher;
 
-import by.parakhnevich.oop.view.locale.LocaleSingleton;
-
+/**
+ * Inheritor of Voucher - ClASS
+ * @autor Danila Parakhnevich
+ * @version 1.1
+ * @see by.parakhnevich.oop.bean.voucher.Voucher
+ */
 public class CruiseVoucher extends Voucher {
-    private CruiseVoucher(Voucher.Passport passport) {
-        super(passport);
+    public CruiseVoucher(String country, String typeOfVoucher,
+                         double costPerDay, int maxCountOfDays) {
+        super(country, typeOfVoucher, costPerDay, maxCountOfDays);
         this.listOfAcceptedTransports.put(1, "Ship");
         this.listOfAcceptedFood.put(1, "AI");
         this.listOfAcceptedFood.put(2, "No food");
