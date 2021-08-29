@@ -2,6 +2,8 @@ package by.parakhnevich.oop.controller;
 
 import by.parakhnevich.oop.controller.command.*;
 import by.parakhnevich.oop.controller.command.ReturnMaxDaysCommand;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class Controller {
     List<Command> listOfCommands;
+    private static final Logger logger = (Logger)
+            LogManager.getLogger(Controller.class.getName());
     public Controller() {
 
         listOfCommands = new ArrayList<>();
@@ -39,7 +43,7 @@ public class Controller {
             return listOfCommands.get(number - 1).execute(list);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return null;
     }

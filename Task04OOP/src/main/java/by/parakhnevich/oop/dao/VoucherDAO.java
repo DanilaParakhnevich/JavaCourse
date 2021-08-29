@@ -1,6 +1,9 @@
 package by.parakhnevich.oop.dao;
 
 import by.parakhnevich.oop.bean.voucher.Voucher;
+import by.parakhnevich.oop.controller.Controller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class VoucherDAO {
     public List<Voucher> getAll(int index) throws IOException {
         String filename = index == 1 ? "info.txt" : "saved.txt";
+        //first file is file with default values , second is file with user's correcting
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource("files/" + filename)).getFile());
         String absolutePath = file.getAbsolutePath();

@@ -1,6 +1,9 @@
 package by.parakhnevich.oop.dao;
 
 import by.parakhnevich.oop.bean.voucher.Voucher;
+import by.parakhnevich.oop.controller.Controller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +17,9 @@ import java.util.Objects;
  * @version 1.1
  */
 public class SaveChanges {
+    private static final Logger logger = (Logger)
+            LogManager.getLogger(Controller.class.getName());
+
     public void save(List<Voucher> list) {
         String filename = "saved.txt";
         ClassLoader classLoader = getClass().getClassLoader();
@@ -26,7 +32,7 @@ public class SaveChanges {
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }

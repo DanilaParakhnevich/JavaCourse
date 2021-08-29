@@ -4,6 +4,8 @@ import by.parakhnevich.oop.bean.voucher.Voucher;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Sort list of Voucher via type of voucher
@@ -14,11 +16,14 @@ import java.util.Locale;
 public class SortViaTypeVoucher implements SortVoucherWithChoise{
     @Override
     public void sort(List<Voucher> list, String obj) {
-        for (int i = 0; i < list.size(); ++i){
-            if (list.get(i).getTypeOfVoucher().toLowerCase(Locale.ROOT).
-                    compareTo(obj.toLowerCase(Locale.ROOT)) != 0){
-                list.remove(i);
-            }
-        }
+        BiConsumer<List<Voucher>, String> func = (List<Voucher> listToSort, String name) -> {
+            for (int i = 0; i < listToSort.size(); ++i) {
+                if (!listToSort.get(i).getTypeOfVoucher().toLowerCase(Locale.ROOT).
+                        equals(name.toLowerCase(Locale.ROOT))) {
+                        listToSort.remove(i--);
+                    }
+                }
+            };
+        func.accept(list, obj);
     }
 }
