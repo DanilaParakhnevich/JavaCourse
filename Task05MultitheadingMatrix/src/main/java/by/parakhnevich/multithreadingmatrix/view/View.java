@@ -16,7 +16,7 @@ public class View {
 
 
     public void execute(){
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             System.out.println(i + 1 + " " + LocaleSingleton.
                     getInstance().getResourceBundle().getString("VARIANT") + '\n');
             List<String> list = new ArrayList<>();

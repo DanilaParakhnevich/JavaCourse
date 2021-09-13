@@ -7,7 +7,7 @@ import by.parakhnevich.multithreadingmatrix.service.threadformatrix.lockthread.T
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ThreadsWithLockCreator {
+public class ThreadsWithLockCreator implements ThreadsCreator{
     public List<PutterThread> create (List<Integer> listOfNumbers, Matrix matrix){
         List<PutterThread> list = new ArrayList<>();
         ReentrantLock locker = new ReentrantLock(false);

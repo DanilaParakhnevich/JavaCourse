@@ -7,7 +7,7 @@ import by.parakhnevich.multithreadingmatrix.service.threadformatrix.simplethread
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleThreadsCreator {
+public class SimpleThreadsCreator implements ThreadsCreator{
     public List<PutterThread> create (List<Integer> listOfNumbers, Matrix matrix){
         List<PutterThread> list = new ArrayList<>();
         Boolean flag = false;

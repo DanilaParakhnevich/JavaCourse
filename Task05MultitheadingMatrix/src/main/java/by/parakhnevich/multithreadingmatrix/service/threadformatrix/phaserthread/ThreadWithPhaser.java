@@ -24,16 +24,17 @@ public class ThreadWithPhaser extends PutterThread {
         phaser.register();
         while (true) {
             try {
-                phaser.arrive();
                 if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
                     phaser.arriveAndDeregister();
                     break;
                 }
                 matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index,
                         number);
+                PutNumbersInMainDiagonal.inc();
                 String logInfo = getName() + " put " + number;
                 logger.log(Level.INFO, logInfo);
-                PutNumbersInMainDiagonal.inc();
+                logInfo = getName() + " end " + phaser.arrive() + " phase";
+                logger.log(Level.INFO, logInfo);
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
                 logger.error(e);

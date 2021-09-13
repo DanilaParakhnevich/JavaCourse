@@ -1,7 +1,6 @@
 package by.parakhnevich.multithreadingmatrix.service.threadformatrix.countdownlatchthread;
 
 import by.parakhnevich.multithreadingmatrix.bean.Matrix;
-import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
 import by.parakhnevich.multithreadingmatrix.service.threadformatrix.PutterThread;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,14 +21,14 @@ public class ThreadWithCountDownLatch extends PutterThread {
     @Override
     public void run() {
         while (true) {
-            latch.countDown();
-            if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
+            if (latch.getCount() <= 0) {
                 break;
             }
-            matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
+            int index = (int) (matrix.getRows() - latch.getCount());
+            matrix.put(index, index, number);
             String logInfo = getName() + " put " + number;
             logger.log(Level.INFO, logInfo);
-            PutNumbersInMainDiagonal.inc();
+            latch.countDown();
             try {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {

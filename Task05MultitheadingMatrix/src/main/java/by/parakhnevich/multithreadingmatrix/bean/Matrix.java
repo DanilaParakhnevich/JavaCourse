@@ -17,7 +17,7 @@ public class Matrix {
         }
     }
     //this constructor copy matrix from another matrix
-    public Matrix(int[][] array) {
+    public Matrix(Integer[][] array) {
         this.array = new int[array.length][array[0].length];
         for(int i = 0 ; i < array.length; ++i) {
             System.arraycopy(array[i], 0, this.array[i], 0, array[i].length);

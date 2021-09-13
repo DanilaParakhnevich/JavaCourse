@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 
-public class ThreadsWithSemaphoreCreator {
+public class ThreadsWithSemaphoreCreator implements ThreadsCreator{
     public List<PutterThread> create (List<Integer> listOfNumbers, Matrix matrix) {
         List<PutterThread> list = new ArrayList<>();
         Semaphore semaphore = new Semaphore(1);

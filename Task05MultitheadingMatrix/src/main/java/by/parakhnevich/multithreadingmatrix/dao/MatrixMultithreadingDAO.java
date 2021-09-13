@@ -16,7 +16,7 @@ public class MatrixMultithreadingDAO {
                 collect(Collectors.toList());
         List<String> limitList = List.of(list.remove(0).split(" "));
         int size = list.size();
-        if (!new LimitsValidator().validate(list.size(), Integer.parseInt(limitList.get(0)),
+        if (new LimitsValidator().validate(list.size(), Integer.parseInt(limitList.get(0)),
                 Integer.parseInt(limitList.get(1)))) {
             throw new DAOException();
         }

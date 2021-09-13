@@ -18,6 +18,7 @@ public class Controller {
         listOfCommands.add(new PuttingThreadWithCountDownLatchCommand());
         listOfCommands.add(new PuttingThreadsWithPhaserCommand());
         listOfCommands.add(new PuttingSimpleThreadsCommand());
+        listOfCommands.add(new PuttingThreadsWithDequeCommand());
     }
 
     public String execute(List<String> message) {

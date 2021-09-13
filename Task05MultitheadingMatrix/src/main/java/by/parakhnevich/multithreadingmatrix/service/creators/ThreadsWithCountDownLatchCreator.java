@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class ThreadsWithCountDownLatchCreator {
+public class ThreadsWithCountDownLatchCreator implements ThreadsCreator {
     public List<PutterThread> create (List<Integer> listOfNumbers, Matrix matrix) {
         List<PutterThread> list = new ArrayList<>();
         CountDownLatch latch = new CountDownLatch(matrix.getRows());

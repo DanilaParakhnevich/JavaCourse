@@ -10,7 +10,9 @@ public class PutNumbersInMainDiagonal {
     public static int index = 0;
 
     public void execute(List<PutterThread> thread) throws InterruptedException {
+        int number = 1;
         for (Thread thread1: thread){
+            thread1.setName("Thread " + number++);
             thread1.start();
             TimeUnit.MILLISECONDS.sleep(10);
         }

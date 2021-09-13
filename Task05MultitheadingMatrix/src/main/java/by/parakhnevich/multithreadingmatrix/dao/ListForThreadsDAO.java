@@ -17,7 +17,7 @@ public class ListForThreadsDAO {
        List<String> limitList = List.of(list.remove(0).split(" "));
        List<String> listOfNumbersForThreads = List.of(list.remove(0).split(" "));
        int count = listOfNumbersForThreads.size();
-       if (! new LimitsValidator().validate(count, Integer.parseInt(limitList.get(0)),
+       if (new LimitsValidator().validate(count, Integer.parseInt(limitList.get(0)),
                Integer.parseInt(limitList.get(1)))){
            throw new DAOException();
        }
