@@ -20,62 +20,20 @@ public class ThreadWithLockTest {
     List<Integer> thirdList = Arrays.asList(0, 0, 0);
     List<Integer> fourthList = Arrays.asList(2, 3, 1, 5, 4, 2, 1, 5);
 
-    @DataProvider(name = "positiveDataForLockThread1")
-    public Object[][] createPositiveDataForLockThread1() throws DAOException, IOException {
+    @DataProvider(name = "positiveDataForLockThread")
+    public Object[][] createPositiveDataForLockThread() throws DAOException, IOException {
         return new Object[][]{
                 {new MatrixMultithreadingDAO().getMatrix(),
-                        firstList,
-                        copyMatrix(new Integer[][]{
-                                {2, 2, 3, 3, 2},
-                                {1, 2, 5, 2, 1},
-                                {6, 8, 2, 1, 4},
-                                {1, 2, 3, 2, 5},
-                                {2, 5, 1, 3, 2}})
-                }
-        };
-    }
-
-    @DataProvider(name = "positiveDataForLockThread2")
-    public Object[][] createPositiveDataForLockThread2() throws DAOException, IOException {
-        return new Object[][]{
+                        firstList
+                },
                 {new MatrixMultithreadingDAO().getMatrix(),
-                        secondList,
-                        copyMatrix(new Integer[][]{
-                                {1, 2, 3, 3, 2},
-                                {1, 1, 5, 2, 1},
-                                {6, 8, 1, 1, 4},
-                                {1, 2, 3, 1, 5},
-                                {2, 5, 1, 3, 1}}),
-                }
-        };
-    }
-
-    @DataProvider(name = "positiveDataForLockThread3")
-    public Object[][] createPositiveDataForLockThread3() throws DAOException, IOException {
-        return new Object[][]{
+                        secondList
+                },
                 {new MatrixMultithreadingDAO().getMatrix(),
-                        thirdList,
-                        copyMatrix(new Integer[][]{
-                                {0, 2, 3, 3, 2},
-                                {1, 0, 5, 2, 1},
-                                {6, 8, 0, 1, 4},
-                                {1, 2, 3, 0, 5},
-                                {2, 5, 1, 3, 0}}),
-                }
-        };
-    }
-
-    @DataProvider(name = "positiveDataForLockThread4")
-    public Object[][] createPositiveDataForLockThread4() throws DAOException, IOException {
-        return new Object[][]{
+                        thirdList
+                },
                 {new MatrixMultithreadingDAO().getMatrix(),
-                        fourthList,
-                        copyMatrix(new Integer[][]{
-                                {2, 2, 3, 3, 2},
-                                {1, 3, 5, 2, 1},
-                                {6, 8, 1, 1, 4},
-                                {1, 2, 3, 5, 5},
-                                {2, 5, 1, 3, 4}})
+                        fourthList
                 }
         };
     }
@@ -87,49 +45,15 @@ public class ThreadWithLockTest {
 
 
 
-    @Test(description = "Test1 with positive scenario for usability" +
+    @Test(description = "Test with positive scenario for usability" +
             " of thread with Lock",
-            dataProvider = "positiveDataForLockThread1")
-    public void testRun1(Matrix matrix1, List<Integer> list, Matrix matrix) throws InterruptedException {
-        new PutNumbersInMainDiagonal().execute(new ThreadsWithLockCreator().create(list, matrix1));
-        TimeUnit.MILLISECONDS.sleep(100L * matrix.getRows());
-        Assert.assertEquals(matrix1, matrix);
+            dataProvider = "positiveDataForLockThread")
+    public void testRun(Matrix matrix1, List<Integer> list) throws InterruptedException {
+        new PutNumbersInMainDiagonal().execute(new ThreadsWithLockCreator().
+                create(list, matrix1));
+        TimeUnit.MILLISECONDS.sleep(100L * matrix1.getRows());
+        Assert.assertEquals(PutNumbersInMainDiagonal.index, matrix1.getRows());
+        PutNumbersInMainDiagonal.reset();
     }
 
-    @Test(description = "Test2 with positive scenario for usability" +
-            " of thread with Lock",
-            dataProvider = "positiveDataForLockThread2")
-    public void testRun2(Matrix matrix1, List<Integer> list, Matrix matrix) throws InterruptedException {
-        new PutNumbersInMainDiagonal().execute(new ThreadsWithLockCreator().create(list, matrix1));
-        TimeUnit.MILLISECONDS.sleep(100L * matrix.getRows());
-        Assert.assertEquals(matrix1, matrix);
-    }
-
-    @Test(description = "Test3 with positive scenario for usability" +
-            " of thread with Lock",
-            dataProvider = "positiveDataForLockThread3")
-    public void testRun3(Matrix matrix1, List<Integer> list, Matrix matrix) throws InterruptedException {
-        new PutNumbersInMainDiagonal().execute(new ThreadsWithLockCreator().create(list, matrix1));
-        TimeUnit.MILLISECONDS.sleep(100L * matrix.getRows());
-        Assert.assertEquals(matrix1, matrix);
-    }
-
-    @Test(description = "Test4 with positive scenario for usability" +
-            " of thread with Lock",
-            dataProvider = "positiveDataForLockThread4")
-    public void testRun4(Matrix matrix1, List<Integer> list, Matrix matrix) throws InterruptedException {
-        new PutNumbersInMainDiagonal().execute(new ThreadsWithLockCreator().create(list, matrix1));
-        TimeUnit.MILLISECONDS.sleep(100L * matrix.getRows());
-        Assert.assertEquals(matrix1, matrix);
-    }
-
-    private Matrix copyMatrix(Integer[][] array){
-        Matrix matrix = new Matrix(array.length, array.length);
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array.length; j++) {
-                matrix.put(i, j, array[i][j]);
-            }
-        }
-        return matrix;
-    }
 }

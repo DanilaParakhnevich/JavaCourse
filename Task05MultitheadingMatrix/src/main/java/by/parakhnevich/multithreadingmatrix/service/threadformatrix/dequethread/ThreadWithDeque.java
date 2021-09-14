@@ -1,6 +1,7 @@
 package by.parakhnevich.multithreadingmatrix.service.threadformatrix.dequethread;
 
 import by.parakhnevich.multithreadingmatrix.bean.Matrix;
+import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
 import by.parakhnevich.multithreadingmatrix.service.threadformatrix.PutterThread;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public class ThreadWithDeque extends PutterThread {
         try {
             while (!indexes.isEmpty()) {
                 matrix.put(indexes.getFirst(), indexes.removeFirst(), number);
+                PutNumbersInMainDiagonal.inc();
                 String logInfo = getName() + " put " + number;
                 logger.log(Level.INFO, logInfo);
                 TimeUnit.MILLISECONDS.sleep(50);

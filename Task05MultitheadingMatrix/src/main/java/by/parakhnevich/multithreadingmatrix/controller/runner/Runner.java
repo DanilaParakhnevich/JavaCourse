@@ -1,6 +1,5 @@
 package by.parakhnevich.multithreadingmatrix.controller.runner;
 
-import by.parakhnevich.multithreadingmatrix.controller.Controller;
 import by.parakhnevich.multithreadingmatrix.view.View;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

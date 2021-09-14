@@ -30,7 +30,7 @@ public class ThreadWithLock extends PutterThread {
            matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
            String logInfo = getName() + " put " + number;
            logger.log(Level.INFO, logInfo);
-               PutNumbersInMainDiagonal.inc();
+           PutNumbersInMainDiagonal.inc();
            locker.unlock();
                TimeUnit.MILLISECONDS.sleep(50);
            } catch (InterruptedException e) {

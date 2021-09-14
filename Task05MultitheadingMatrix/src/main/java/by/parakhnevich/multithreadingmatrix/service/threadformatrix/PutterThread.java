@@ -3,6 +3,9 @@ package by.parakhnevich.multithreadingmatrix.service.threadformatrix;
 import by.parakhnevich.multithreadingmatrix.bean.Matrix;
 import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
 
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 
 public class PutterThread extends Thread{
     protected Matrix matrix;
@@ -16,7 +19,17 @@ public class PutterThread extends Thread{
 
     @Override
     public void run() {
-        matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
-        PutNumbersInMainDiagonal.inc();
+        while(true) {
+            if (PutNumbersInMainDiagonal.index <= matrix.getRows()){
+                break;
+            }
+            matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
+            PutNumbersInMainDiagonal.inc();
+            try {
+                TimeUnit.MILLISECONDS.sleep(new Random().nextLong() % 50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

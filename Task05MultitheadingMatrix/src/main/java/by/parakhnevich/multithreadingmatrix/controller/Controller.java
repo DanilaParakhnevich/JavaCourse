@@ -19,6 +19,7 @@ public class Controller {
         listOfCommands.add(new PuttingThreadsWithPhaserCommand());
         listOfCommands.add(new PuttingSimpleThreadsCommand());
         listOfCommands.add(new PuttingThreadsWithDequeCommand());
+        listOfCommands.add(new PuttingThreadsWithAtomicIntegerCommand());
     }
 
     public String execute(List<String> message) {

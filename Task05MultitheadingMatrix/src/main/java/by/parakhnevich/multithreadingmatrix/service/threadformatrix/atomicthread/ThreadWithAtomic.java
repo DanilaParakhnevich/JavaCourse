@@ -1,38 +1,38 @@
-package by.parakhnevich.multithreadingmatrix.service.threadformatrix.countdownlatchthread;
+package by.parakhnevich.multithreadingmatrix.service.threadformatrix.atomicthread;
 
 import by.parakhnevich.multithreadingmatrix.bean.Matrix;
 import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
 import by.parakhnevich.multithreadingmatrix.service.threadformatrix.PutterThread;
+import by.parakhnevich.multithreadingmatrix.service.threadformatrix.countdownlatchthread.ThreadWithCountDownLatch;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ThreadWithCountDownLatch extends PutterThread {
-    public CountDownLatch latch;
-    Logger logger = (Logger) LogManager.getLogger(ThreadWithCountDownLatch.class);
+public class ThreadWithAtomic extends PutterThread {
+    Logger logger = (Logger) LogManager.getLogger(ThreadWithAtomic.class);
+    AtomicInteger index;
 
-    public ThreadWithCountDownLatch(Matrix matrix, CountDownLatch latch, int number) {
+    public ThreadWithAtomic(Matrix matrix, AtomicInteger index, int number) {
         super(matrix, number);
-        this.latch = latch;
+        this.index = index;
     }
 
     @Override
     public void run() {
-        while (true) {
-            if (latch.getCount() <= 0) {
+        while(true) {
+            if (index.get() >= matrix.getRows()){
                 break;
             }
-            int index = (int) (matrix.getRows() - latch.getCount());
-            matrix.put(index, index, number);
+            matrix.put(index.get(), index.getAndIncrement(), number);
             String logInfo = getName() + " put " + number;
             logger.log(Level.INFO, logInfo);
-            latch.countDown();
             PutNumbersInMainDiagonal.inc();
             try {
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(new Random().nextLong() % 50);
             } catch (InterruptedException e) {
                 logger.error(e);
             }

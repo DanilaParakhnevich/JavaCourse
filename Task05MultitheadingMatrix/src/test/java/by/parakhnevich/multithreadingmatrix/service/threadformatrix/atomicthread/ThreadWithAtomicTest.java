@@ -1,10 +1,11 @@
-package by.parakhnevich.multithreadingmatrix.service.threadformatrix.semaphorethread;
+package by.parakhnevich.multithreadingmatrix.service.threadformatrix.atomicthread;
 
 import by.parakhnevich.multithreadingmatrix.bean.Matrix;
 import by.parakhnevich.multithreadingmatrix.dao.MatrixMultithreadingDAO;
 import by.parakhnevich.multithreadingmatrix.dao.exception.DAOException;
 import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
-import by.parakhnevich.multithreadingmatrix.service.creators.ThreadsWithSemaphoreCreator;
+import by.parakhnevich.multithreadingmatrix.service.creators.SimpleThreadsCreator;
+import by.parakhnevich.multithreadingmatrix.service.creators.ThreadsWithAtomicIntegerCreator;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -14,14 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ThreadWithSemaphoreTest {
+import static org.testng.Assert.*;
+
+public class ThreadWithAtomicTest {
     List<Integer> firstList = List.of(2);
     List<Integer> secondList = List.of(1);
     List<Integer> thirdList = Arrays.asList(0, 0, 0);
     List<Integer> fourthList = Arrays.asList(2, 3, 1, 5, 4, 2, 1, 5);
 
-    @DataProvider(name = "positiveDataForSemaphoreThread")
-    public Object[][] createPositiveDataForSemaphoreThread() throws DAOException, IOException {
+    @DataProvider(name = "positiveDataForAtomicThread")
+    public Object[][] createPositiveDataForAtomicThread() throws DAOException, IOException {
         return new Object[][]{
                 {new MatrixMultithreadingDAO().getMatrix(),
                         firstList
@@ -40,10 +43,10 @@ public class ThreadWithSemaphoreTest {
 
 
     @Test(description = "Test with positive scenario for usability" +
-            " of thread with Semaphore",
-            dataProvider = "positiveDataForSemaphoreThread")
+            " of thread with AtomicInteger",
+            dataProvider = "positiveDataForAtomicThread")
     public void testRun(Matrix matrix1, List<Integer> list) throws InterruptedException {
-        new PutNumbersInMainDiagonal().execute(new ThreadsWithSemaphoreCreator().
+        new PutNumbersInMainDiagonal().execute(new ThreadsWithAtomicIntegerCreator().
                 create(list, matrix1));
         TimeUnit.MILLISECONDS.sleep(100L * matrix1.getRows());
         Assert.assertEquals(PutNumbersInMainDiagonal.index, matrix1.getRows());
