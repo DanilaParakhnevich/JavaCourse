@@ -25,15 +25,14 @@ public class ThreadWithSemaphore extends PutterThread {
         while (true) {
             try {
                 sema.acquire();
-                if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
+                if (PutNumbersInMainDiagonal.getIndex() >= matrix.getRows()) {
                     break;
                 }
-                matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index,
+                matrix.put(PutNumbersInMainDiagonal.getIndex(), PutNumbersInMainDiagonal.getIndex(),
                         number);
                 String logInfo = getName() + " put " + number;
                 logger.log(Level.INFO, logInfo);
                 PutNumbersInMainDiagonal.inc();
-                sema.release();
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
                 logger.error(e);

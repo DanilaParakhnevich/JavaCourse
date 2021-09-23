@@ -26,10 +26,10 @@ public class SimpleThreadWithBoolean extends PutterThread {
             try {
                 if (!isLocked) {
                     isLocked = true;
-                    if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
+                    if (PutNumbersInMainDiagonal.getIndex() >= matrix.getRows()) {
                         break;
                     }
-                    matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index,
+                    matrix.put(PutNumbersInMainDiagonal.getIndex(), PutNumbersInMainDiagonal.getIndex(),
                             number);
                     String logInfo = getName() + " put " + number;
                     logger.log(Level.INFO, logInfo);

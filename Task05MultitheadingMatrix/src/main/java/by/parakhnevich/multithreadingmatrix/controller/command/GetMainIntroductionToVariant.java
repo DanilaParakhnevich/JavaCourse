@@ -8,7 +8,7 @@ public class GetMainIntroductionToVariant {
     {
         return '\n' + LocaleSingleton.getInstance().getResourceBundle().
                 getString("BEFORE") +
-                '\n' + matrix.get() + '\n' +
+                '\n' + matrix.toPureString() + '\n' +
                 LocaleSingleton.getInstance().getResourceBundle().
                         getString("AFTER") + '\n';
     }

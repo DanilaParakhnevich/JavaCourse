@@ -10,7 +10,7 @@ import java.util.List;
 public class SimpleThreadsCreator implements ThreadsCreator{
     public List<PutterThread> create (List<Integer> listOfNumbers, Matrix matrix){
         List<PutterThread> list = new ArrayList<>();
-        Boolean flag = false;
+        Boolean flag = false;// TODO: 15.09.2021 AtomicBoolean
         for (Integer number : listOfNumbers) {
             list.add(new SimpleThreadWithBoolean(matrix, flag, number));
         }

@@ -22,7 +22,7 @@ public class ThreadWithCountDownLatch extends PutterThread {
     @Override
     public void run() {
         while (true) {
-            if (latch.getCount() <= 0) {
+            if (latch.getCount() == 0) {
                 break;
             }
             int index = (int) (matrix.getRows() - latch.getCount());
@@ -30,7 +30,7 @@ public class ThreadWithCountDownLatch extends PutterThread {
             String logInfo = getName() + " put " + number;
             logger.log(Level.INFO, logInfo);
             latch.countDown();
-            PutNumbersInMainDiagonal.inc();
+            PutNumbersInMainDiagonal.inc();//для теста
             try {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {

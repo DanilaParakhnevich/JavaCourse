@@ -6,7 +6,6 @@ import by.parakhnevich.multithreadingmatrix.dao.MatrixMultithreadingDAO;
 import by.parakhnevich.multithreadingmatrix.dao.exception.DAOException;
 import by.parakhnevich.multithreadingmatrix.service.PutNumbersInMainDiagonal;
 import by.parakhnevich.multithreadingmatrix.service.creators.ThreadsWithDequeCreator;
-import by.parakhnevich.multithreadingmatrix.service.creators.ThreadsWithLockCreator;
 import by.parakhnevich.multithreadingmatrix.view.locale.LocaleSingleton;
 
 import java.io.IOException;
@@ -25,6 +24,6 @@ public class PuttingThreadsWithDequeCommand implements Command{
         new PutNumbersInMainDiagonal().execute(new ThreadsWithDequeCreator().create(listForThreads, matrix));
         TimeUnit.MILLISECONDS.sleep(matrix.getRows() * 50L);
         PutNumbersInMainDiagonal.reset();
-        return result.append(matrix.get()).toString();
+        return result.append(matrix.toPureString()).toString();
     }
 }

@@ -24,6 +24,6 @@ public class PuttingThreadsWithPhaserCommand implements Command {
         new PutNumbersInMainDiagonal().execute(new ThreadsWithPhaserCreator().create(listForThreads, matrix));
         TimeUnit.MILLISECONDS.sleep(matrix.getRows() * 50L);
         PutNumbersInMainDiagonal.reset();
-        return result.append(matrix.get()).toString();
+        return result.append(matrix.toPureString()).toString();
     }
 }

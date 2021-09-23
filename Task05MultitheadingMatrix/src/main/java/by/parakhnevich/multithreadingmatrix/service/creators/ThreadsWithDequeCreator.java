@@ -8,14 +8,16 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class ThreadsWithDequeCreator implements ThreadsCreator{
     @Override
     public List<PutterThread> create(List<Integer> listOfNumbers, Matrix matrix) {
         List<PutterThread> list = new ArrayList<>();
         Deque<Integer> indexes = createDequeOfIndexes(matrix);
+        Semaphore sema = new Semaphore(1);
         for (Integer number : listOfNumbers) {
-            list.add(new ThreadWithDeque(matrix, (ArrayDeque<Integer>) indexes, number));
+            list.add(new ThreadWithDeque(matrix, (ArrayDeque<Integer>) indexes, sema, number));
         }
         return list;
     }

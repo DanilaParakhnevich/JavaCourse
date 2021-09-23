@@ -32,11 +32,11 @@ public class Matrix {
         array[n][m] = element;
     }
 
-    public int get(int n, int m) {
+    public int toPureString(int n, int m) {
         return array[n][m];
     }
     //return matrix in string without unnecessary info
-    public String get(){
+    public String toPureString(){
         StringBuilder result = new StringBuilder();
         for (int index1 = 0; index1 < this.getRows(); index1++) {
             for (int index2 = 0; index2 < this.getColumns(); index2++) {
@@ -95,7 +95,7 @@ public class Matrix {
     public String toString() {
 
         return "Matrix{" +
-                "array=\n" + this.get() +
+                "array=\n" + this.toPureString() +
                 '}';
     }
 }

@@ -30,7 +30,7 @@ public class ThreadWithAtomic extends PutterThread {
             matrix.put(index.get(), index.getAndIncrement(), number);
             String logInfo = getName() + " put " + number;
             logger.log(Level.INFO, logInfo);
-            PutNumbersInMainDiagonal.inc();
+            PutNumbersInMainDiagonal.inc();//для теста
             try {
                 TimeUnit.MILLISECONDS.sleep(new Random().nextLong() % 50);
             } catch (InterruptedException e) {

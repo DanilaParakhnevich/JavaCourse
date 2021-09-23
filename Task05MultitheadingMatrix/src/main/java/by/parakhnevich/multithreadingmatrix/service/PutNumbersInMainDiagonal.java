@@ -4,10 +4,11 @@ import by.parakhnevich.multithreadingmatrix.service.threadformatrix.PutterThread
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class PutNumbersInMainDiagonal {
-    public static int index = 0;
+    private static AtomicInteger index = new AtomicInteger(0);
 
     public void execute(List<PutterThread> thread) throws InterruptedException {
         int number = 1;
@@ -19,10 +20,14 @@ public class PutNumbersInMainDiagonal {
     }
 
     public static void inc() {
-        ++index;
+        index.incrementAndGet();
+    }
+
+    public static int getIndex(){
+        return index.get();
     }
 
     public static void reset() {
-        index = 0;
+        index.set(0);
     }
 }

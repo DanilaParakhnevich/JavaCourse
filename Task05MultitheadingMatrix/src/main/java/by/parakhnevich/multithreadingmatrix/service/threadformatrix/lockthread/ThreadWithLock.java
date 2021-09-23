@@ -24,10 +24,10 @@ public class ThreadWithLock extends PutterThread {
        while (true) {
            try {
            locker.lock();
-           if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
+           if (PutNumbersInMainDiagonal.getIndex() >= matrix.getRows()) {
                break;
            }
-           matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
+           matrix.put(PutNumbersInMainDiagonal.getIndex(), PutNumbersInMainDiagonal.getIndex(), number);
            String logInfo = getName() + " put " + number;
            logger.log(Level.INFO, logInfo);
            PutNumbersInMainDiagonal.inc();

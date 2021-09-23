@@ -24,11 +24,11 @@ public class ThreadWithPhaser extends PutterThread {
         phaser.register();
         while (true) {
             try {
-                if (PutNumbersInMainDiagonal.index >= matrix.getRows()) {
+                if (PutNumbersInMainDiagonal.getIndex() >= matrix.getRows() && !phaser.isTerminated()) {
                     phaser.arriveAndDeregister();
                     break;
                 }
-                matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index,
+                matrix.put(PutNumbersInMainDiagonal.getIndex(), PutNumbersInMainDiagonal.getIndex(),
                         number);
                 PutNumbersInMainDiagonal.inc();
                 String logInfo = getName() + " put " + number;

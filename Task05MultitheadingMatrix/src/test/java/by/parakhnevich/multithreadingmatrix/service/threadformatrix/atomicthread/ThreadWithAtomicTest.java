@@ -49,7 +49,7 @@ public class ThreadWithAtomicTest {
         new PutNumbersInMainDiagonal().execute(new ThreadsWithAtomicIntegerCreator().
                 create(list, matrix1));
         TimeUnit.MILLISECONDS.sleep(100L * matrix1.getRows());
-        Assert.assertEquals(PutNumbersInMainDiagonal.index, matrix1.getRows());
+        Assert.assertEquals(PutNumbersInMainDiagonal.getIndex(), matrix1.getRows());
         PutNumbersInMainDiagonal.reset();
     }
 }

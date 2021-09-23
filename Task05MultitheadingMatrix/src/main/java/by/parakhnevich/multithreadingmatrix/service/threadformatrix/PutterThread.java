@@ -20,10 +20,10 @@ public class PutterThread extends Thread{
     @Override
     public void run() {
         while(true) {
-            if (PutNumbersInMainDiagonal.index <= matrix.getRows()){
+            if (PutNumbersInMainDiagonal.getIndex() <= matrix.getRows()){
                 break;
             }
-            matrix.put(PutNumbersInMainDiagonal.index, PutNumbersInMainDiagonal.index, number);
+            matrix.put(PutNumbersInMainDiagonal.getIndex(), PutNumbersInMainDiagonal.getIndex(), number);
             PutNumbersInMainDiagonal.inc();
             try {
                 TimeUnit.MILLISECONDS.sleep(new Random().nextLong() % 50);
