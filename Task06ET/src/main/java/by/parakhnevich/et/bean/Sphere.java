@@ -1,5 +1,7 @@
 package by.parakhnevich.et.bean;
 
+import by.parakhnevich.et.dao.repository.SphereRegister;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,7 @@ public class Sphere {
     private final double radius;
     Point point;
     long id;
+    SphereRegister register = new SphereRegister();
 
     public static class Point {
         List<Double> coordinates;
@@ -78,6 +81,11 @@ public class Sphere {
     public Point getPoint() {
         return this.point;
     }
+
+    public SphereRegister getRegister() {
+        return this.register;
+    }
+
 
     @Override
     public boolean equals(Object o) {

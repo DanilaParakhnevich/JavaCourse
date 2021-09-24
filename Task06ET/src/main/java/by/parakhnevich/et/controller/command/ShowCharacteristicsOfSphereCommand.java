@@ -10,9 +10,6 @@ public class ShowCharacteristicsOfSphereCommand implements Command{
 
     @Override
     public String execute(List<String> list) throws IOException {
-        if (ArraySphereRepository.getInstance().getAll() == null) {
-            ArraySphereRepository.getInstance().load("ActualSpheres.txt");
-        }
         int index = Integer.parseInt(list.remove(0));
         if (index < 0 ||
                 index >= ArraySphereRepository.getInstance().getAll().size()){

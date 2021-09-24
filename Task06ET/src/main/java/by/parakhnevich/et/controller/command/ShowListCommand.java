@@ -9,9 +9,6 @@ import java.util.List;
 public class ShowListCommand implements Command{
     @Override
     public String execute(List<String> list) throws IOException {
-        if (ArraySphereRepository.getInstance().getAll() == null) {
-            ArraySphereRepository.getInstance().load("ActualSpheres.txt");
-        }
         return new ListToString(ArraySphereRepository.getInstance().getAll()).get();
     }
 }

@@ -1,7 +1,9 @@
 package by.parakhnevich.et.dao;
 
 import by.parakhnevich.et.bean.Sphere;
-import by.parakhnevich.et.dao.repository.ArraySphereRepository;
+import by.parakhnevich.et.dao.repository.SphereRegister;
+import by.parakhnevich.et.service.calculator.SphereCalculator;
+import by.parakhnevich.et.service.validator.SphereIntersectsWithPlanesValidator;
 import by.parakhnevich.et.service.validator.SphereValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,13 +86,20 @@ public class CloudscapeSphereDAO implements CircleDAO {
         List<Sphere> result = new ArrayList<>();
         for (String line : list) {
             double[] array = stringToDoubleArray(line);
-            Sphere circle = null;
+            Sphere sphere = null;
             if (array.length != 0) {
-                circle = generate(array);
+                sphere = generate(array);
             }
-            if (circle != null) {
-                circle.setId(ArraySphereRepository.getAndIncActualId());
-                result.add(circle);
+            if (sphere != null) {
+                sphere.getRegister().setId(SphereRegister.getCurrentId());
+                SphereRegister.inc();
+                SphereCalculator calculator = new SphereCalculator(sphere);
+                sphere.getRegister().setArea(calculator.calculateArea());
+                sphere.getRegister().setVolume(calculator.calculateVolume());
+                sphere.getRegister().
+                        setSphereIntersectsAllThePlanes(
+                                new SphereIntersectsWithPlanesValidator().validate(sphere));
+                result.add(sphere);
             }
         }
         return result;
