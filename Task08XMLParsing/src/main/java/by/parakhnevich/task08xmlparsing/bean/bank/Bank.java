@@ -48,4 +48,8 @@ public class Bank {
         }
         return builder.toString();
     }
+
+    public boolean isCommercial() {
+        return getClass().equals(CommercialBank.class);
+    }
 }

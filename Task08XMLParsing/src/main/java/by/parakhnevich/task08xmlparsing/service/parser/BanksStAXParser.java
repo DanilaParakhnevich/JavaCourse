@@ -7,6 +7,8 @@ import by.parakhnevich.task08xmlparsing.bean.bank.StateBank;
 import by.parakhnevich.task08xmlparsing.bean.deposit.Deposit;
 import by.parakhnevich.task08xmlparsing.bean.deposit.Depositor;
 import by.parakhnevich.task08xmlparsing.bean.deposit.TypeOfDeposit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.stream.XMLInputFactory;
@@ -21,15 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BanksStAXParser implements BanksParser{
+    BanksTagName banksTagName = null;
+    Logger logger = (Logger) LogManager.getLogger(BanksDOMParser.class);
+
     @Override
     public List<Bank> execute(File file) throws IOException, SAXException, XMLStreamException {
+        logger.info("Start parsing");
         List<Bank> list = new ArrayList<>();
-
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         InputStream input = new FileInputStream(file.getAbsolutePath());
         XMLStreamReader reader = inputFactory.createXMLStreamReader(input);
-        Bank bank = new Bank();
-        BanksTagName banksTagName = null;
+        Bank bank = new CommercialBank();
         Deposit deposit = new Deposit();
         Depositor depositor = new Depositor();
         while (reader.hasNext()) {
@@ -54,7 +58,7 @@ public class BanksStAXParser implements BanksParser{
                             depositor.setAccountId(Long.parseLong(reader.
                                     getAttributeValue(null, "accountId")));
                             break;
-                       default:
+                        default:
                             break;
                     }
                     break;
@@ -64,7 +68,7 @@ public class BanksStAXParser implements BanksParser{
                         break;
                     }
                     switch (banksTagName) {
-                       case COUNTRY:
+                        case COUNTRY:
                             bank.setCountry(text);
                             break;
                         case OWNER:
@@ -74,7 +78,7 @@ public class BanksStAXParser implements BanksParser{
                             deposit.setType(TypeOfDeposit.
                                     valueOf(text.toUpperCase()));
                             break;
-                       case NAME:
+                        case NAME:
                             depositor.setName(text);
                             break;
                         case TIMEEND:
@@ -84,7 +88,7 @@ public class BanksStAXParser implements BanksParser{
                             deposit.setTimeBegin(text);
                             break;
                         case PROFITABILITY:
-                           deposit.setProfitability(Double.parseDouble(text));
+                            deposit.setProfitability(Double.parseDouble(text));
                             break;
                         case INVESTMENT:
                             deposit.setInvestment(Double.parseDouble(text));
@@ -94,7 +98,7 @@ public class BanksStAXParser implements BanksParser{
                     }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                   banksTagName = BanksTagName.valueOf(reader.getLocalName().toUpperCase());
+                    banksTagName = BanksTagName.valueOf(reader.getLocalName().toUpperCase());
                     switch (banksTagName) {
                         case COMMERCIALBANK:
                         case STATEBANK:
@@ -104,7 +108,7 @@ public class BanksStAXParser implements BanksParser{
                             bank.getDepositList().add(deposit);
                             break;
                         case DEPOSITOR:
-                           deposit.setDepositor(depositor);
+                            deposit.setDepositor(depositor);
                             break;
                         default:
                             break;
@@ -114,6 +118,7 @@ public class BanksStAXParser implements BanksParser{
                     break;
             }
         }
+        logger.info("End parsing. Success");
         return list;
     }
 }

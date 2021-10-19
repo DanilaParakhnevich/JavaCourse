@@ -31,6 +31,6 @@ public class CommercialBank extends Bank {
     @Override
     public String toString() {
         return "Commercial bank" + '\n' + super.toString()
-                +"Owner : " + owner;
+                +"Owner : " + owner + '\n';
     }
 }
