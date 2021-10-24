@@ -19,7 +19,7 @@
 
     <complexType name="Bank">
         <sequence>
-            <element name="country" type="string"/>
+            <element name="country" type="string" default="Belarus"/>
             <element name="deposits" type="tns:Deposits"/>
         </sequence>
     </complexType>
@@ -73,7 +73,7 @@
         <sequence>
             <element name="name" type="string"/>
         </sequence>
-        <attribute name="accountId" type="tns:AccountId"/>
+        <attribute name="accountId" type="tns:AccountId" use="optional" default="000000000000"/>
     </complexType>
 
     <simpleType name="DepositType">

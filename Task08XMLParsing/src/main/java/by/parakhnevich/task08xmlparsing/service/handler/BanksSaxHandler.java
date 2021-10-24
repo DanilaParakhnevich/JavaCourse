@@ -16,6 +16,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BanksSaxHandler extends DefaultHandler {
     private final List<Bank> banks = new ArrayList<>();
@@ -82,6 +83,7 @@ public class BanksSaxHandler extends DefaultHandler {
         switch (tagName) {
             case COMMERCIALBANK:
             case STATEBANK:
+                System.out.println(bank.toString());
                 banks.add(bank);
                 bank = null;
                 break;

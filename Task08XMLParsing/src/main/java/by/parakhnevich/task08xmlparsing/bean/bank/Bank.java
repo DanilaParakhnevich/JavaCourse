@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Bank {
-    protected String country;
+    protected String country = "";
     protected List<Deposit> depositList = new ArrayList<>();
 
     public String getCountry() {

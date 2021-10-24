@@ -33,7 +33,7 @@ public class BanksSAXParser implements BanksParser{
         reader.setFeature("http://xml.org/sax/features/validation", true);
         reader.setFeature("http://xml.org/sax/features/namespaces", true);
         reader.setFeature("http://xml.org/sax/features/string-interning", true);
-        reader.setFeature("http://apache.org/xml/features/validation/schema",false);
+        reader.setFeature("http://apache.org/xml/features/validation/schema",true);
         logger.info("End parsing. Success");
         return handler.getBanks();
     }
