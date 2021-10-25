@@ -16,7 +16,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class BanksSaxHandler extends DefaultHandler {
     private final List<Bank> banks = new ArrayList<>();

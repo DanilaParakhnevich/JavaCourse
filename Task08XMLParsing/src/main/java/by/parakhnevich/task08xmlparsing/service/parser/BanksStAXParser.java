@@ -8,7 +8,7 @@ import by.parakhnevich.task08xmlparsing.bean.deposit.Deposit;
 import by.parakhnevich.task08xmlparsing.bean.deposit.Depositor;
 import by.parakhnevich.task08xmlparsing.bean.deposit.TypeOfDeposit;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.stream.XMLInputFactory;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class BanksStAXParser implements BanksParser{
     BanksTagName banksTagName = null;
-    Logger logger = (Logger) LogManager.getLogger(BanksDOMParser.class);
+    Logger logger = LogManager.getLogger(BanksDOMParser.class);
 
     @Override
     public List<Bank> execute(File file) throws IOException, SAXException, XMLStreamException {

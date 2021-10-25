@@ -3,13 +3,11 @@ package by.parakhnevich.task08xmlparsing.service.parser;
 import by.parakhnevich.task08xmlparsing.bean.bank.Bank;
 import by.parakhnevich.task08xmlparsing.service.handler.BanksSaxHandler;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -17,10 +15,10 @@ import java.util.List;
 public class BanksSAXParser implements BanksParser{
     XMLReader reader;
     BanksSaxHandler handler = new BanksSaxHandler();
-    Logger logger = (Logger) LogManager.getLogger(BanksSAXParser.class);
+    Logger logger = LogManager.getLogger(BanksSAXParser.class);
 
 
-    public BanksSAXParser() throws ParserConfigurationException, SAXException {
+    public BanksSAXParser() throws SAXException {
          reader = XMLReaderFactory.createXMLReader();
     }
 

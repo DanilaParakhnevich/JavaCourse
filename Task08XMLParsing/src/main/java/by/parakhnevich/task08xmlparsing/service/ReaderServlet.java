@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 
 @WebServlet(urlPatterns = "/reader")
-@MultipartConfig(location = "J:\\Projects\\JavaCourse\\Task08XMLParsing\\src\\main\\resources\\files\\copies")
+@MultipartConfig(location = "D:\\Projects\\JavaCourse\\Task08XMLParsing\\src\\main\\resources\\files\\copies")
 public class ReaderServlet extends HttpServlet {
     private static final String TYPE = "ParserType";
     private static final String FILE_NAME = "fileName";

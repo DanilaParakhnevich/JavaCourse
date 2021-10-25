@@ -7,7 +7,7 @@ import by.parakhnevich.task08xmlparsing.bean.deposit.Deposit;
 import by.parakhnevich.task08xmlparsing.bean.deposit.Depositor;
 import by.parakhnevich.task08xmlparsing.bean.deposit.TypeOfDeposit;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BanksDOMParser implements BanksParser{
-    Logger logger = (Logger) LogManager.getLogger(BanksDOMParser.class);
+    Logger logger = LogManager.getLogger(BanksDOMParser.class);
 
     @Override
     public List<Bank> execute(File file)  throws IOException, SAXException {

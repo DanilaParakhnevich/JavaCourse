@@ -8,7 +8,6 @@ import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@WebServlet(urlPatterns = "/controller")
 @MultipartConfig(location = "J:/Projects/JavaCourse/Task08XMLParsing/src/main/resources/files")
 public class ControllerServlet extends HttpServlet {
     private static final Map<String, WebCommand> commandMap = new HashMap<>();

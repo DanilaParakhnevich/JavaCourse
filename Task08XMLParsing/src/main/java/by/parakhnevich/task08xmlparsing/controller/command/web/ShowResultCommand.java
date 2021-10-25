@@ -2,12 +2,10 @@ package by.parakhnevich.task08xmlparsing.controller.command.web;
 
 import by.parakhnevich.task08xmlparsing.bean.bank.Bank;
 import by.parakhnevich.task08xmlparsing.service.FileInResources;
-import by.parakhnevich.task08xmlparsing.service.ReaderServlet;
 import by.parakhnevich.task08xmlparsing.service.parser.BanksDOMParser;
 import by.parakhnevich.task08xmlparsing.service.parser.BanksSAXParser;
 import by.parakhnevich.task08xmlparsing.service.parser.BanksStAXParser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
+
 import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
@@ -22,7 +20,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ShowResultCommand implements WebCommand{
-    Logger log = (Logger) LogManager.getLogger(ShowResultCommand.class);
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, SAXException, ParserConfigurationException, XMLStreamException, ServletException {
         File file = new FileInResources().getFile("files/copies/" + req.getSession().getAttribute("fileName"));
