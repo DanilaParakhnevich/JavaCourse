@@ -1,4 +1,4 @@
-package by.parakhnevich.kedid.bean.publication;
+package by.parakhnevich.keddit.bean.publication;
 
 public class Dislike extends Rating{
     @Override

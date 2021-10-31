@@ -1,6 +1,6 @@
-package by.parakhnevich.kedid.bean.publication;
+package by.parakhnevich.keddit.bean.publication;
 
-import by.parakhnevich.kedid.bean.user.User;
+import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
 import java.util.List;

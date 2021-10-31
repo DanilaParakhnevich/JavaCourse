@@ -1,7 +1,7 @@
-package by.parakhnevich.kedid.bean.publication;
+package by.parakhnevich.keddit.bean.publication;
 
 
-import by.parakhnevich.kedid.bean.user.User;
+import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
 import java.util.List;
@@ -13,7 +13,7 @@ public class Publication {
     private String textContent;
     private User user;
     private String date;
-    private String tag;
+    private List<String> tags;
     private List<Like> likes;
     private List<Comment> comments;
     private List<File> photos;
@@ -103,15 +103,6 @@ public class Publication {
         this.date = date;
     }
 
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     public long getId() {
         return id;
     }
@@ -120,17 +111,34 @@ public class Publication {
         this.id = id;
     }
 
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+
+    public int getCountOfTags() {
+        return this.tags.size();
+    }
+
+    public void removeTag(int id) {
+        tags.remove(id);
+    }
+
+    public String getTag(int id) {
+        return tags.get(id);
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return id == that.id && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tag, that.tag) && Objects.equals(likes, that.likes) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
+        return id == that.id && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(likes, that.likes) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, heading, textContent, user, date, tag, likes, comments, photos);
+        return Objects.hash(id, heading, textContent, user, date, tags, likes, comments, photos);
     }
 
     @Override
@@ -140,8 +148,7 @@ public class Publication {
                 ", heading='" + heading + '\'' +
                 ", textContent='" + textContent + '\'' +
                 ", user=" + user +
-                ", time='" + date + '\'' +
-                ", tag='" + tag + '\'' +
+                ", date='" + date + '\'' +
                 '}';
     }
 }

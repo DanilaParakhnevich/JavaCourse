@@ -1,8 +1,4 @@
-package by.parakhnevich.kedid.bean.publication;
-
-import by.parakhnevich.kedid.bean.user.User;
-
-import java.util.Objects;
+package by.parakhnevich.keddit.bean.publication;
 
 public class Like extends Rating{
 

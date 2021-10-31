@@ -1,4 +1,4 @@
-package by.parakhnevich.kedid.service;
+package by.parakhnevich.keddit.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

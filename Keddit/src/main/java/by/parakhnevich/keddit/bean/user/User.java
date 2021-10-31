@@ -1,7 +1,7 @@
-package by.parakhnevich.kedid.bean.user;
+package by.parakhnevich.keddit.bean.user;
 
-import by.parakhnevich.kedid.bean.publication.Community;
-import by.parakhnevich.kedid.bean.publication.Publication;
+import by.parakhnevich.keddit.bean.publication.Community;
+import by.parakhnevich.keddit.bean.publication.Publication;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package by.parakhnevich.kedid.bean.user;
+package by.parakhnevich.keddit.bean.user;
 
 public enum Role {
     ADMIN,
