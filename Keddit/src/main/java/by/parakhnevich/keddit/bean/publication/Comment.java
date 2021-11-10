@@ -1,20 +1,22 @@
 package by.parakhnevich.keddit.bean.publication;
 
+import by.parakhnevich.keddit.bean.SiteBeans;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
 
 
-public class Comment {
+public class Comment implements SiteBeans {
     private long id;
     User user;
     File photo;
     private String content;
     private List<Like> likes;
-    private String date;
+    private Timestamp date;
 
     public User getUser() {
         return user;
@@ -44,11 +46,11 @@ public class Comment {
         likes.remove(id);
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

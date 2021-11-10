@@ -5,8 +5,7 @@ public class Like extends Rating{
     @Override
     public String toString() {
         return "Like{" +
-                "id=" + id +
-                ", user=" + user +
+                "user=" + user +
                 '}';
     }
 }

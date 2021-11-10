@@ -1,24 +1,26 @@
 package by.parakhnevich.keddit.bean.user;
 
+import by.parakhnevich.keddit.bean.SiteBeans;
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.publication.Publication;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
-public class User {
+public class User implements SiteBeans {
     private Role role;
     private long id;
     private String mail;
     private String password;
     private String nickname;
-    private String date;
-    public File photo;
-    public static final List<Community> followingCommunities = new ArrayList<>();
-    public static final List<Community> ownCommunities = new ArrayList<>();
-    private static final List<Publication> publications = new ArrayList<>();
+    private Timestamp date;
+    private File photo;
+    private boolean isBanned;
+    private List<Community> followingCommunities;
+    private List<Community> ownCommunities;
+    private List<Publication> publications;
 
 
     public Publication getPublication(int id) {
@@ -110,11 +112,11 @@ public class User {
         this.nickname = nickname;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
@@ -124,6 +126,14 @@ public class User {
 
     public void setPhoto(File photo) {
         this.photo = photo;
+    }
+
+    public boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 
     @Override
@@ -148,7 +158,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", date='" + date + '\'' +
-                ", photo=" + photo.getAbsolutePath() +
                 '}';
     }
 }

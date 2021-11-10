@@ -1,6 +1,8 @@
 package by.parakhnevich.keddit.bean.user;
 
-public enum Role {
+import by.parakhnevich.keddit.bean.SiteBeans;
+
+public enum Role implements SiteBeans {
     ADMIN,
     MODERATOR,
     USER;

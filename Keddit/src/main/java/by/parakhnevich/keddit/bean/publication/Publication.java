@@ -1,23 +1,33 @@
 package by.parakhnevich.keddit.bean.publication;
 
 
+import by.parakhnevich.keddit.bean.SiteBeans;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Publication {
+public class Publication implements SiteBeans {
     private long id;
     private String heading;
     private String textContent;
     private User user;
-    private String date;
+    private Timestamp date;
+    private Community communityOwner;
     private List<String> tags;
     private List<Like> likes;
     private List<Comment> comments;
     private List<File> photos;
 
+    public Publication() {
+        tags = new ArrayList<>();
+        likes = new ArrayList<>();
+        comments = new ArrayList<>();
+        photos = new ArrayList<>();
+    }
 
     public String getHeading() {
         return heading;
@@ -95,11 +105,11 @@ public class Publication {
         this.user = user;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
@@ -127,18 +137,26 @@ public class Publication {
         return tags.get(id);
     }
 
+    public Community getCommunityOwner() {
+        return communityOwner;
+    }
+
+    public void setCommunityOwner(Community communityOwner) {
+        this.communityOwner = communityOwner;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return id == that.id && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(likes, that.likes) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
+        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(likes, that.likes) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, heading, textContent, user, date, tags, likes, comments, photos);
+        return Objects.hash(id, heading, textContent, user, date, communityOwner, tags, likes, comments, photos);
     }
 
     @Override
@@ -149,6 +167,8 @@ public class Publication {
                 ", textContent='" + textContent + '\'' +
                 ", user=" + user +
                 ", date='" + date + '\'' +
+                ", communityOwner='" + communityOwner.toString() + '\'' +
+                ", tags='" + tags.toString() + '\'' +
                 '}';
     }
 }

@@ -1,11 +1,11 @@
 package by.parakhnevich.keddit.bean.publication;
 
+import by.parakhnevich.keddit.bean.SiteBeans;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.util.Objects;
 
-abstract class Rating {
-    protected long id;
+public abstract class Rating implements SiteBeans {
     protected User user;
 
     public void setUser(User user) {
@@ -16,25 +16,17 @@ abstract class Rating {
         return user;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rating rating = (Rating) o;
-        return id == rating.id && Objects.equals(user, rating.user);
+        return Objects.equals(user, rating.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user);
+        return Objects.hash(user);
     }
 }

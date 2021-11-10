@@ -1,18 +1,25 @@
 package by.parakhnevich.keddit.bean.publication;
 
+import by.parakhnevich.keddit.bean.SiteBeans;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Community {
+public class Community implements SiteBeans {
     private long id;
     String name;
     User user;
     List<User> followers;
     List<Publication> publications;
     File photo;
+
+    public Community() {
+        followers = new ArrayList<>();
+        publications = new ArrayList<>();
+    }
 
     public String getName() {
         return name;
@@ -91,14 +98,13 @@ public class Community {
         return Objects.hash(id, user, followers, publications, photo);
     }
 
+
     @Override
     public String toString() {
         return "Community{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", user=" + user +
-                ", followers=" + followers +
-                ", publications=" + publications +
-                ", photo=" + photo.getAbsolutePath() +
                 '}';
     }
 }
