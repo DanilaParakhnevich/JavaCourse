@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<schema targetNamespace="http://www.example.org/bank-deposits"
+        xmlns:tns="http://www.example.org/bank-deposits"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+    <element name="bank" type="tns:Bank" abstract="true"/>
+    <element name="stateBank" type="tns:StateBank" substitutionGroup="tns:bank"/>
+    <element name="commercialBank" type="tns:CommercialBank" substitutionGroup="tns:bank"/>
+
+    <element name="banks">
+        <complexType>
+            <sequence>
+                <element ref="tns:bank"
+                minOccurs="0"
+                maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="Bank">
+        <sequence>
+            <element name="country" type="string" default="Belarus"/>
+            <element name="deposits" type="tns:Deposits"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="Deposits">
+        <sequence>
+            <element ref="tns:deposit"
+                        minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="deposit">
+        <complexType>
+            <sequence>
+                <element name="depositor" type="tns:Depositor"/>
+                <element name="type" type="tns:DepositType" default="ACCUMULATIVE"/>
+                <element name="investment" type="tns:Positive"/>
+                <element name="profitability" type="tns:Percent"
+                            minOccurs="0" maxOccurs="100"/>
+                <element name="timeBegin" type="date"/>
+                <element name="timeEnd" type="date"/>
+            </sequence>
+            <attribute name="id" type="string"/>
+        </complexType>
+    </element>
+
+    <simpleType name="Percent">
+        <restriction base="double">
+            <minExclusive value="0"/>
+            <maxExclusive value="100"/>
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="Positive">
+        <restriction base="double">
+            <minExclusive value="0"/>
+        </restriction>
+    </simpleType>
+
+
+    <simpleType name="AccountId">
+        <restriction base="string">
+            <whiteSpace value="preserve"/>
+            <pattern value="[\d]{12}"/>
+        </restriction>
+    </simpleType>
+
+
+    <complexType name="Depositor">
+        <sequence>
+            <element name="name" type="string"/>
+        </sequence>
+        <attribute name="accountId" type="tns:AccountId" use="optional" default="000000000000"/>
+    </complexType>
+
+    <simpleType name="DepositType">
+        <restriction base="string">
+            <enumeration value="ON_DEMAND"/>
+            <enumeration value="URGENT"/>
+            <enumeration value="SETTLEMENT"/>
+            <enumeration value="SAVINGS"/>
+            <enumeration value="ACCUMULATIVE"/>
+            <enumeration value="METAL"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="StateBank">
+        <complexContent>
+            <extension base="tns:Bank">
+                <sequence>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CommercialBank">
+        <complexContent>
+            <extension base="tns:Bank">
+                <sequence>
+                    <element name="Owner" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
+

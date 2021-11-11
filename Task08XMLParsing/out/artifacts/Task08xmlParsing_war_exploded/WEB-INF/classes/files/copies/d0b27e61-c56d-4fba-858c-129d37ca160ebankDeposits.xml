@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<banks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.example.org/bank-deposits"
+       xsi:schemaLocation="http://www.example.org/bank-deposits bankDeposits.xsd">
+    <commercialBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="870484217562">
+                    <name>Alexandr Gromyko</name>
+                </depositor>
+                <type>SAVINGS</type>
+                <investment>2000</investment>
+                <profitability>9.4</profitability>
+                <timeBegin>2021-10-06</timeBegin>
+                <timeEnd>2022-10-06</timeEnd>
+            </deposit>
+            <deposit id="2">
+                <depositor accountId="570432117562">
+                    <name>Alexandr Herman</name>
+                </depositor>
+                <type>ACCUMULATIVE</type>
+                <investment>2580</investment>
+                <profitability>8</profitability>
+                <timeBegin>2011-11-05</timeBegin>
+                <timeEnd>2021-11-06</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Sergey</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="911133322212">
+                    <name>Stepan Warrior</name>
+                </depositor>
+                <type>METAL</type>
+                <investment>9999</investment>
+                <profitability>99</profitability>
+                <timeBegin>2021-10-21</timeBegin>
+                <timeEnd>2021-10-22</timeEnd>
+            </deposit>
+            <deposit id="2">
+                <depositor accountId="819321357313">
+                    <name>Oleg Stepan</name>
+                </depositor>
+                <type>URGENT</type>
+                <investment>100</investment>
+                <profitability>50</profitability>
+                <timeBegin>2010-11-05</timeBegin>
+                <timeEnd>2020-10-06</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Russia</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="870484217562">
+                    <name>Valeriy Gena</name>
+                </depositor>
+                <type>SETTLEMENT</type>
+                <investment>999</investment>
+                <profitability>9.4</profitability>
+                <timeBegin>2021-10-06</timeBegin>
+                <timeEnd>2022-10-06</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Vitaliy</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>China</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="812341521625">
+                    <name>Acomulau China</name>
+                </depositor>
+                <type>SETTLEMENT</type>
+                <investment>10530</investment>
+                <profitability>34</profitability>
+                <timeBegin>2010-09-21</timeBegin>
+                <timeEnd>2022-09-21</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <stateBank>
+        <country>Poland</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="123456789101">
+                    <name>Prikol Lokirp</name>
+                </depositor>
+                <type>ACCUMULATIVE</type>
+                <investment>228822</investment>
+                <profitability>22.8</profitability>
+                <timeBegin>2002-11-29</timeBegin>
+                <timeEnd>2021-10-10</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Britain</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="999944441111">
+                    <name>James Brown</name>
+                </depositor>
+                <type>SAVINGS</type>
+                <investment>10000</investment>
+                <profitability>10.5</profitability>
+                <timeBegin>2020-10-06</timeBegin>
+                <timeEnd>2022-10-06</timeEnd>
+            </deposit>
+            <deposit id="2">
+                <depositor accountId="570432117562">
+                    <name>Henry Kazimir</name>
+                </depositor>
+                <type>ACCUMULATIVE</type>
+                <investment>2580</investment>
+                <profitability>8</profitability>
+                <timeBegin>2011-11-05</timeBegin>
+                <timeEnd>2021-11-06</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Kristina</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="812341521625">
+                    <name>Svetlana Boruvka</name>
+                </depositor>
+                <type>ON_DEMAND</type>
+                <investment>839</investment>
+                <profitability>10</profitability>
+                <timeBegin>2001-09-21</timeBegin>
+                <timeEnd>2031-09-21</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="121314121314">
+                    <name>Nadezhda Slovak</name>
+                </depositor>
+                <type>SAVINGS</type>
+                <investment>2000</investment>
+                <profitability>19</profitability>
+                <timeBegin>2021-10-06</timeBegin>
+                <timeEnd>2022-10-06</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Serega</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="131415161718">
+                    <name>Lipkiy Plastilin</name>
+                </depositor>
+                <type>METAL</type>
+                <investment>1030</investment>
+                <profitability>15</profitability>
+                <timeBegin>2018-09-21</timeBegin>
+                <timeEnd>2022-09-21</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <stateBank>
+        <country>Italy</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="213244226421">
+                    <name>Masyana Piter</name>
+                </depositor>
+                <type>ON_DEMAND</type>
+                <investment>998</investment>
+                <profitability>12</profitability>
+                <timeBegin>2011-03-21</timeBegin>
+                <timeEnd>2022-10-21</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="999911113333">
+                    <name>Roman Lashkevich</name>
+                </depositor>
+                <type>SETTLEMENT</type>
+                <investment>1992</investment>
+                <profitability>12.5</profitability>
+                <timeBegin>2017-09-03</timeBegin>
+                <timeEnd>2026-09-03</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>LilPeep</Owner>
+    </commercialBank>
+    <commercialBank>
+        <country>USA</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="632341212343">
+                    <name>Peter Parker</name>
+                </depositor>
+                <type>SAVINGS</type>
+                <investment>999</investment>
+                <profitability>9.9</profitability>
+                <timeBegin>1999-09-09</timeBegin>
+                <timeEnd>2099-09-09</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Sergey</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>Spain</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="143214561235">
+                    <name>Fedor Bernoulli</name>
+                </depositor>
+                <type>METAL</type>
+                <investment>1032</investment>
+                <profitability>54</profitability>
+                <timeBegin>2019-09-21</timeBegin>
+                <timeEnd>2022-09-21</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Rome</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="821356235442">
+                    <name>Roman Roman</name>
+                </depositor>
+                <type>ACCUMULATIVE</type>
+                <investment>2000</investment>
+                <profitability>2.4</profitability>
+                <timeBegin>2018-10-15</timeBegin>
+                <timeEnd>2026-11-15</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Arsenio</Owner>
+    </commercialBank>
+    <stateBank>
+        <country>K</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="812341521625">
+                    <name>Fedor Badly</name>
+                </depositor>
+                <type>METAL</type>
+                <investment>231</investment>
+                <profitability>12</profitability>
+                <timeBegin>2019-07-29</timeBegin>
+                <timeEnd>2022-03-12</timeEnd>
+            </deposit>
+        </deposits>
+    </stateBank>
+    <commercialBank>
+        <country>Belarus</country>
+        <deposits>
+            <deposit id="1">
+                <depositor accountId="229921312212">
+                    <name>Vladimir Karatkevich</name>
+                </depositor>
+                <type>ACCUMULATIVE</type>
+                <investment>2580</investment>
+                <profitability>8</profitability>
+                <timeBegin>2005-10-09</timeBegin>
+                <timeEnd>2021-12-01</timeEnd>
+            </deposit>
+        </deposits>
+        <Owner>Vladimir</Owner>
+    </commercialBank>
+</banks>
