@@ -1,11 +1,11 @@
 package by.parakhnevich.keddit.bean.publication;
 
-import by.parakhnevich.keddit.bean.SiteBeans;
+import by.parakhnevich.keddit.bean.Entity;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.util.Objects;
 
-public abstract class Rating implements SiteBeans {
+public abstract class Rating implements Entity {
     protected User user;
 
     public void setUser(User user) {

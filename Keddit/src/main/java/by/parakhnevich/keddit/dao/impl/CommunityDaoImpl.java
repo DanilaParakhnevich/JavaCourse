@@ -1,7 +1,6 @@
-package by.parakhnevich.keddit.dao.implementation;
+package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Community;
-import by.parakhnevich.keddit.connection.ConnectionPool;
 import by.parakhnevich.keddit.dao.interfaces.CommunityDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.exception.DaoException;
@@ -21,11 +20,11 @@ public class CommunityDaoImpl implements CommunityDao {
                     "GROUP BY followers.id_community";
     private static final String SQL_SELECT_COMMUNITIES_BY_ID =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
-                    "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id=?" +
+                    "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id=? " +
                     "GROUP BY followers.id_community";
     private static final String SQL_SELECT_COMMUNITY_BY_USER_ID =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
-                    "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id_user=?" +
+                    "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id_user=? " +
                     "GROUP BY followers.id_community";
     private static final String SQL_SELECT_FOLLOWING_COMMUNITIES_BY_USER_ID =
             "SELECT id, name, photo FROM communities " +
@@ -42,71 +41,71 @@ public class CommunityDaoImpl implements CommunityDao {
     private static final String SQL_DELETE_FOLLOWER = "DELETE FROM followers WHERE id_user = ? AND id_community=?";
 
     private static final String SQL_DELETE_BY_USER_ID = "DELETE FROM communities WHERE id_user = ?";
-
     Mapper mapper = new Mapper();
+    Connection connection;
+
+    public CommunityDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public List<Community> findAll() throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement =
+        try (PreparedStatement preparedStatement =
                      connection.prepareStatement(SQL_SELECT_ALL_COMMUNITIES)) {
             List<Community> communities = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 communities.add(mapper.mapCommunity(resultSet));
             }
             return communities;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public Community findEntityById(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement =
+        try (PreparedStatement preparedStatement =
                      connection.prepareStatement(SQL_SELECT_COMMUNITIES_BY_ID)) {
-            Community community;
+            Community community = null;
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            community = mapper.mapCommunity(resultSet);
+            if (resultSet != null && resultSet.next()) {
+                community = mapper.mapCommunity(resultSet);
+            }
             return community;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public List<Community> getCommunitiesByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement =
+        try (PreparedStatement preparedStatement =
                      connection.prepareStatement(SQL_SELECT_COMMUNITY_BY_USER_ID)) {
             List<Community> communities = new ArrayList<>();
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 communities.add(mapper.mapCommunity(resultSet));
             }
             return communities;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public List<Community> getFollowingCommunitiesByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement =
+        try (PreparedStatement preparedStatement =
                      connection.prepareStatement(SQL_SELECT_FOLLOWING_COMMUNITIES_BY_USER_ID)){
             List<Community> communities = new ArrayList<>();
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 Community community = new Community();
                 community.setId(resultSet.getLong("id"));
                 String photo = resultSet.getString("photo");
@@ -118,96 +117,90 @@ public class CommunityDaoImpl implements CommunityDao {
                 communities.add(community);
             }
             return communities;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean addFollower(long communityId, long followerId) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_FOLLOWER)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_FOLLOWER)) {
             preparedStatement.setLong(1, followerId);
             preparedStatement.setLong(2, communityId);
             return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean deleteFollower(long communityId, long followerId) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FOLLOWER)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FOLLOWER)) {
             preparedStatement.setLong(1, followerId);
             preparedStatement.setLong(2, communityId);
             return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean deleteByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_USER_ID)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_USER_ID)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(Community community) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             preparedStatement.setLong(1, community.getId());
             return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean create(Community community) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_COMMUNITY)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_COMMUNITY)) {
             fillingCommunityData(community, statement);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public Community update(Community community) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMUNITY)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMUNITY)) {
             statement.setLong(1, community.getId());
             fillingCommunityData(community, statement);
             statement.executeUpdate();
             return community;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 

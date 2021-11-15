@@ -3,7 +3,6 @@ package by.parakhnevich.keddit.dao.mapper;
 import by.parakhnevich.keddit.bean.publication.*;
 import by.parakhnevich.keddit.bean.user.Role;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.dao.implementation.UserDaoImpl;
 import by.parakhnevich.keddit.exception.DaoException;
 
 
@@ -14,6 +13,7 @@ import java.sql.Timestamp;
 
 
 public class Mapper {
+    private static final String PATH_TO_PHOTOS = "D:/Projects/JavaCourse/Keddit/src/main/resources/photo/";
     public Community mapCommunity(ResultSet resultSet) throws DaoException{
         Community community = new Community();
         try {
@@ -63,7 +63,7 @@ public class Mapper {
                     break;
             }
             if (resultSet.getString("photo") != null) {
-                user.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\resources\\photo\\" + resultSet.getString("photo")));
+                user.setPhoto(new File(PATH_TO_PHOTOS + resultSet.getString("photo")));
             }
         }
         catch (SQLException e) {
@@ -74,19 +74,18 @@ public class Mapper {
 
     public Publication mapPublication(ResultSet resultSet) throws DaoException {
         Publication publication = new Publication();
-        UserDaoImpl userDao = new UserDaoImpl();
         try{
             publication.setId(resultSet.getLong("id"));
             User user = new User();
             user.setId(resultSet.getLong("id_user"));
             publication.setUser(user);
             publication.setHeading(resultSet.getString("head"));
-            publication.setTextContent("body");
+            publication.setTextContent(resultSet.getString("body"));
             String photosFromDB = resultSet.getString("photos");
             if (photosFromDB != null) {
                 String[] photoNames = photosFromDB.split(";");
                 for (String name : photoNames) {
-                    publication.addPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\resources\\photos\\" + name));
+                    publication.addPhoto(new File(PATH_TO_PHOTOS + name));
                 }
             }
             publication.setDate(Timestamp.valueOf(resultSet.getString("date")));
@@ -98,6 +97,7 @@ public class Mapper {
                     publication.addTag(tag);
                 }
             }
+            publication.setOnModeration(resultSet.getInt("is_on_moderation") == 1);
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -112,7 +112,7 @@ public class Mapper {
             User user = new User();
             user.setId(resultSet.getLong("id_user"));
             comment.setUser(user);
-            comment.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\resources\\photos\\" +
+            comment.setPhoto(new File(PATH_TO_PHOTOS +
                     resultSet.getString("photo")));
             comment.setDate(Timestamp.valueOf(resultSet.getString("date")));
             comment.setContent(resultSet.getString("content"));

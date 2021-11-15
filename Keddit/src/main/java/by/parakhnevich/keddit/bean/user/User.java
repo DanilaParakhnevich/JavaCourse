@@ -1,6 +1,6 @@
 package by.parakhnevich.keddit.bean.user;
 
-import by.parakhnevich.keddit.bean.SiteBeans;
+import by.parakhnevich.keddit.bean.Entity;
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.publication.Publication;
 
@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
-public class User implements SiteBeans {
+public class User implements Entity {
     private Role role;
     private long id;
     private String mail;
@@ -23,48 +23,48 @@ public class User implements SiteBeans {
     private List<Publication> publications;
 
 
-    public Publication getPublication(int id) {
-        return publications.get(id);
+    public Publication getPublication(int index) {
+        return publications.get(index);
     }
 
     public void addPublication(Publication publication) {
         publications.add(publication);
     }
 
-    public void removePublication(int id) {
-        publications.remove(id);
+    public void removePublication(int index) {
+        publications.remove(index);
     }
 
     public int countOfPublications() {
         return publications.size();
     }
 
-    public Community getFollowingCommunity(int id) {
-        return ownCommunities.get(id);
+    public Community getFollowingCommunity(int index) {
+        return ownCommunities.get(index);
     }
 
     public void addFollowingCommunity(Community community) {
         followingCommunities.add(community);
     }
 
-    public void removeFollowingCommunity(int id) {
-        followingCommunities.remove(id);
+    public void removeFollowingCommunity(int index) {
+        followingCommunities.remove(index);
     }
 
     public int countOfFollowingCommunities() {
         return followingCommunities.size();
     }
 
-    public Community getOwnCommunity(int id) {
-        return ownCommunities.get(id);
+    public Community getOwnCommunity(int index) {
+        return ownCommunities.get(index);
     }
 
     public void addOwnCommunity(Community community) {
         ownCommunities.add(community);
     }
 
-    public void removeOwnCommunity(int id) {
-        ownCommunities.remove(id);
+    public void removeOwnCommunity(int index) {
+        ownCommunities.remove(index);
     }
 
     public int countOfOwnCommunities() {
@@ -134,6 +134,18 @@ public class User implements SiteBeans {
 
     public void setBanned(boolean banned) {
         isBanned = banned;
+    }
+
+    public void setFollowingCommunities(List<Community> followingCommunities) {
+        this.followingCommunities = followingCommunities;
+    }
+
+    public void setOwnCommunities(List<Community> ownCommunities) {
+        this.ownCommunities = ownCommunities;
+    }
+
+    public void setPublications(List<Publication> publications) {
+        this.publications = publications;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package by.parakhnevich.keddit.bean.publication;
 
 
-import by.parakhnevich.keddit.bean.SiteBeans;
+import by.parakhnevich.keddit.bean.Entity;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Publication implements SiteBeans {
+public class Publication implements Entity {
     private long id;
     private String heading;
     private String textContent;
@@ -18,13 +18,14 @@ public class Publication implements SiteBeans {
     private Timestamp date;
     private Community communityOwner;
     private List<String> tags;
-    private List<Like> likes;
+    private List<Rating> ratings;
     private List<Comment> comments;
     private List<File> photos;
+    private boolean isOnModeration;
 
     public Publication() {
         tags = new ArrayList<>();
-        likes = new ArrayList<>();
+        ratings = new ArrayList<>();
         comments = new ArrayList<>();
         photos = new ArrayList<>();
     }
@@ -45,24 +46,24 @@ public class Publication implements SiteBeans {
         this.textContent = textContent;
     }
 
-    public Like getLike(int id) {
-        return likes.get(id);
+    public Rating getRating(int id) {
+        return ratings.get(id);
     }
 
-    public void addLike(Like like) {
-        likes.add(like);
+    public void addRating(Rating rating) {
+        ratings.add(rating);
     }
 
-    public void deleteLike(int id) {
-        likes.remove(id);
+    public void deleteRating(int id) {
+        ratings.remove(id);
     }
 
-    public int getCountOfLikes() {
-        return likes.size();
+    public int getCountOfRatings() {
+        return ratings.size();
     }
 
-    public void removeLike(Like like) {
-        likes.remove(like);
+    public void removeRating(Rating rating) {
+        ratings.remove(rating);
     }
 
     public int getCountOfPhotos() {
@@ -145,18 +146,33 @@ public class Publication implements SiteBeans {
         this.communityOwner = communityOwner;
     }
 
+    public boolean isOnModeration() {
+        return isOnModeration;
+    }
+
+    public void setOnModeration(boolean onModeration) {
+        isOnModeration = onModeration;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(likes, that.likes) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
+        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(ratings, that.ratings) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, heading, textContent, user, date, communityOwner, tags, likes, comments, photos);
+        return Objects.hash(id, heading, textContent, user, date, communityOwner, tags, ratings, comments, photos);
     }
 
     @Override

@@ -1,7 +1,6 @@
-package by.parakhnevich.keddit.dao.implementation;
+package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Comment;
-import by.parakhnevich.keddit.connection.ConnectionPool;
 import by.parakhnevich.keddit.dao.interfaces.CommentDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.exception.DaoException;
@@ -30,45 +29,48 @@ public class CommentDaoImpl implements CommentDao {
     private static final String SQL_REMOVE_BY_ID = "DELETE FROM comments WHERE id = ?";
     private static final String SQL_REMOVE_BY_USER_ID = "DELETE FROM comments WHERE id_user = ?";
     private final Mapper mapper = new Mapper();
+    Connection connection;
+
+    public CommentDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public List<Comment> findAll() throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_COMMENTS)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_COMMENTS)) {
             List<Comment> comments = new ArrayList<>();
             ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 comments.add(mapper.mapComment(resultSet));
             }
             return comments;
         }
         catch (SQLException e) {
+            logger.error(e);
             throw new DaoException(e);
         }
     }
 
-    @Override
+        @Override
     public Comment findEntityById(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_ID)) {
-            Comment comment;
+            try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_ID)) {
+            Comment comment = null;
             statement.setLong(1, id);
             ResultSet resultSet = statement.getResultSet();
-            comment = mapper.mapComment(resultSet);
+            if (resultSet != null && resultSet.next()) {
+                comment = mapper.mapComment(resultSet);
+            }
             return comment;
         }
         catch (SQLException e) {
+            logger.error(e);
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(Comment comment) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_ID)) {
             statement.setLong(1, comment.getId());
             return statement.executeUpdate() == 1;
         }
@@ -79,9 +81,7 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
         }
@@ -92,9 +92,7 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public boolean createCommentByPublicationId(Comment comment, long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_COMMENT)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_COMMENT)) {
             fillCommentData(comment, id, statement);
             return statement.executeUpdate() == 1;
         }
@@ -105,9 +103,7 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public boolean deleteByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_USER_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_USER_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
         }
@@ -118,23 +114,20 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public Comment update(Comment comment) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMENT)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMENT)){
             statement.setLong(6, comment.getId());
             fillCommentData(comment, comment.getId(), statement);
             statement.executeUpdate();
             return comment;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public List<Comment> findCommentsByPublicationId(long id) throws DaoException{
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
+        try (PreparedStatement statement =
                      connection.prepareStatement(SQL_SELECT_COMMENT_BY_PUBLICATION_ID)) {
             List<Comment> comments = new ArrayList<>();
             statement.setLong(1, id);
@@ -151,9 +144,7 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public List<Comment> findCommentsByUserId(long id) throws DaoException{
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_USER_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_USER_ID)) {
             List<Comment> comments = new ArrayList<>();
             statement.setLong(1, id);
             ResultSet resultSet = statement.getResultSet();
@@ -181,3 +172,4 @@ public class CommentDaoImpl implements CommentDao {
         throw new UnsupportedOperationException();
     }
 }
+

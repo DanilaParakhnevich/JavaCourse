@@ -1,7 +1,7 @@
-package by.parakhnevich.keddit.dao.implementation;
+package by.parakhnevich.keddit.dao.impl;
 
+import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.connection.ConnectionPool;
 import by.parakhnevich.keddit.exception.DaoException;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.UserDao;
@@ -24,104 +24,123 @@ public class UserDaoImpl implements UserDao {
     private static final String SQL_UPDATE_USER = "UPDATE users SET id = ?, mail = ?, password = ?, nickname = ?, " +
             "date = ?, photo = ?, role = ? ,is_banned = ? WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM users WHERE id = ?";
-
+    private static final String SQL_SELECT_USERS_BY_FOLLOWED_COMMUNITY =
+            "SELECT id, mail, password, nickname, date, users.photo, role, is_banned " +
+                    "FROM users INNER JOIN followers ON followers.id_user = users.id WHERE followers.id_user = ?";
     Mapper mapper = new Mapper();
+    Connection connection;
 
     @Override
-    public List<User> findAll() throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_USERS)){
+    public List<User> findUsersByFollowedCommunity(Community community) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USERS_BY_FOLLOWED_COMMUNITY)){
             List<User> users= new ArrayList<>();
+            statement.setLong(1, community.getId());
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 users.add(mapper.mapUser(resultSet));
             }
             return users;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    public UserDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public List<User> findAll() throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_USERS)){
+            List<User> users= new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet != null && resultSet.next()) {
+                users.add(mapper.mapUser(resultSet));
+            }
+            return users;
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public User findEntityById(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_ID)) {
-            User user;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_ID)) {
+            User user = null;
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            user = mapper.mapUser(resultSet);
-            user.setNickname(resultSet.getString("nickname"));
-            user.setId(id);
+            if (resultSet != null && resultSet.next()) {
+                user = mapper.mapUser(resultSet);
+                user.setNickname(resultSet.getString("nickname"));
+                user.setId(id);
+            }
             return user;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(User user) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, user.getId());
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public boolean create(User user) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER)) {
             fillUserData(user, statement);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public User update(User user) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER)) {
             statement.setLong(8, user.getId());
             fillUserData(user, statement);
             statement.executeUpdate();
             return user;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public User findUserByNickname(String nickname) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_NICKNAME)) {
-            User user;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_NICKNAME)) {
+            User user = null;
             statement.setString(1, nickname);
             ResultSet resultSet = statement.executeQuery();
-            user = mapper.mapUser(resultSet);
+            if (resultSet != null && resultSet.next()) {
+                user = mapper.mapUser(resultSet);
+            }
             return user;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }

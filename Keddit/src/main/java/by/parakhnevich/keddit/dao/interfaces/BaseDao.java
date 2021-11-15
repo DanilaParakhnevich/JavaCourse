@@ -1,6 +1,6 @@
 package by.parakhnevich.keddit.dao.interfaces;
 
-import by.parakhnevich.keddit.bean.SiteBeans;
+import by.parakhnevich.keddit.bean.Entity;
 import by.parakhnevich.keddit.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public interface BaseDao<K, T extends SiteBeans> {
+public interface BaseDao<K, T extends Entity> {
     Logger logger = LogManager.getLogger();
 
     List<T> findAll() throws DaoException;

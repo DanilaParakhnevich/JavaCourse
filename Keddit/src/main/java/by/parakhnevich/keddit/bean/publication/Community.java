@@ -1,6 +1,6 @@
 package by.parakhnevich.keddit.bean.publication;
 
-import by.parakhnevich.keddit.bean.SiteBeans;
+import by.parakhnevich.keddit.bean.Entity;
 import by.parakhnevich.keddit.bean.user.User;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Community implements SiteBeans {
+public class Community implements Entity {
     private long id;
     String name;
     User user;
@@ -83,6 +83,14 @@ public class Community implements SiteBeans {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setPublications(List<Publication> publications) {
+        this.publications = publications;
+    }
+
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
     }
 
     @Override

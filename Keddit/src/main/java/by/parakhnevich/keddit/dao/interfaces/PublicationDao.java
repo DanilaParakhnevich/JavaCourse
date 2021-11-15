@@ -10,6 +10,8 @@ public interface PublicationDao extends BaseDao<Long, Publication> {
 
     List<Publication> findPublicationsByUserId(long id) throws DaoException;
 
+    List<Publication> findPublicationsByCommunityId(long id) throws DaoException;
+
     boolean createTag(long id, String tag) throws DaoException;
 
     boolean deleteTag(long id, String tag) throws DaoException;

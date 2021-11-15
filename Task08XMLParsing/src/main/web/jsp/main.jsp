@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Dendil
-  Date: 17.10.2021
-  Time: 18:27
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%request.getSession().setAttribute("command", "result_page");%>
 <html>

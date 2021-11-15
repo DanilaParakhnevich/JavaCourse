@@ -6,7 +6,7 @@ import by.parakhnevich.keddit.exception.DaoException;
 
 import java.util.List;
 
-public interface RatingCommentDao extends BaseDao<Long, Rating> {
+public interface RatingCommentDao extends RatingDao{
     public List<Rating> getRatingsByCommentId(long id) throws DaoException;
 
     public List<Rating> getRatingsByComment(Comment comment) throws DaoException;
@@ -14,6 +14,4 @@ public interface RatingCommentDao extends BaseDao<Long, Rating> {
     public boolean addRatingByCommentId(long id, Rating rating) throws DaoException;
 
     public boolean deleteRatingByCommentId(long id, Rating rating) throws DaoException;
-
-    public boolean deleteRatingByUserId(long id) throws DaoException;
 }

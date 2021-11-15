@@ -1,10 +1,9 @@
-package by.parakhnevich.keddit.dao.implementation;
+package by.parakhnevich.keddit.dao.impl;
 
 
 import by.parakhnevich.keddit.bean.publication.Comment;
 import by.parakhnevich.keddit.bean.publication.Like;
 import by.parakhnevich.keddit.bean.publication.Rating;
-import by.parakhnevich.keddit.connection.ConnectionPool;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.RatingCommentDao;
 import by.parakhnevich.keddit.exception.DaoException;
@@ -18,6 +17,8 @@ public class RatingCommentDaoImpl implements RatingCommentDao {
             "SELECT id_user, is_like FROM like_comments";
     private static final String SQL_SELECT_RATING_BY_COMMENT_ID =
             "SELECT id_user, is_like FROM like_comments WHERE id_comment=?";
+    private static final String SQL_SELECT_RATING_BY_USER_ID =
+            "SELECT id_user, is_like FROM like_comments WHERE id_user=?";
     private static final String SQL_DELETE_RATING_BY_USER_ID =
             "DELETE FROM like_comments WHERE id_user=?";
     private static final String SQL_CREATE_RATING =
@@ -25,92 +26,108 @@ public class RatingCommentDaoImpl implements RatingCommentDao {
                     " VALUES (?, ?, ?)";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM like_comments WHERE (id_user=? AND id_comment=?)";
     Mapper mapper = new Mapper();
+    Connection connection;
+
+    public RatingCommentDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public List<Rating> findAll() throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_RATINGS)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_RATINGS)) {
             List<Rating> ratings = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 ratings.add(mapper.mapRating(resultSet));
             }
             return ratings;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public List<Rating> getRatingsByCommentId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
+        try (PreparedStatement statement =
                      connection.prepareStatement(SQL_SELECT_RATING_BY_COMMENT_ID)) {
             List<Rating> ratings = new ArrayList<>();
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 ratings.add(mapper.mapRating(resultSet));
             }
             return ratings;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public List<Rating> getRatingsByComment(Comment comment) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
+        try (PreparedStatement statement =
                      connection.prepareStatement(SQL_SELECT_RATING_BY_COMMENT_ID)) {
             List<Rating> ratings = new ArrayList<>();
             statement.setLong(1, comment.getId());
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 ratings.add(mapper.mapRating(resultSet));
             }
             return ratings;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean addRatingByCommentId(long id, Rating rating) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_RATING)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_RATING)) {
             fillingRating(statement, id, rating);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
     public boolean deleteRatingByCommentId(long id, Rating rating) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, rating.getUser().getId());
             statement.setLong(2, id);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public boolean deleteRatingByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_RATING_BY_USER_ID)) {
+    public boolean deleteRatingsByUserId(long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_RATING_BY_USER_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<Rating> findByUserId(long id) throws DaoException {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQL_SELECT_RATING_BY_USER_ID)) {
+            List<Rating> ratings = new ArrayList<>();
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet != null && resultSet.next()) {
+                ratings.add(mapper.mapRating(resultSet));
+            }
+            return ratings;
+        }
+        catch (SQLException e) {
             throw new DaoException(e);
         }
     }

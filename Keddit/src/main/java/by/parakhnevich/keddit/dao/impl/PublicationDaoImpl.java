@@ -1,7 +1,6 @@
-package by.parakhnevich.keddit.dao.implementation;
+package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Publication;
-import by.parakhnevich.keddit.connection.ConnectionPool;
 import by.parakhnevich.keddit.exception.DaoException;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.PublicationDao;
@@ -15,40 +14,64 @@ import java.util.List;
 
 public class PublicationDaoImpl implements PublicationDao {
     private static final String SQL_SELECT_ALL_PUBLICATIONS =
-            "SELECT id, id_user, head, body, photos, date, id_community, GROUP_CONCAT(tags.tag) as tag " +
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications GROUP BY tags.id_publications";
     private static final String SQL_SELECT_PUBLICATION_BY_HEAD =
-            "SELECT id, id_user, head, body, photos, date, id_community, GROUP_CONCAT(tags.tag) as tag " +
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE head=?" +
                     "GROUP BY tags.id_publications";
+    private static final String SQL_SELECT_PUBLICATION_BY_COMMUNITY_ID =
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation FROM publications " +
+                    "WHERE id_community=?";
+    private static final String SQL_SELECT_PUBLICATION_BY_USER_ID =
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
+                    "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id_user=? " +
+                    "GROUP BY tags.id_publications";
     private static final String SQL_SELECT_PUBLICATION_BY_ID =
-            "SELECT id, id_user, head, body, photos, date, id_community, GROUP_CONCAT(tags.tag) as tag " +
-                    "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id=?" +
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
+                    "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id=? " +
                     "GROUP BY tags.id_publications";
     private static final String SQL_CREATE_PUBLICATION =
-            "INSERT INTO publications (id, id_user, head, body, photos, date, id_community)" +
-                    " VALUES (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO publications (id, id_user, head, body, photos, date, id_community, is_on_moderation)" +
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE_PUBLICATION = "UPDATE publications SET id = ?, id_user = ?, head = ?, body = ?, " +
-            "photos = ?, date = ?, id_community = ? WHERE id = ?";
+            "photos = ?, date = ?, id_community = ? ,is_on_moderation = ? WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM publications WHERE id = ?";
     private static final String SQL_DELETE_TAG_BY_ID = "DELETE FROM tags WHERE id_publications = ?";
     private static final String SQL_CREATE_TAG = "INSERT INTO tags (id_publications, tag) VALUES (?, ?)";
-    private static final String SQL_SELECT_PUBLICATION_BY_USER_ID =
-            "SELECT id, id_user, head, body, photos, date, id_community, GROUP_CONCAT(tags.tag) as tag " +
-                    "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id_user=?" +
-                    "GROUP BY tags.id_publications";
     Mapper mapper = new Mapper();
+    Connection connection;
+
+    public PublicationDaoImpl(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
-    public List<Publication> findPublicationsByUserId(long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_USER_ID)) {
+    public List<Publication> findPublicationsByCommunityId(long id) throws DaoException {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_COMMUNITY_ID)) {
             List<Publication> publications = new ArrayList<>();
             statement.setLong(1, id);
             ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
+                publications.add(mapper.mapPublication(resultSet));
+            }
+            return publications;
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+
+    @Override
+    public List<Publication> findPublicationsByUserId(long id) throws DaoException {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_USER_ID)) {
+            List<Publication> publications = new ArrayList<>();
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet != null && resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -60,14 +83,12 @@ public class PublicationDaoImpl implements PublicationDao {
 
     @Override
     public List<Publication> findPublicationsByHead(String head) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
+        try (PreparedStatement statement =
                      connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_HEAD)) {
             List<Publication> publications = new ArrayList<>();
             statement.setString(1, head);
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet != null && resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -79,37 +100,33 @@ public class PublicationDaoImpl implements PublicationDao {
 
     @Override
     public boolean createTag(long id, String tag) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_TAG)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_TAG)) {
             statement.setLong(1, id);
             statement.setString(2, tag);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public boolean deleteTag(long id, String tag) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_TAG_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_TAG_BY_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public List<Publication> findAll() throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PUBLICATIONS)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PUBLICATIONS)) {
             List<Publication> publications = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -121,15 +138,14 @@ public class PublicationDaoImpl implements PublicationDao {
 
     @Override
     public Publication findEntityById(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement =
+        try (PreparedStatement statement =
                      connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_ID)) {
-            Publication publication;
+            Publication publication = null;
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
-            resultSet.next();
-            publication = mapper.mapPublication(resultSet);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet != null && resultSet.next()) {
+                publication = mapper.mapPublication(resultSet);
+            }
             return publication;
         }
         catch (SQLException e) {
@@ -139,51 +155,47 @@ public class PublicationDaoImpl implements PublicationDao {
 
     @Override
     public boolean delete(Publication publication) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, publication.getId());
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public boolean create(Publication publication) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_PUBLICATION)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_PUBLICATION)) {
             fillPublicationData(publication, statement);
             return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
     public Publication update(Publication publication) throws DaoException {
-        ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-        try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PUBLICATION)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PUBLICATION)) {
             statement.setLong(8, publication.getId());
             fillPublicationData(publication, statement);
             statement.executeUpdate();
             return publication;
-        } catch (SQLException e) {
-            throw new DaoException(e.getMessage());
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
@@ -202,5 +214,7 @@ public class PublicationDaoImpl implements PublicationDao {
         statement.setString(5, stringBuilder.toString());
         statement.setString(6, publication.getDate().toString());
         statement.setLong(7, publication.getCommunityOwner().getId());
+        int value = publication.isOnModeration() ? 1 : 0;
+        statement.setInt(8, value);
     }
 }
