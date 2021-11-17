@@ -12,26 +12,19 @@ import by.parakhnevich.keddit.exception.PersistentException;
 import by.parakhnevich.keddit.exception.ServiceException;
 import by.parakhnevich.keddit.exception.TransactionException;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.util.List;
 
 public class PublicationServiceImpl implements PublicationService {
-    private static final Logger logger = LogManager.getLogger(PublicationServiceImpl.class);
     private Transaction transaction = null;
-
-    public PublicationServiceImpl() {
-        try {
-            transaction = new TransactionFactoryImpl().createTransaction();
-        } catch (PersistentException e) {
-            logger.error(e);
-        }
-    }
+    private TransactionFactoryImpl transactionFactory = null;
 
     @Override
     public List<Publication> selectAll() throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
@@ -39,9 +32,10 @@ public class PublicationServiceImpl implements PublicationService {
             for (Publication publication : publications) {
                 publication.setRatings(ratingPublicationDao.getRatingsByPublication(publication));
             }
+            transactionFactory.close();
             return publications;
         }
-        catch (TransactionException | DaoException e) {
+        catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -49,14 +43,17 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public Publication selectById(long id) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             Publication publication = publicationDao.findEntityById(id);
             publication.setRatings(ratingPublicationDao.getRatingsByPublicationId(id));
+            transactionFactory.close();
             return publication;
         }
-        catch (TransactionException | DaoException e) {
+        catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -64,8 +61,12 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public Publication update(Publication publication) throws ServiceException {
         try {
-            return transaction.createDao(PublicationDao.class).update(publication);
-        } catch (TransactionException | DaoException e) {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
+            Publication result = transaction.createDao(PublicationDao.class).update(publication);
+            transactionFactory.close();
+            return result;
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -73,17 +74,22 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public Publication add(Publication publication) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             publicationDao.create(publication);
+            transactionFactory.close();
             return publication;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public Publication delete(Publication publication) throws ServiceException {
+    public Publication delete(Publication publication) throws ServiceException, PersistentException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             CommentDao commentDao = transaction.createDao(CommentDao.class);
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
@@ -92,6 +98,7 @@ public class PublicationServiceImpl implements PublicationService {
             for (int i = 0; i < publication.getCountOfRatings(); i++) {
                 ratingPublicationDao.delete(publication.getRating(i));
             }//ratings of publication
+            transaction.commit();
             for (int i = 0; i < publication.getCountOfComments(); i++) {
                 Comment comment = publication.getComment(i);
                 for (int j = 0; j < comment.getCountOfRatings(); j++) {
@@ -99,9 +106,13 @@ public class PublicationServiceImpl implements PublicationService {
                 }//delete ratings from comment
                 commentDao.delete(publication.getComment(i));
             }//delete comments pf publication
+            transaction.commit();
             publicationDao.delete(publication);
+            transaction.commit();
+            transactionFactory.close();
             return publication;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
+            transaction.rollback();
             throw new ServiceException(e);
         }
     }
@@ -109,6 +120,8 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public List<Publication> selectByUser(User user) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
@@ -118,8 +131,9 @@ public class PublicationServiceImpl implements PublicationService {
                 publication.setRatings(ratingPublicationDao
                         .getRatingsByPublicationId(publication.getId()));
             }
+            transactionFactory.close();
             return publications;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -127,6 +141,8 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public List<Publication> selectByCommunity(Community community) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
@@ -136,34 +152,9 @@ public class PublicationServiceImpl implements PublicationService {
                 publication.setRatings(ratingPublicationDao
                         .getRatingsByPublicationId(publication.getId()));
             }
+            transactionFactory.close();
             return publications;
-        } catch (TransactionException | DaoException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    @Override
-    public Rating addRating(long id, Rating rating) throws ServiceException {
-        try {
-            RatingPublicationDao ratingPublicationDao =
-                    transaction.createDao(RatingPublicationDao.class);
-            ratingPublicationDao.addRatingByPublicationId(id, rating);
-            return rating;
-        }
-        catch (TransactionException | DaoException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    @Override
-    public Rating deleteRating(long id, Rating rating) throws ServiceException {
-        try {
-            RatingPublicationDao ratingPublicationDao =
-                    transaction.createDao(RatingPublicationDao.class);
-            ratingPublicationDao.deleteRatingByPublicationId(id, rating);
-            return rating;
-        }
-        catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }

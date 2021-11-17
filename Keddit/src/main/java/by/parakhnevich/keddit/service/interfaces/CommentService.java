@@ -12,8 +12,4 @@ public interface CommentService extends Service<Comment>{
     public List<Comment> selectByUser(User user) throws ServiceException;
 
     public List<Comment> selectByPublication(Publication publication) throws ServiceException;
-
-    public Rating addRating(Rating rating) throws ServiceException;
-
-    public Rating deleteRating(Rating rating) throws ServiceException;
 }

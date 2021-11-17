@@ -1,9 +1,7 @@
 package by.parakhnevich.keddit.controller;
 
-
-
 import by.parakhnevich.keddit.controller.command.Command;
-import by.parakhnevich.keddit.controller.command.ThrowNoticeCommand;
+import by.parakhnevich.keddit.controller.command.CommandProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +25,7 @@ public class Controller extends HttpServlet {
 
     private static void process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String commandName = req.getParameter("command");
-        Command command = new ThrowNoticeCommand();
+        Command command = CommandProvider.getInstance().getCommand(commandName);
         command.execute(req, resp);
     }
 }

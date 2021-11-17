@@ -19,21 +19,17 @@ import java.util.List;
 public class RatingFromCommentServiceImpl implements RatingFromCommentService {
     Logger logger = LogManager.getLogger(RatingFromCommentServiceImpl.class);
     Transaction transaction = null;
-
-    public RatingFromCommentServiceImpl() {
-        try {
-            transaction = new TransactionFactoryImpl().createTransaction();
-        } catch (PersistentException e) {
-            logger.error(e);
-        }
-    }
+    TransactionFactoryImpl transactionFactory = null;
 
     @Override
     public List<Rating> selectByUser(User user) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
+            transactionFactory.close();
             return ratingCommentDao.findByUserId(user.getId());
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -41,9 +37,13 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
     @Override
     public List<Rating> selectByComment(Comment comment) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
-            return ratingCommentDao.getRatingsByComment(comment);
-        } catch (TransactionException | DaoException e) {
+            List<Rating> result = ratingCommentDao.getRatingsByComment(comment);
+            transactionFactory.close();
+            return result;
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -51,10 +51,13 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
     @Override
     public Rating add(Comment comment, Rating rating) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            transactionFactory.close();
             return rating;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -62,10 +65,13 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
     @Override
     public Rating delete(Comment comment, Rating rating) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            transactionFactory.close();
             return rating;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -73,9 +79,13 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
     @Override
     public List<Rating> selectAll() throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
-            return ratingCommentDao.findAll();
-        } catch (TransactionException | DaoException e) {
+            List<Rating> result = ratingCommentDao.findAll();
+            transactionFactory.close();
+            return result;
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }

@@ -16,8 +16,9 @@ public class TransactionImpl implements Transaction {
     private static final String PATH_TO_DAO = "by.parakhnevich.keddit.dao.interfaces.";
     Connection connection;
 
-    public TransactionImpl(Connection connection) {
+    public TransactionImpl(Connection connection) throws SQLException {
         this.connection = connection;
+        connection.setAutoCommit(false);
     }
 
     @Override

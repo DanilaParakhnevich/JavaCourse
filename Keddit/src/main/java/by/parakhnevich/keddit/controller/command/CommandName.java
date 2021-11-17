@@ -1,6 +1,7 @@
 package by.parakhnevich.keddit.controller.command;
 
 public enum CommandName {
+    NO_SUCH_COMMAND,
 
     //POST
     LOGIN,

@@ -10,26 +10,19 @@ import by.parakhnevich.keddit.exception.PersistentException;
 import by.parakhnevich.keddit.exception.ServiceException;
 import by.parakhnevich.keddit.exception.TransactionException;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.util.List;
 
 public class CommunityServiceImpl implements CommunityService {
-    private static final Logger logger = LogManager.getLogger(CommentServiceImpl.class);
     private Transaction transaction = null;
-
-    public CommunityServiceImpl() {
-        try {
-            this.transaction = new TransactionFactoryImpl().createTransaction();
-        } catch (PersistentException e) {
-            logger.error(e);
-        }
-    }
+    private TransactionFactoryImpl transactionFactory = null;
 
     @Override
     public List<Community> selectAll() throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             UserDao userDao = transaction.createDao(UserDao.class);
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
@@ -48,8 +41,9 @@ public class CommunityServiceImpl implements CommunityService {
                 community.setFollowers(userDao
                         .findUsersByFollowedCommunity(community));
             }
+            transactionFactory.close();
             return communities;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -57,6 +51,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Community selectById(long id) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             UserDao userDao = transaction.createDao(UserDao.class);
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
@@ -73,33 +69,51 @@ public class CommunityServiceImpl implements CommunityService {
                     .findPublicationsByCommunityId(community.getId()));
             community.setFollowers(userDao
                     .findUsersByFollowedCommunity(community));
+            transactionFactory.close();
             return community;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public Community update(Community community) throws ServiceException {
+    public Community update(Community community) throws ServiceException, PersistentException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             UserDao userDao = transaction.createDao(UserDao.class);
             userDao.update(community.getUser());
+            transaction.commit();
             communityDao.update(community);
+            transaction.commit();
+            transactionFactory.close();
             return community;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
+            transaction.rollback();
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public Community add(Community community) {
-        return null;
+    public Community add(Community community) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            communityDao.create(community);
+            transactionFactory.close();
+            return community;
+        } catch (TransactionException | DaoException | PersistentException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public Community delete(Community community) throws ServiceException {
+    public Community delete(Community community) throws ServiceException, PersistentException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             UserDao userDao = transaction.createDao(UserDao.class);
@@ -110,12 +124,17 @@ public class CommunityServiceImpl implements CommunityService {
                 publication.setCommunityOwner(null);
                 publicationDao.update(publication);
             }
+            transaction.commit();
             for (User user : users) {
                 communityDao.deleteFollower(community.getId(), user.getId());
             }
+            transaction.commit();
             communityDao.delete(community);
+            transaction.commit();
+            transactionFactory.close();
             return community;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
+            transaction.rollback();
             throw new ServiceException(e);
         }
     }
@@ -123,10 +142,13 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public User addFollower(Community community, User user) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             communityDao.addFollower(community.getId(), user.getId());
+            transactionFactory.close();
             return user;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }
@@ -134,10 +156,13 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public User deleteFollower(Community community, User user) throws ServiceException {
         try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             communityDao.deleteFollower(community.getId(), user.getId());
+            transactionFactory.close();
             return user;
-        } catch (TransactionException | DaoException e) {
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }

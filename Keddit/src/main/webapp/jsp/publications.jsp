@@ -9,36 +9,10 @@
     <title>Publications</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mynavbar">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="publications.jsp">
-                        <img src="photo/efd1d8ef-daee-4160-b38a-d166ce728330Keddit_Official.png" width="55 " height="25" alt="logo">
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">My communities</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="text" placeholder="Search communities or people">
-                <button class="btn btn-primary" type="button">Search</button>
-            </form>
-            <li class="nav-item">
-                <a class="nav-item" href="#">
-                    <img src="photo/82f560b4-1943-4153-b037-395a18404c4edendilll.jpg.jpg" width="50" height="45" alt="ac"/>
-                </a>
-            </li>
-        </div>
+<header id="header" class="fixed-top">
+    <div class="container bg-dark text-white link-light">
+        <link href="#" title="22">
     </div>
-</nav>
+</header>
 </body>
 </html>

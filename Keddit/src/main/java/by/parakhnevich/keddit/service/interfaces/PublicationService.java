@@ -12,8 +12,4 @@ public interface PublicationService extends Service<Publication> {
     public List<Publication> selectByUser(User user) throws ServiceException;
 
     public List<Publication> selectByCommunity(Community community) throws ServiceException;
-
-    public Rating addRating(long id, Rating rating) throws ServiceException;
-
-    public Rating deleteRating(long id, Rating rating) throws ServiceException;
 }

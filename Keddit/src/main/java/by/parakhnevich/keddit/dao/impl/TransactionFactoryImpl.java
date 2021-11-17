@@ -25,8 +25,13 @@ public class TransactionFactoryImpl implements TransactionFactory {
     }
 
     @Override
-    public Transaction createTransaction() {
-        return new TransactionImpl(connection);
+    public Transaction createTransaction() throws PersistentException {
+        try {
+            return new TransactionImpl(connection);
+        } catch (SQLException e) {
+            logger.error(e);
+            throw new PersistentException(e);
+        }
     }
 
     @Override
