@@ -11,4 +11,6 @@ public interface UserDao extends BaseDao<Long, User> {
     User findUserByNickname(String nickname) throws DaoException;
 
     List<User> findUsersByFollowedCommunity(Community community) throws DaoException;
+
+    User findUserByMail(String mail) throws DaoException;
 }

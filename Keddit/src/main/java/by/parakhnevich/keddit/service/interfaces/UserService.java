@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface UserService extends Service<User> {
     List<User> selectByCommunity(Community community) throws ServiceException;
+
+    boolean isExist(String mail, String password) throws ServiceException;
+
+    User selectByMail(String mail) throws ServiceException;
 }

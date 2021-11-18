@@ -16,6 +16,8 @@ public class UserDaoImpl implements UserDao {
             "SELECT id, mail, password, nickname, date, photo, role , is_banned FROM users";
     private static final String SQL_SELECT_USER_BY_NICKNAME =
             "SELECT id, mail, password, nickname, date, photo, role , is_banned FROM users WHERE nickname=?";
+    private static final String SQL_SELECT_USER_BY_MAIL =
+            "SELECT id, mail, password, nickname, date, photo, role , is_banned FROM users WHERE mail=?";
     private static final String SQL_SELECT_USER_BY_ID =
             "SELECT id, mail, password, nickname, date, photo, role , is_banned FROM users WHERE id=?";
     private static final String SQL_CREATE_USER =
@@ -40,6 +42,21 @@ public class UserDaoImpl implements UserDao {
                 users.add(mapper.mapUser(resultSet));
             }
             return users;
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public User findUserByMail(String mail) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_USER_BY_MAIL)){
+            statement.setString(1, mail);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return mapper.mapUser(resultSet);
+            }
+            return null;
         }
         catch (SQLException e) {
             throw new DaoException(e);

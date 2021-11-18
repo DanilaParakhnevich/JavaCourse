@@ -10,6 +10,7 @@ import by.parakhnevich.keddit.exception.DaoException;
 import by.parakhnevich.keddit.exception.PersistentException;
 import by.parakhnevich.keddit.exception.ServiceException;
 import by.parakhnevich.keddit.exception.TransactionException;
+import by.parakhnevich.keddit.service.PasswordService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private Transaction transaction = null;
     private TransactionFactoryImpl transactionFactory = null;
+    PasswordService service = new PasswordService();
+
 
     @Override
     public List<User> selectAll() throws ServiceException {
@@ -162,6 +165,42 @@ public class UserServiceImpl implements UserService {
             return users;
         } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean isExist(String mail, String password) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            UserDao userDao = transaction.createDao(UserDao.class);
+            if (userDao.findUserByMail(mail) != null &&
+                    service.isMatches(password, userDao.findUserByMail(mail).getPassword())) {
+                return true;
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public User selectByMail(String mail) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            UserDao userDao = transaction.createDao(UserDao.class);
+            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            User user = userDao.findUserByMail(mail);
+            user.setOwnCommunities(communityDao.getCommunitiesByUserId(user.getId()));
+            user.setFollowingCommunities(communityDao.getFollowingCommunitiesByUserId(user.getId()));
+            user.setPublications(publicationDao.findPublicationsByUserId(user.getId()));
+            transactionFactory.close();
+            return user;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
         }
     }
 }

@@ -10,11 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
@@ -24,8 +21,8 @@ public class ConnectionPool {
     private final String username;
     private final String password;
     private final String driverName;
-    private final Deque<Connection> freeConnections;
-    private final Deque<Connection> usedConnections;
+    private final LinkedBlockingDeque<Connection> freeConnections;
+    private final LinkedBlockingDeque<Connection> usedConnections;
     private static final String CONNECTIONS_LIMIT = "The limit of number" +
             " of database connections is exceeded";
     private static final String IMPOSSIBLE_CONNECTION = "It's impossible to execute connection";
@@ -33,8 +30,8 @@ public class ConnectionPool {
 
     private ConnectionPool() throws PersistentException {
         ClassLoader classLoader = getClass().getClassLoader();
-        freeConnections = new ArrayDeque<>();
-        usedConnections = new ArrayDeque<>();
+        freeConnections = new LinkedBlockingDeque<>();
+        usedConnections = new LinkedBlockingDeque<>();
         Properties dbProperties = new Properties();
         String pathToProperties = "db.properties";
         InputStream path = classLoader.getResourceAsStream(pathToProperties);
@@ -64,7 +61,7 @@ public class ConnectionPool {
         while (connection == null) {
             try {
                 if (!freeConnections.isEmpty()) {
-                    connection = freeConnections.pop();
+                    connection = freeConnections.take();
                     if (connection.isClosed()) {
                         makeAvailable(connection);
                     }
@@ -74,7 +71,7 @@ public class ConnectionPool {
                     logger.error(CONNECTIONS_LIMIT);
                     throw new PersistentException(CONNECTIONS_LIMIT);
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | InterruptedException e) {
                 logger.error(IMPOSSIBLE_CONNECTION);
                 throw new PersistentException(IMPOSSIBLE_CONNECTION);
             }
@@ -112,9 +109,9 @@ public class ConnectionPool {
         return connection;
     }
 
-    private Connection makeAvailable(Connection connection) {
+    private void makeAvailable(Connection connection) {
         if (isConnectionAvailable(connection)) {
-            return connection;
+            return;
         }
         usedConnections.remove(connection);
         try {
@@ -124,7 +121,6 @@ public class ConnectionPool {
         }
         connection = createNewConnection();
         usedConnections.add(connection);
-        return connection;
     }
 
     public synchronized void initPool() {

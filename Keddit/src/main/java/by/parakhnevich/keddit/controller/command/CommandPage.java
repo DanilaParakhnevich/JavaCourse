@@ -1,6 +1,8 @@
 package by.parakhnevich.keddit.controller.command;
 
 public class CommandPage {
+    private CommandPage() {}
+
     public static final String PUBLICATIONS = "jsp/publications.jsp";
     public static final String LOGIN_PAGE = "jsp/login.jsp";
     public static final String REGISTRATION_PAGE = "jsp/registration.jsp";
@@ -15,4 +17,5 @@ public class CommandPage {
     public static final String EDIT_USER_PAGE = "jsp/edit_user.jsp";
     public static final String EDIT_PUBLICATION = "jsp/edit_publication.jsp";
     public static final String EDIT_COMMUNITY = "jsp/edit_community.jsp";
+    public static final String PUBLICATIONS_ON_MODERATION = "jsp/edit_community.jsp";
 }

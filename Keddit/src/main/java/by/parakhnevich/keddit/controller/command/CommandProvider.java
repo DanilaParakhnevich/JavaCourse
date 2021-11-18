@@ -1,5 +1,7 @@
 package by.parakhnevich.keddit.controller.command;
 
+import by.parakhnevich.keddit.controller.command.action.post.LoginCommand;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ public class CommandProvider {
     private CommandProvider(){
         commands = new HashMap<>();
         commands.put(CommandName.NO_SUCH_COMMAND, null);
+        commands.put(CommandName.LOGIN, new LoginCommand());
     }
 
     public static CommandProvider getInstance() {
