@@ -204,14 +204,7 @@ public class PublicationDaoImpl implements PublicationDao {
         statement.setLong(2, publication.getUser().getId());
         statement.setString(3, publication.getHeading());
         statement.setString(4, publication.getTextContent());
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < publication.getCountOfPhotos(); i++) {
-            stringBuilder.append(publication.getPhoto(i));
-            if (i < publication.getCountOfPhotos() - 1) {
-                stringBuilder.append(';');
-            }
-        }
-        statement.setString(5, stringBuilder.toString());
+        statement.setString(5, publication.getPhoto().getName());
         statement.setString(6, publication.getDate().toString());
         statement.setLong(7, publication.getCommunityOwner().getId());
         int value = publication.isOnModeration() ? 1 : 0;

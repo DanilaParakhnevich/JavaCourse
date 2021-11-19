@@ -55,6 +55,7 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
             this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            transaction.commit();
             transactionFactory.close();
             return rating;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -69,6 +70,7 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
             this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            transaction.commit();
             transactionFactory.close();
             return rating;
         } catch (TransactionException | DaoException | PersistentException e) {

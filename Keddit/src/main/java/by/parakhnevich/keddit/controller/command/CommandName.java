@@ -5,7 +5,7 @@ public enum CommandName {
 
     //POST
     LOGIN,
-    REGISTRATION,
+    SIGN_UP,
     DELETE_ACCOUNT,
     FOLLOW_THE_COMMUNITY,
     UNFOLLOW_THE_COMMUNITY,
@@ -30,6 +30,7 @@ public enum CommandName {
     DENY_PUBLICATION,
     BLOCK_USER,
     BLOCK_COMMUNITY,
+    REGISTRATION_PAGE,
 
 
     //GET

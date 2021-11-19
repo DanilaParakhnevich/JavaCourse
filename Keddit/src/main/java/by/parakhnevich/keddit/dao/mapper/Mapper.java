@@ -81,13 +81,7 @@ public class Mapper {
             publication.setUser(user);
             publication.setHeading(resultSet.getString("head"));
             publication.setTextContent(resultSet.getString("body"));
-            String photosFromDB = resultSet.getString("photos");
-            if (photosFromDB != null) {
-                String[] photoNames = photosFromDB.split(";");
-                for (String name : photoNames) {
-                    publication.addPhoto(new File(PATH_TO_PHOTOS + name));
-                }
-            }
+            publication.setPhoto(new File(PATH_TO_PHOTOS + resultSet.getString("photos")));
             publication.setDate(Timestamp.valueOf(resultSet.getString("date")));
             Community community = new Community();
             community.setId(resultSet.getLong("id_community"));

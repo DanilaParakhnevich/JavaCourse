@@ -12,4 +12,8 @@ public interface UserService extends Service<User> {
     boolean isExist(String mail, String password) throws ServiceException;
 
     User selectByMail(String mail) throws ServiceException;
+
+    User selectByNickname(String nickname) throws ServiceException;
+
+    long getFreeId() throws ServiceException;
 }

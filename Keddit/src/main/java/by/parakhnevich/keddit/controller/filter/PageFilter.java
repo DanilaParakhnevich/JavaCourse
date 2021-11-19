@@ -1,4 +1,4 @@
-package by.parakhnevich.keddit.filter;
+package by.parakhnevich.keddit.controller.filter;
 
 import javax.servlet.*;
 import java.io.IOException;

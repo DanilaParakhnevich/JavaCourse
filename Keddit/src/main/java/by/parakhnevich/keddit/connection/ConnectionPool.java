@@ -11,27 +11,27 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
-    private final Integer maxSize;
+    private Integer maxSize;
     private static final String BASIC_SQL_REQUEST = "select 1";
-    private final String url;
-    private final String username;
-    private final String password;
-    private final String driverName;
-    private final LinkedBlockingDeque<Connection> freeConnections;
-    private final LinkedBlockingDeque<Connection> usedConnections;
+    private String url;
+    private String username;
+    private String password;
+    private String driverName;
+    private final BlockingQueue<Connection> freeConnections;
+    private final BlockingQueue<Connection> usedConnections;
     private static final String CONNECTIONS_LIMIT = "The limit of number" +
             " of database connections is exceeded";
     private static final String IMPOSSIBLE_CONNECTION = "It's impossible to execute connection";
     private static final Logger logger = LogManager.getLogger(ConnectionPool.class);
 
+
     private ConnectionPool() throws PersistentException {
         ClassLoader classLoader = getClass().getClassLoader();
-        freeConnections = new LinkedBlockingDeque<>();
-        usedConnections = new LinkedBlockingDeque<>();
         Properties dbProperties = new Properties();
         String pathToProperties = "db.properties";
         InputStream path = classLoader.getResourceAsStream(pathToProperties);
@@ -44,14 +44,16 @@ public class ConnectionPool {
             this.driverName = dbProperties.getProperty("db.driver");
         } catch (IOException e) {
             logger.error(e);
-            throw new PersistentException(e);
         }
+        freeConnections = new ArrayBlockingQueue<>(maxSize);
+        usedConnections = new ArrayBlockingQueue<>(maxSize);
         initPool();
     }
 
     public static ConnectionPool getConnectionPool() throws PersistentException {
         if (connectionPool == null) {
             connectionPool = new ConnectionPool();
+            return connectionPool;
         }
         return connectionPool;
     }
@@ -98,32 +100,30 @@ public class ConnectionPool {
         }
     }
 
-    private Connection createNewConnection() {
-        Connection connection = null;
+    private Connection createNewConnection() throws PersistentException{
         try {
             Class.forName(driverName);
-            connection = DriverManager.getConnection(url, username, password);
+            return DriverManager.getConnection(url, username, password);
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new PersistentException(e);
         }
-        return connection;
     }
 
-    private void makeAvailable(Connection connection) {
-        if (isConnectionAvailable(connection)) {
-            return;
-        }
-        usedConnections.remove(connection);
+    private void makeAvailable(Connection connection) throws PersistentException{
         try {
+            if (isConnectionAvailable(connection)) {
+            return;
+            }
+            usedConnections.remove(connection);
             connection.close();
+            connection = createNewConnection();
+            usedConnections.add(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new PersistentException(e);
         }
-        connection = createNewConnection();
-        usedConnections.add(connection);
     }
 
-    public synchronized void initPool() {
+    public synchronized void initPool() throws PersistentException {
         destroy();
         for (int i = 0; i < maxSize; i++) {
             freeConnections.add(createNewConnection());

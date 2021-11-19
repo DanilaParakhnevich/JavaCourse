@@ -59,6 +59,7 @@ public class RatingFromPublicationServiceImpl implements RatingFromPublicationSe
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             ratingPublicationDao.addRatingByPublicationId(publication.getId(), rating);
+            transaction.commit();
             transactionFactory.close();
             return rating;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -75,6 +76,7 @@ public class RatingFromPublicationServiceImpl implements RatingFromPublicationSe
                     transaction.createDao(RatingPublicationDao.class);
             ratingPublicationDao
                     .deleteRatingByPublicationId(publication.getId(), rating);
+            transaction.commit();
             transactionFactory.close();
             return rating;
         } catch (TransactionException | DaoException | PersistentException e) {

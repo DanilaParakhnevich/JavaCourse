@@ -98,6 +98,7 @@ public class UserServiceImpl implements UserService {
             this.transaction = transactionFactory.createTransaction();
             final UserDao userDao = transaction.createDao(UserDao.class);
             userDao.create(user);
+            transaction.commit();
             transactionFactory.close();
             return user;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -169,13 +170,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isExist(String mail, String password) throws ServiceException {
+    public boolean isExist(String nickname, String password) throws ServiceException {
         try {
             transactionFactory = new TransactionFactoryImpl();
             transaction = transactionFactory.createTransaction();
             UserDao userDao = transaction.createDao(UserDao.class);
-            if (userDao.findUserByMail(mail) != null &&
-                    service.isMatches(password, userDao.findUserByMail(mail).getPassword())) {
+            if (userDao.findUserByNickname(nickname) != null &&
+                    service.isMatches(password, userDao.findUserByNickname(nickname).getPassword())) {
                 return true;
             }
             transactionFactory.close();
@@ -194,11 +195,54 @@ public class UserServiceImpl implements UserService {
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             User user = userDao.findUserByMail(mail);
-            user.setOwnCommunities(communityDao.getCommunitiesByUserId(user.getId()));
-            user.setFollowingCommunities(communityDao.getFollowingCommunitiesByUserId(user.getId()));
-            user.setPublications(publicationDao.findPublicationsByUserId(user.getId()));
+            if (user != null) {
+                user.setOwnCommunities(communityDao.getCommunitiesByUserId(user.getId()));
+                user.setFollowingCommunities(communityDao.getFollowingCommunitiesByUserId(user.getId()));
+                user.setPublications(publicationDao.findPublicationsByUserId(user.getId()));
+            }
             transactionFactory.close();
             return user;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public User selectByNickname(String nickname) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            UserDao userDao = transaction.createDao(UserDao.class);
+            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            User user = userDao.findUserByNickname(nickname);
+            if (user != null) {
+                user.setOwnCommunities(communityDao.getCommunitiesByUserId(user.getId()));
+                user.setFollowingCommunities(communityDao.getFollowingCommunitiesByUserId(user.getId()));
+                user.setPublications(publicationDao.findPublicationsByUserId(user.getId()));
+            }
+            transactionFactory.close();
+            return user;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public long getFreeId() throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            UserDao userDao = transaction.createDao(UserDao.class);
+            List<User> users = userDao.findAll();
+            long highest = 1;
+            for (User user : users) {
+                if (user.getId() > highest) {
+                    highest = user.getId();
+                }
+            }
+            transactionFactory.close();
+            return ++highest;
         } catch (PersistentException | TransactionException | DaoException e) {
             throw new ServiceException(e);
         }

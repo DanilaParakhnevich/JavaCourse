@@ -3,7 +3,7 @@ package by.parakhnevich.keddit.controller.command;
 public class CommandPage {
     private CommandPage() {}
 
-    public static final String PUBLICATIONS = "jsp/publications.jsp";
+    public static final String PUBLICATIONS = "jsp/main.jsp";
     public static final String LOGIN_PAGE = "jsp/login.jsp";
     public static final String REGISTRATION_PAGE = "jsp/registration.jsp";
     public static final String USER_PAGE = "jsp/user.jsp";

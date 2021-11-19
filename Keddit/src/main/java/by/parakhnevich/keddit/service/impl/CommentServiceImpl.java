@@ -98,19 +98,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment update(Comment comment) throws ServiceException {
+    public Comment update(Comment comment) throws ServiceException, PersistentException {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             CommentDao commentDao = transaction.createDao(CommentDao.class);
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             commentDao.update(comment);
+            transaction.commit();
             for (int i = 0; i < comment.getCountOfRatings(); i++) {
                 ratingCommentDao.update(comment.getRating(i));
             }
+            transaction.commit();
             transactionFactory.close();
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
+            transaction.rollback();
             logger.error(e);
             throw new ServiceException(e);
         }
@@ -123,6 +126,7 @@ public class CommentServiceImpl implements CommentService {
             this.transaction = transactionFactory.createTransaction();
             CommentDao commentDao = transaction.createDao(CommentDao.class);
             commentDao.create(comment);
+            transaction.commit();
             transactionFactory.close();
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -132,7 +136,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment delete(Comment comment) throws ServiceException {
+    public Comment delete(Comment comment) throws ServiceException, PersistentException {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
@@ -141,10 +145,13 @@ public class CommentServiceImpl implements CommentService {
             for (int i = 0; i < comment.getCountOfRatings(); i++) {
                 ratingCommentDao.delete(comment.getRating(i));
             }
+            transaction.commit();
             commentDao.delete(comment);
+            transaction.commit();
             transactionFactory.close();
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
+            transaction.rollback();
             logger.error(e);
             throw new ServiceException(e);
         }

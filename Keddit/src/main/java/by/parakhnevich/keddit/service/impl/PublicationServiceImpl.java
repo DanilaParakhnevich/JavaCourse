@@ -26,10 +26,12 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            UserDao userDao = transaction.createDao(UserDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             List<Publication> publications = publicationDao.findAll();
             for (Publication publication : publications) {
+                publication.setUser(userDao.findEntityById(publication.getUser().getId()));
                 publication.setRatings(ratingPublicationDao.getRatingsByPublication(publication));
             }
             transactionFactory.close();

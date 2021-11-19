@@ -20,14 +20,13 @@ public class Publication implements Entity {
     private List<String> tags;
     private List<Rating> ratings;
     private List<Comment> comments;
-    private List<File> photos;
+    private File photo;
     private boolean isOnModeration;
 
     public Publication() {
         tags = new ArrayList<>();
         ratings = new ArrayList<>();
         comments = new ArrayList<>();
-        photos = new ArrayList<>();
     }
 
     public String getHeading() {
@@ -64,22 +63,6 @@ public class Publication implements Entity {
 
     public void removeRating(Rating rating) {
         ratings.remove(rating);
-    }
-
-    public int getCountOfPhotos() {
-        return photos.size();
-    }
-
-    public void addPhoto(File photo) {
-        photos.add(photo);
-    }
-
-    public void removePhoto(int id) {
-        photos.remove(id);
-    }
-
-    public File getPhoto(int id) {
-        return photos.get(id);
     }
 
     public int getCountOfComments() {
@@ -162,17 +145,41 @@ public class Publication implements Entity {
         this.ratings = ratings;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public File getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(File photo) {
+        this.photo = photo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(ratings, that.ratings) && Objects.equals(comments, that.comments) && Objects.equals(photos, that.photos);
+        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(ratings, that.ratings) && Objects.equals(comments, that.comments) && Objects.equals(photo, that.photo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, heading, textContent, user, date, communityOwner, tags, ratings, comments, photos);
+        return Objects.hash(id, heading, textContent, user, date, communityOwner, tags, ratings, comments, photo);
     }
 
     @Override
