@@ -5,7 +5,7 @@ import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.publication.Rating;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.RatingPublicationDao;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

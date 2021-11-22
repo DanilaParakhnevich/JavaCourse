@@ -3,7 +3,7 @@ package by.parakhnevich.keddit.dao.impl;
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.dao.interfaces.CommunityDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.io.File;
 import java.sql.Connection;

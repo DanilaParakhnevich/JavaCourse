@@ -1,7 +1,7 @@
 package by.parakhnevich.keddit.dao.interfaces;
 
 import by.parakhnevich.keddit.bean.Entity;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

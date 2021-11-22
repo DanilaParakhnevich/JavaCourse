@@ -3,7 +3,7 @@ package by.parakhnevich.keddit.dao.impl;
 import by.parakhnevich.keddit.bean.publication.Comment;
 import by.parakhnevich.keddit.dao.interfaces.CommentDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,7 +39,7 @@ public class CommentDaoImpl implements CommentDao {
     public List<Comment> findAll() throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_COMMENTS)) {
             List<Comment> comments = new ArrayList<>();
-            ResultSet resultSet = statement.getResultSet();
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet != null && resultSet.next()) {
                 comments.add(mapper.mapComment(resultSet));
             }
@@ -56,7 +56,7 @@ public class CommentDaoImpl implements CommentDao {
             try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_ID)) {
             Comment comment = null;
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet != null && resultSet.next()) {
                 comment = mapper.mapComment(resultSet);
             }
@@ -131,7 +131,7 @@ public class CommentDaoImpl implements CommentDao {
                      connection.prepareStatement(SQL_SELECT_COMMENT_BY_PUBLICATION_ID)) {
             List<Comment> comments = new ArrayList<>();
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
+            ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     comments.add(mapper.mapComment(resultSet));
                 }
@@ -147,7 +147,7 @@ public class CommentDaoImpl implements CommentDao {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_COMMENT_BY_USER_ID)) {
             List<Comment> comments = new ArrayList<>();
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 comments.add(mapper.mapComment(resultSet));
             }

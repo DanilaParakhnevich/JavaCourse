@@ -1,9 +1,9 @@
 package by.parakhnevich.keddit.dao.impl;
 
-import by.parakhnevich.keddit.connection.ConnectionPool;
+import by.parakhnevich.keddit.dao.connection.ConnectionPool;
 import by.parakhnevich.keddit.dao.interfaces.Transaction;
 import by.parakhnevich.keddit.dao.interfaces.TransactionFactory;
-import by.parakhnevich.keddit.exception.PersistentException;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package by.parakhnevich.keddit.controller.command.action.get;
+package by.parakhnevich.keddit.controller.command.action.redirect;
 
 import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;

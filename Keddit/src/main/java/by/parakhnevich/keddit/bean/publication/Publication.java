@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Publication implements Entity {
+public class    Publication implements Entity {
     private long id;
     private String heading;
     private String textContent;
@@ -45,42 +45,6 @@ public class Publication implements Entity {
         this.textContent = textContent;
     }
 
-    public Rating getRating(int id) {
-        return ratings.get(id);
-    }
-
-    public void addRating(Rating rating) {
-        ratings.add(rating);
-    }
-
-    public void deleteRating(int id) {
-        ratings.remove(id);
-    }
-
-    public int getCountOfRatings() {
-        return ratings.size();
-    }
-
-    public void removeRating(Rating rating) {
-        ratings.remove(rating);
-    }
-
-    public int getCountOfComments() {
-        return comments.size();
-    }
-
-    public void addComment(Comment comment) {
-        comments.add(comment);
-    }
-
-    public void removeComment(int id) {
-        comments.remove(id);
-    }
-
-    public Comment getComment(int id) {
-        return comments.get(id);
-    }
-
     public User getUser() {
         return user;
     }
@@ -107,18 +71,6 @@ public class Publication implements Entity {
 
     public void addTag(String tag) {
         tags.add(tag);
-    }
-
-    public int getCountOfTags() {
-        return this.tags.size();
-    }
-
-    public void removeTag(int id) {
-        tags.remove(id);
-    }
-
-    public String getTag(int id) {
-        return tags.get(id);
     }
 
     public Community getCommunityOwner() {

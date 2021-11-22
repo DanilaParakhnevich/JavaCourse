@@ -2,7 +2,7 @@ package by.parakhnevich.keddit.dao.interfaces;
 
 import by.parakhnevich.keddit.bean.publication.Comment;
 import by.parakhnevich.keddit.bean.publication.Rating;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 

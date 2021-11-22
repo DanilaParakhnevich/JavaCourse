@@ -3,7 +3,7 @@ package by.parakhnevich.keddit.dao.mapper;
 import by.parakhnevich.keddit.bean.publication.*;
 import by.parakhnevich.keddit.bean.user.Role;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 
 import java.io.File;
@@ -12,8 +12,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 
-public class Mapper {
-    private static final String PATH_TO_PHOTOS = "D:/Projects/JavaCourse/Keddit/src/main/resources/photo/";
+public class Mapper {// TODO: 11/19/2021
+    private static final String PATH_TO_PHOTOS = ".src/main/webapp/images/";
     public Community mapCommunity(ResultSet resultSet) throws DaoException{
         Community community = new Community();
         try {
@@ -29,7 +29,7 @@ public class Mapper {
                 for (String usr : userList.split(",")) {
                     User user = new User();
                     user.setId(Long.parseLong(usr));
-                    community.addFollower(user);
+                    community.getFollowers().add(user);
                 }
             }
             User user = new User();
@@ -45,6 +45,7 @@ public class Mapper {
     public User mapUser(ResultSet resultSet) throws DaoException {
         User user = new User();
         try {
+            user.setNickname(resultSet.getString("nickname"));
             user.setId(resultSet.getLong("id"));
             user.setDate(Timestamp.valueOf(resultSet.getString("date")));
             user.setMail(resultSet.getString("mail"));
@@ -81,11 +82,19 @@ public class Mapper {
             publication.setUser(user);
             publication.setHeading(resultSet.getString("head"));
             publication.setTextContent(resultSet.getString("body"));
-            publication.setPhoto(new File(PATH_TO_PHOTOS + resultSet.getString("photos")));
+            if (resultSet.getString("photos") != null) {
+                publication.setPhoto(new File(PATH_TO_PHOTOS + resultSet.getString("photos")));
+            }
             publication.setDate(Timestamp.valueOf(resultSet.getString("date")));
             Community community = new Community();
-            community.setId(resultSet.getLong("id_community"));
-            publication.setCommunityOwner(community);
+            long id = resultSet.getLong("id_community");
+            if (id == 0) {
+                publication.setCommunityOwner(null);
+            }
+            else {
+                community.setId(id);
+                publication.setCommunityOwner(community);
+            }
             for (String tag : resultSet.getString("tag").split(",")) {
                 if (tag != null) {
                     publication.addTag(tag);
@@ -120,7 +129,7 @@ public class Mapper {
     public Rating mapRating(ResultSet resultSet) throws DaoException{
         try {
             Rating rating;
-            if (resultSet.getBoolean("is_like")) {
+            if (resultSet.getInt("is_like") == 1) {
                 rating = new Like();
             } else {
                 rating = new Dislike();

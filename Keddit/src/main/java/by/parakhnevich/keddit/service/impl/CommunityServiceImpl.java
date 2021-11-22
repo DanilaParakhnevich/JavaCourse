@@ -3,13 +3,16 @@ package by.parakhnevich.keddit.service.impl;
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.user.User;
+import by.parakhnevich.keddit.dao.impl.CommunityDaoImpl;
 import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.*;
-import by.parakhnevich.keddit.exception.DaoException;
-import by.parakhnevich.keddit.exception.PersistentException;
-import by.parakhnevich.keddit.exception.ServiceException;
-import by.parakhnevich.keddit.exception.TransactionException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.service.exception.ServiceException;
+import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
+import by.parakhnevich.keddit.service.interfaces.PublicationService;
+import by.parakhnevich.keddit.service.interfaces.RatingFromPublicationService;
 
 
 import java.util.List;
@@ -57,6 +60,7 @@ public class CommunityServiceImpl implements CommunityService {
             UserDao userDao = transaction.createDao(UserDao.class);
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             Community community = communityDao.findEntityById(id);
+            RatingFromPublicationService ratingFromPublicationService = new RatingFromPublicationServiceImpl();
             User user = userDao.findEntityById(community.getUser().getId());
             user.setOwnCommunities(communityDao
                     .getCommunitiesByUserId(user.getId()));
@@ -67,8 +71,12 @@ public class CommunityServiceImpl implements CommunityService {
             community.setUser(user);
             community.setPublications(publicationDao
                     .findPublicationsByCommunityId(community.getId()));
+            for (Publication publication : community.getPublications()) {
+                publication.setRatings(ratingFromPublicationService.selectByPublication(publication));
+            }
             community.setFollowers(userDao
                     .findUsersByFollowedCommunity(community));
+
             transactionFactory.close();
             return community;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -163,6 +171,37 @@ public class CommunityServiceImpl implements CommunityService {
             transactionFactory.close();
             return user;
         } catch (TransactionException | DaoException | PersistentException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public int getRating(Community community) throws ServiceException {
+        PublicationService publicationService = new PublicationServiceImpl();
+        int count = 0;
+        for (Publication publication : community.getPublications()) {
+            count += publicationService.getCountOfLikes(publication);
+            count -= publicationService.getCountOfDislikes(publication);
+        }
+        return count;
+    }
+
+    @Override
+    public long getFreeId() throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            List<Community> communities = communityDao.findAll();
+            long highest = 1;
+            for (Community community : communities) {
+                if (community.getId() > highest) {
+                    highest = community.getId();
+                }
+            }
+            transactionFactory.close();
+            return ++highest;
+        } catch (PersistentException | TransactionException | DaoException e) {
             throw new ServiceException(e);
         }
     }

@@ -118,7 +118,7 @@ CREATE TABLE `publications` (
                                 `id_user` int unsigned NOT NULL,
                                 `head` varchar(140) NOT NULL,
                                 `body` varchar(1000) NOT NULL,
-                                `photos` varchar(630) DEFAULT NULL,
+                                `photos` varchar(62) DEFAULT NULL,
                                 `date` datetime NOT NULL,
                                 `id_community` int DEFAULT NULL,
                                 `is_on_moderation` tinyint NOT NULL,

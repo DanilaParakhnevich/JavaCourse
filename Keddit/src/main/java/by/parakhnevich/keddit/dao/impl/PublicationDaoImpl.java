@@ -1,7 +1,7 @@
 package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Publication;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.PublicationDao;
 
@@ -21,12 +21,14 @@ public class PublicationDaoImpl implements PublicationDao {
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE head=?" +
                     "GROUP BY tags.id_publications";
     private static final String SQL_SELECT_PUBLICATION_BY_COMMUNITY_ID =
-            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation FROM publications " +
-                    "WHERE id_community=?";
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag FROM publications " +
+                    "INNER JOIN tags ON publications.id = tags.id_publications WHERE id_community=? GROUP BY tags.id_publications";
     private static final String SQL_SELECT_PUBLICATION_BY_USER_ID =
             "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id_user=? " +
                     "GROUP BY tags.id_publications";
+    private static final String SQL_SELECT_ALL_ID_PUBLICATION =  "SELECT id " +
+            "FROM publications";
     private static final String SQL_SELECT_PUBLICATION_BY_ID =
             "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id=? " +
@@ -52,8 +54,8 @@ public class PublicationDaoImpl implements PublicationDao {
                      connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_COMMUNITY_ID)) {
             List<Publication> publications = new ArrayList<>();
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet != null && resultSet.next()) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -71,7 +73,7 @@ public class PublicationDaoImpl implements PublicationDao {
             List<Publication> publications = new ArrayList<>();
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet != null && resultSet.next()) {
+            while (resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -88,7 +90,7 @@ public class PublicationDaoImpl implements PublicationDao {
             List<Publication> publications = new ArrayList<>();
             statement.setString(1, head);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet != null && resultSet.next()) {
+            while (resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -122,11 +124,26 @@ public class PublicationDaoImpl implements PublicationDao {
     }
 
     @Override
+    public List<Long> findAllIdOfPublications() throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_ID_PUBLICATION)) {
+            List<Long> ids = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                ids.add(resultSet.getLong("id"));
+            }
+            return ids;
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
     public List<Publication> findAll() throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL_PUBLICATIONS)) {
             List<Publication> publications = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet != null && resultSet.next()) {
+            while (resultSet.next()) {
                 publications.add(mapper.mapPublication(resultSet));
             }
             return publications;
@@ -204,9 +221,19 @@ public class PublicationDaoImpl implements PublicationDao {
         statement.setLong(2, publication.getUser().getId());
         statement.setString(3, publication.getHeading());
         statement.setString(4, publication.getTextContent());
-        statement.setString(5, publication.getPhoto().getName());
+        if (publication.getPhoto() == null) {
+            statement.setString(5, null);
+        }
+        else {
+            statement.setString(5, publication.getPhoto().getName());
+        }
         statement.setString(6, publication.getDate().toString());
-        statement.setLong(7, publication.getCommunityOwner().getId());
+        if (publication.getCommunityOwner() != null) {
+            statement.setLong(7, publication.getCommunityOwner().getId());
+        }
+        else {
+            statement.setLong(7, 0);
+        }
         int value = publication.isOnModeration() ? 1 : 0;
         statement.setInt(8, value);
     }

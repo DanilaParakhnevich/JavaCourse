@@ -45,38 +45,6 @@ public class Community implements Entity {
         this.photo = photo;
     }
 
-    public Publication getPublication(int id) {
-        return publications.get(id);
-    }
-
-    public void addPublication(Publication publication) {
-        publications.add(publication);
-    }
-
-    public void removePublication(int id) {
-        publications.remove(id);
-    }
-
-    public int countOfPublications() {
-        return publications.size();
-    }
-
-    public User getFollower(int id) {
-        return followers.get(id);
-    }
-
-    public void addFollower(User user) {
-        followers.add(user);
-    }
-
-    public void removeFollower(int id) {
-        followers.remove(id);
-    }
-
-    public int countOfFollowers() {
-        return followers.size();
-    }
-
     public long getId() {
         return id;
     }
@@ -91,6 +59,14 @@ public class Community implements Entity {
 
     public void setFollowers(List<User> followers) {
         this.followers = followers;
+    }
+
+    public List<User> getFollowers() {
+        return followers;
+    }
+
+    public List<Publication> getPublications() {
+        return publications;
     }
 
     @Override

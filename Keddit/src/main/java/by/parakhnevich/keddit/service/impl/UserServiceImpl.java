@@ -1,16 +1,16 @@
 package by.parakhnevich.keddit.service.impl;
 
-import by.parakhnevich.keddit.bean.publication.Comment;
-import by.parakhnevich.keddit.bean.publication.Community;
-import by.parakhnevich.keddit.bean.publication.Publication;
+import by.parakhnevich.keddit.bean.publication.*;
 import by.parakhnevich.keddit.bean.user.User;
 import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.*;
-import by.parakhnevich.keddit.exception.DaoException;
-import by.parakhnevich.keddit.exception.PersistentException;
-import by.parakhnevich.keddit.exception.ServiceException;
-import by.parakhnevich.keddit.exception.TransactionException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.service.exception.ServiceException;
+import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.PasswordService;
+import by.parakhnevich.keddit.service.interfaces.CommentService;
+import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 
 import java.util.List;
@@ -71,16 +71,16 @@ public class UserServiceImpl implements UserService {
             final CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             userDao.update(user);
             transaction.commit();
-            for (int i = 0; i < user.countOfPublications(); i++) {
-                publicationDao.update(user.getPublication(i));
+            for (int i = 0; i < user.getPublications().size(); i++) {
+                publicationDao.update(user.getPublications().get(i));
             }
             transaction.commit();
-            for (int i = 0; i < user.countOfFollowingCommunities(); i++) {
-                communityDao.update(user.getFollowingCommunity(i));
+            for (int i = 0; i < user.getFollowingCommunities().size(); i++) {
+                communityDao.update(user.getFollowingCommunities().get(i));
             }
             transaction.commit();
-            for (int i = 0; i < user.countOfOwnCommunities(); i++) {
-                communityDao.update(user.getOwnCommunity(i));
+            for (int i = 0; i < user.getOwnCommunities().size(); i++) {
+                communityDao.update(user.getOwnCommunities().get(i));
             }
             transaction.commit();
             transactionFactory.close();
@@ -246,5 +246,49 @@ public class UserServiceImpl implements UserService {
         } catch (PersistentException | TransactionException | DaoException e) {
             throw new ServiceException(e);
         }
+    }
+
+    @Override
+    public int getCountOfLikes(User user) throws ServiceException {
+        int count = 0;
+        CommentService commentService = new CommentServiceImpl();
+        PublicationService publicationService = new PublicationServiceImpl();
+        for (Comment comment : commentService.selectByUser(user)) {
+            for (Rating rating : comment.getRatings()) {
+                if (rating.getClass() == Like.class) {
+                    ++count;
+                }
+            }
+        }
+        for (Publication publication : publicationService.selectByUser(user)) {
+            for (Rating rating : publication.getRatings()) {
+                if (rating.getClass() == Like.class) {
+                    ++count;
+                }
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int getCountOfDislikes(User user) throws ServiceException {
+        int count = 0;
+        CommentService commentService = new CommentServiceImpl();
+        PublicationService publicationService = new PublicationServiceImpl();
+        for (Comment comment : commentService.selectByUser(user)) {
+            for (Rating rating : comment.getRatings()) {
+                if (rating.getClass() == Dislike.class) {
+                    ++count;
+                }
+            }
+        }
+        for (Publication publication : publicationService.selectByUser(user)) {
+            for (Rating rating : publication.getRatings()) {
+                if (rating.getClass() == Dislike.class) {
+                    ++count;
+                }
+            }
+        }
+        return count;
     }
 }

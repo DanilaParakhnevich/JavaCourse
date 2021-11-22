@@ -1,15 +1,15 @@
-package by.parakhnevich.keddit.controller.command.action.post;
+package by.parakhnevich.keddit.controller.command.action.edit;
 
-import by.parakhnevich.keddit.bean.user.Role;
+import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.user.User;
 import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
-import by.parakhnevich.keddit.exception.ServiceException;
-import by.parakhnevich.keddit.exception.TransactionException;
+import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.DateCreator;
-import by.parakhnevich.keddit.service.PasswordService;
 import by.parakhnevich.keddit.service.PhotoNameGenerator;
 import by.parakhnevich.keddit.service.ServiceFactory;
+import by.parakhnevich.keddit.service.exception.ServiceException;
+import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -24,31 +24,37 @@ import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-public class SignUpCommand implements Command {
-    Logger logger = LogManager.getLogger(SignUpCommand.class);
+public class CreatePublicationByUserCommand implements Command {
+    Logger logger = LogManager.getLogger(CreatePublicationByUserCommand.class);
     PhotoNameGenerator generator = new PhotoNameGenerator();
-    DateCreator creator = new DateCreator();
-    PasswordService passwordService = new PasswordService();
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        UserService userService = ServiceFactory.getInstance().getUserService();
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
-        String nickname = request.getParameter("nickname");
-        String password = request.getParameter("password");
-        String mail = request.getParameter("mail");
+        UserService userService = new UserServiceImpl();
+        request.getSession().removeAttribute("type");
+        DateCreator dateCreator = new DateCreator();
         try {
-            User user = new User();
-            user.setNickname(nickname);
-            user.setMail(mail);
-            user.setPassword(passwordService.encrypt(password));
-            user.setPhoto(new File("src/main/webapp/photos/" + load(request, nickname)));
-            user.setId(userService.getFreeId());
-            user.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
-            user.setRole(Role.USER);
-            userService.add(user);
+            User user = (User) request.getSession().getAttribute("user");
+            user = userService.selectById(user.getId());
+            Publication publication = new Publication();
+            publication.setUser(user);
+            publication.setDate(Timestamp.valueOf(dateCreator.create().replaceAll("/", "-")));
+            publication.setTextContent(request.getParameter("body"));
+            publication.setHeading(request.getParameter("head"));
+            publication.getTags().add(request.getParameter("tags"));
+            String fileName =  load(request, user.getNickname());
+            if (!fileName.contains(".")) {
+                user.setPhoto(null);
+            }
+            else {
+                user.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+            }
+            publication.setOnModeration(true);
+            publication.setId(publicationService.getFreeId());
+            publicationService.add(publication);
             request.setAttribute("publications", publicationService.selectAll());
             request.setAttribute("user",user);
+            request.getSession().setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
         } catch (ServiceException | TransactionException e) {
             logger.error(e);
@@ -70,6 +76,9 @@ public class SignUpCommand implements Command {
                 part.write(name + getFileExtension(part.getSubmittedFileName()));
                 result = name + getFileExtension(part.getSubmittedFileName());
             }
+        }
+        if (!result.contains(".")) {
+            return "";
         }
         return result;
     }

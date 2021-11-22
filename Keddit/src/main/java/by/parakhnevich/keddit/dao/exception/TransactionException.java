@@ -1,4 +1,4 @@
-package by.parakhnevich.keddit.exception;
+package by.parakhnevich.keddit.dao.exception;
 
 public class TransactionException extends Exception{
     public TransactionException() {

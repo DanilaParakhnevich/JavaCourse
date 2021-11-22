@@ -1,4 +1,4 @@
-package by.parakhnevich.keddit.exception;
+package by.parakhnevich.keddit.service.exception;
 
 public class ServiceException extends Exception{
     public ServiceException() {

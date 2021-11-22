@@ -1,4 +1,4 @@
-package by.parakhnevich.keddit.exception;
+package by.parakhnevich.keddit.dao.exception;
 
 public class PersistentException extends Exception {
     public PersistentException() {

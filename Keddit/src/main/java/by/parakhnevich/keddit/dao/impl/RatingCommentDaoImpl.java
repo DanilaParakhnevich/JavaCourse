@@ -6,7 +6,7 @@ import by.parakhnevich.keddit.bean.publication.Like;
 import by.parakhnevich.keddit.bean.publication.Rating;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.RatingCommentDao;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.sql.*;
 import java.util.ArrayList;

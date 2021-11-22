@@ -1,6 +1,6 @@
-package by.parakhnevich.keddit.connection;
+package by.parakhnevich.keddit.dao.connection;
 
-import by.parakhnevich.keddit.exception.PersistentException;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,16 +84,9 @@ public class ConnectionPool {
 
     public void closeConnection(Connection connection) throws PersistentException {
         try {
-            if (isConnectionAvailable(connection)) {
-                logger.info("Connection has already closed");
-            } else if (usedConnections.contains(connection)) {
-                usedConnections.remove(connection);
-                connection.close();
-                freeConnections.add(createNewConnection());
-            }
-            else {
-                connection.close();
-            }
+            usedConnections.remove(connection);
+            connection.close();
+            freeConnections.add(createNewConnection());
         }
         catch (SQLException e) {
             throw new PersistentException(e);

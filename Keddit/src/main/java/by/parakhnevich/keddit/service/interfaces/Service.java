@@ -1,8 +1,8 @@
 package by.parakhnevich.keddit.service.interfaces;
 
-import by.parakhnevich.keddit.exception.PersistentException;
-import by.parakhnevich.keddit.exception.ServiceException;
-import by.parakhnevich.keddit.exception.TransactionException;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.service.exception.ServiceException;
+import by.parakhnevich.keddit.dao.exception.TransactionException;
 
 import java.util.List;
 

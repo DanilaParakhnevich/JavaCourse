@@ -2,7 +2,7 @@ package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.exception.DaoException;
+import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.UserDao;
 
@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
     private static final String SQL_DELETE_BY_ID = "DELETE FROM users WHERE id = ?";
     private static final String SQL_SELECT_USERS_BY_FOLLOWED_COMMUNITY =
             "SELECT id, mail, password, nickname, date, users.photo, role, is_banned " +
-                    "FROM users INNER JOIN followers ON followers.id_user = users.id WHERE followers.id_user = ?";
+                    "FROM users INNER JOIN followers ON followers.id_user = users.id WHERE followers.id_community = ?";
     Mapper mapper = new Mapper();
     Connection connection;
 
@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
             List<User> users= new ArrayList<>();
             statement.setLong(1, community.getId());
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet != null && resultSet.next()) {
+            while (resultSet.next()) {
                 users.add(mapper.mapUser(resultSet));
             }
             return users;
@@ -88,7 +88,7 @@ public class UserDaoImpl implements UserDao {
             User user = null;
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet != null && resultSet.next()) {
+            if (resultSet.next()) {
                 user = mapper.mapUser(resultSet);
                 user.setNickname(resultSet.getString("nickname"));
                 user.setId(id);
@@ -168,7 +168,12 @@ public class UserDaoImpl implements UserDao {
         statement.setString(3, user.getPassword());
         statement.setString(4, user.getNickname());
         statement.setString(5, user.getDate().toString());
-        statement.setString(6, user.getPhoto().getName());
+        if (user.getPhoto() == null) {
+            statement.setString(6, null);
+        }
+        else {
+            statement.setString(6, user.getPhoto().getName());
+        }
         int role = switch (user.getRole().toString().toLowerCase(Locale.ROOT)) {
             case "admin" -> 3;
             case "moderator" -> 2;

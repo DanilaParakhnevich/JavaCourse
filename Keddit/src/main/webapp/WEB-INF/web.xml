@@ -4,6 +4,22 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
 
     <filter>
+        <filter-name>JspFilter</filter-name>
+        <filter-class>by.parakhnevich.keddit.controller.filter.JspFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JspFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>BlockFilter</filter-name>
+        <filter-class>by.parakhnevich.keddit.controller.filter.BlockFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>BlockFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter>
         <filter-name>CharsetFilter</filter-name>
         <filter-class>by.parakhnevich.keddit.controller.filter.CharsetFilter</filter-class>
         <init-param>
@@ -11,9 +27,8 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
-
     <filter-mapping>
         <filter-name>CharsetFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/controller</url-pattern>
     </filter-mapping>
 </web-app>

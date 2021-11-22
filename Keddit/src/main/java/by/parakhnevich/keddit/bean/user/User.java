@@ -22,55 +22,17 @@ public class User implements Entity {
     private List<Community> ownCommunities;
     private List<Publication> publications;
 
-
-    public Publication getPublication(int index) {
-        return publications.get(index);
+    public List<Community> getFollowingCommunities() {
+        return followingCommunities;
     }
 
-    public void addPublication(Publication publication) {
-        publications.add(publication);
+    public List<Community> getOwnCommunities() {
+        return ownCommunities;
     }
 
-    public void removePublication(int index) {
-        publications.remove(index);
+    public List<Publication> getPublications() {
+        return publications;
     }
-
-    public int countOfPublications() {
-        return publications.size();
-    }
-
-    public Community getFollowingCommunity(int index) {
-        return ownCommunities.get(index);
-    }
-
-    public void addFollowingCommunity(Community community) {
-        followingCommunities.add(community);
-    }
-
-    public void removeFollowingCommunity(int index) {
-        followingCommunities.remove(index);
-    }
-
-    public int countOfFollowingCommunities() {
-        return followingCommunities.size();
-    }
-
-    public Community getOwnCommunity(int index) {
-        return ownCommunities.get(index);
-    }
-
-    public void addOwnCommunity(Community community) {
-        ownCommunities.add(community);
-    }
-
-    public void removeOwnCommunity(int index) {
-        ownCommunities.remove(index);
-    }
-
-    public int countOfOwnCommunities() {
-        return ownCommunities.size();
-    }
-
 
     public Role getRole() {
         return role;

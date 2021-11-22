@@ -77,6 +77,9 @@ public class Comment implements Entity {
     public Rating getRating(int index) {
         return ratings.get(index);
     }
+    public List<Rating> getRatings() {
+        return ratings;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -3,7 +3,7 @@ package by.parakhnevich.keddit.service.interfaces;
 import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.publication.Rating;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.exception.ServiceException;
+import by.parakhnevich.keddit.service.exception.ServiceException;
 
 import java.util.List;
 
