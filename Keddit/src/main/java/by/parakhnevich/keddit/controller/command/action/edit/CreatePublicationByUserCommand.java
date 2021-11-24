@@ -9,7 +9,6 @@ import by.parakhnevich.keddit.service.DateCreator;
 import by.parakhnevich.keddit.service.PhotoNameGenerator;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -30,8 +29,7 @@ public class CreatePublicationByUserCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
-        UserService userService = new UserServiceImpl();
-        request.getSession().removeAttribute("type");
+        UserService userService = ServiceFactory.getInstance().getUserService();
         DateCreator dateCreator = new DateCreator();
         try {
             User user = (User) request.getSession().getAttribute("user");
@@ -39,15 +37,24 @@ public class CreatePublicationByUserCommand implements Command {
             Publication publication = new Publication();
             publication.setUser(user);
             publication.setDate(Timestamp.valueOf(dateCreator.create().replaceAll("/", "-")));
-            publication.setTextContent(request.getParameter("body"));
-            publication.setHeading(request.getParameter("head"));
-            publication.getTags().add(request.getParameter("tags"));
-            String fileName =  load(request, user.getNickname());
-            if (!fileName.contains(".")) {
-                user.setPhoto(null);
+            String fileName =  load(publication, request, user.getNickname());
+            if (publication.getHeading().equals("")) {
+                request.setAttribute("error_message_create_publication", "Heading must be");
+                request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+            }
+            if (publication.getTextContent().equals("")) {
+                request.setAttribute("error_message_create_publication", "Body must be");
+                request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+            }
+            if (publication.getTags().get(0).equals("")) {
+                request.setAttribute("error_message_create_publication", "Minimally one tag must be");
+                request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+            }
+            if (fileName.equals("")) {
+                publication.setPhoto(null);
             }
             else {
-                user.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+                publication.setPhoto(new File(".src/main/webapp/photos/" + fileName));
             }
             publication.setOnModeration(true);
             publication.setId(publicationService.getFreeId());
@@ -61,7 +68,7 @@ public class CreatePublicationByUserCommand implements Command {
         }
     }
 
-    private String load(HttpServletRequest request, String keyWord) throws ServletException, IOException {
+    private String load(Publication publication, HttpServletRequest request, String keyWord) throws ServletException, IOException {
         Iterator<Part> var3 = request.getParts().iterator();
         String name = generator.generate(keyWord, "");
         String result = "";
@@ -72,7 +79,19 @@ public class CreatePublicationByUserCommand implements Command {
                 InputStreamReader isr = new InputStreamReader(inputStream);
                 (new BufferedReader(isr)).lines().collect(Collectors.joining("\n"));
             }
-            if (part.getSubmittedFileName() != null) {
+            if (part.getName().equals("body")) {
+                publication.setTextContent(convertStreamToString(part.getInputStream()));
+            }
+            if (part.getName().equals("head")) {
+                publication.setHeading(convertStreamToString(part.getInputStream()));
+            }
+            if (part.getName().equals("tags")) {
+                String tags = convertStreamToString(part.getInputStream());
+                for (String tag : tags.trim().split(",")) {
+                    publication.addTag(tag);
+                }
+            }
+            if (part.getSubmittedFileName() != null && getFileExtension(part.getSubmittedFileName()).contains(".")) {
                 part.write(name + getFileExtension(part.getSubmittedFileName()));
                 result = name + getFileExtension(part.getSubmittedFileName());
             }
@@ -81,6 +100,11 @@ public class CreatePublicationByUserCommand implements Command {
             return "";
         }
         return result;
+    }
+
+    private String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     private static String getFileExtension(String fileName) {

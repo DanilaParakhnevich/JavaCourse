@@ -58,7 +58,7 @@ public class ConnectionPool {
         return connectionPool;
     }
 
-    public Connection getConnection() throws PersistentException {
+    public synchronized Connection getConnection() throws PersistentException {
         Connection connection = null;
         while (connection == null) {
             try {
@@ -70,6 +70,7 @@ public class ConnectionPool {
                 } else if (usedConnections.size() < maxSize) {
                     connection = createNewConnection();
                 } else {
+                    connection = createNewConnection();
                     logger.error(CONNECTIONS_LIMIT);
                     throw new PersistentException(CONNECTIONS_LIMIT);
                 }
@@ -82,7 +83,7 @@ public class ConnectionPool {
         return connection;
     }
 
-    public void closeConnection(Connection connection) throws PersistentException {
+    public synchronized void closeConnection(Connection connection) throws PersistentException {
         try {
             usedConnections.remove(connection);
             connection.close();

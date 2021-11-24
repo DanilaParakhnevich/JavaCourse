@@ -5,6 +5,7 @@ import by.parakhnevich.keddit.bean.user.User;
 import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
+import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.impl.PublicationServiceImpl;
 import by.parakhnevich.keddit.service.impl.UserServiceImpl;
@@ -24,16 +25,15 @@ public class PublicationsCommandPage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
-            PublicationService publicationService = new PublicationServiceImpl();
-            UserService userService = new UserServiceImpl();
+            PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
+            UserService userService = ServiceFactory.getInstance().getUserService();
             List<Publication> publications = publicationService.selectAll();
             User user = (User)request.getSession().getAttribute("user");
-            request.getSession().setAttribute("user",
-                    userService.selectById(user.getId()));
-            System.out.println(publications.size());
+            request.getSession().setAttribute("user", userService.selectById(user.getId()));
             request.setAttribute("user", user);
             request.setAttribute("publications", publications);
-            request.setAttribute("publication_service", new PublicationServiceImpl());
+            request.setAttribute("publication_service", publicationService);
+            request.setAttribute("user_service", userService);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request,response);
         } catch (TransactionException | ServiceException e) {
             logger.error(e);

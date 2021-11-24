@@ -1,15 +1,15 @@
 package by.parakhnevich.keddit.controller.command.action.edit;
 
-import by.parakhnevich.keddit.bean.user.Role;
+import by.parakhnevich.keddit.bean.publication.Community;
+import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.user.User;
 import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
-import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.DateCreator;
-import by.parakhnevich.keddit.service.PasswordService;
 import by.parakhnevich.keddit.service.PhotoNameGenerator;
 import by.parakhnevich.keddit.service.ServiceFactory;
+import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -22,58 +22,50 @@ import javax.servlet.http.Part;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
-public class SignUpCommand implements Command {
-    Logger logger = LogManager.getLogger(SignUpCommand.class);
+public class CreatePublicationByCommunityCommand implements Command {
+    Logger logger = LogManager.getLogger(CreatePublicationByCommunityCommand.class);
     PhotoNameGenerator generator = new PhotoNameGenerator();
     DateCreator creator = new DateCreator();
-    PasswordService passwordService = new PasswordService();
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+        User user = (User) request.getSession().getAttribute("user");
         UserService userService = ServiceFactory.getInstance().getUserService();
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
-        User user1 = new User();
-        String nickname = request.getParameter("nickname");
-        user1.setNickname(nickname);
-        String name = generator.generate(nickname, "");
-        user1.setPassword(passwordService.encrypt(request.getParameter("password")));
-        user1.setMail(request.getParameter("mail"));
+        user = userService.selectById(user.getId());
+        Community community = new Community();
+        community.setId(Long.parseLong(request.getParameter("id")));
+        Publication publication = new Publication();
+        publication.setHeading(request.getParameter("head"));
+        publication.setTextContent(request.getParameter("body"));
+        for (String tag : request.getParameter("tags").split(",")) {
+            publication.getTags().add(tag.trim());
+        }
+        String name = generator.generate(community.getName(), "");
         String fileName =  load(name, request);
-        if (user1.getNickname().equals("") || user1.getPassword().equals("") || user1.getMail().equals("")) {
-            request.setAttribute("error_message_sign_up", "All text fields are required");
-            request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
+        if (publication.getHeading().equals("") || publication.getTextContent().equals("")
+                || publication.getTags().get(0).equals("")) {
+            request.setAttribute("error_message_create_publication", "All text fields are required");
+            request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_COMMUNITY).forward(request, response);
             return;
         }
         try {
-            List<User> users = userService.selectAll();
-            for (User user : users) {
-                if (user.getNickname().equals(user1.getNickname())) {
-                    request.setAttribute("error_message_sign_up", "User with this nickname is already exist");
-                    request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
-                    return;
-                }
-                else if (user.getMail().equals(user1.getMail())) {
-                    request.setAttribute("error_message_sign_up", "User with this mail is already exist");
-                    request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
-                    return;
-                }
-            }
             if (!fileName.contains(".")) {
-                user1.setPhoto(null);
+                publication.setPhoto(null);
             }
             else {
-                user1.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+                publication.setPhoto(new File(".src/main/webapp/photos/" + fileName));
             }
-            user1.setId(userService.getFreeId());
-            user1.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
-            user1.setRole(Role.USER);
-            userService.add(user1);
+            publication.setId(publicationService.getFreeId());
+            publication.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
+            publication.setUser(user);
+            publication.setOnModeration(true);
+            publicationService.add(publication);
             request.setAttribute("publications", publicationService.selectAll());
-            request.setAttribute("user",user1);
-            request.getSession().setAttribute("user", user1);
+            request.setAttribute("user",user);
+            request.getSession().setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
         } catch (ServiceException | TransactionException e) {
             logger.error(e);

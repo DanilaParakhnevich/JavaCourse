@@ -3,7 +3,6 @@ package by.parakhnevich.keddit.service.impl;
 import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.dao.impl.CommunityDaoImpl;
 import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.*;
 import by.parakhnevich.keddit.dao.exception.DaoException;
@@ -154,6 +153,7 @@ public class CommunityServiceImpl implements CommunityService {
             this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             communityDao.addFollower(community.getId(), user.getId());
+            transaction.commit();
             transactionFactory.close();
             return user;
         } catch (TransactionException | DaoException | PersistentException e) {
@@ -168,6 +168,7 @@ public class CommunityServiceImpl implements CommunityService {
             this.transaction = transactionFactory.createTransaction();
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             communityDao.deleteFollower(community.getId(), user.getId());
+            transaction.commit();
             transactionFactory.close();
             return user;
         } catch (TransactionException | DaoException | PersistentException e) {

@@ -1,9 +1,12 @@
 package by.parakhnevich.keddit.controller.command;
 
+import by.parakhnevich.keddit.controller.command.action.edit.CreatePublicationByCommunityCommand;
 import by.parakhnevich.keddit.controller.command.action.edit.CreatePublicationByUserCommand;
+import by.parakhnevich.keddit.controller.command.action.edit.rating.*;
 import by.parakhnevich.keddit.controller.command.action.redirect.*;
 import by.parakhnevich.keddit.controller.command.action.verify.LoginCommand;
 import by.parakhnevich.keddit.controller.command.action.edit.SignUpCommand;
+import by.parakhnevich.keddit.controller.command.action.verify.LogoutCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +30,18 @@ public class CommandProvider {
         commands.put(CommandName.SEARCH_PAGE, new SearchCommandPage());
         commands.put(CommandName.CREATE_PUBLICATION_BY_USER, new CreatePublicationByUserCommand());
         commands.put(CommandName.CREATE_PUBLICATION_BY_USER_PAGE, new CreatePublicationByUserCommandPage());
+        commands.put(CommandName.CREATE_PUBLICATION_BY_COMMUNITY, new CreatePublicationByCommunityCommand());
+        commands.put(CommandName.CREATE_PUBLICATION_BY_COMMUNITY_PAGE, new CreatePublicationByCommunityCommandPage());
+        commands.put(CommandName.PUBLICATION_PAGE, new PublicationCommandPage());
+        commands.put(CommandName.ABOUT, new AboutCommandPage());
+        commands.put(CommandName.SEARCH_FOLLOWER, new SearchFollowersCommand());
+        commands.put(CommandName.MY_COMMUNITIES, new MyCommunitiesCommandPage());
+        commands.put(CommandName.LOGOUT, new LogoutCommand());
+        commands.put(CommandName.SET_LIKE_PUBLICATION, new LikePublicationCommand());
+        commands.put(CommandName.SET_DISLIKE_PUBLICATION, new DislikePublicationCommand());
+        commands.put(CommandName.SUBSCRIBE_COMMUNITY, new SubscribeCommand());
+        commands.put(CommandName.SET_LIKE_COMMENT, new LikeCommentCommand());
+        commands.put(CommandName.SET_DISLIKE_COMMENT, new DislikeCommentCommand());
     }
 
     public static CommandProvider getInstance() {

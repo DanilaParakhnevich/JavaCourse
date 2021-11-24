@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommunityDaoImpl implements CommunityDao {
     private static final String SQL_SELECT_ALL_COMMUNITIES =
@@ -47,7 +49,6 @@ public class CommunityDaoImpl implements CommunityDao {
     public CommunityDaoImpl(Connection connection) {
         this.connection = connection;
     }
-
     @Override
     public List<Community> findAll() throws DaoException {
         try (PreparedStatement preparedStatement =

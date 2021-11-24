@@ -6,8 +6,10 @@ import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.*;
 import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
+import by.parakhnevich.keddit.service.interfaces.CommentService;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class PublicationServiceImpl implements PublicationService {
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             UserDao userDao = transaction.createDao(UserDao.class);
             CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            CommentService commentService = new CommentServiceImpl();
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             List<Publication> publications = publicationDao.findAll();
@@ -33,6 +36,7 @@ public class PublicationServiceImpl implements PublicationService {
                 if (publication.getCommunityOwner() != null) {
                     publication.setCommunityOwner(communityDao.findEntityById(publication.getCommunityOwner().getId()));
                 }
+                publication.setComments(commentService.selectByPublication(publication));
             }
             transactionFactory.close();
             return publications;
@@ -48,10 +52,18 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            UserDao userDao = transaction.createDao(UserDao.class);
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            CommentService commentService = ServiceFactory.getInstance().getCommentService();
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             Publication publication = publicationDao.findEntityById(id);
             publication.setRatings(ratingPublicationDao.getRatingsByPublicationId(id));
+            if (publication.getCommunityOwner() != null) {
+                publication.setCommunityOwner(communityDao.findEntityById(publication.getCommunityOwner().getId()));
+            }
+            publication.setComments(commentService.selectByPublication(publication));
+            publication.setUser(userDao.findEntityById(publication.getUser().getId()));
             transactionFactory.close();
             return publication;
         }
@@ -80,9 +92,7 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            System.out.println(publication.getId());
             publicationDao.create(publication);
-            System.out.println(22);
             transaction.commit();
             for (String tag : publication.getTags()) {
                 publicationDao.createTag(publication.getId(), tag);
@@ -96,7 +106,7 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public Publication delete(Publication publication) throws ServiceException, PersistentException {
+    public Publication delete(Publication publication) throws ServiceException {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
@@ -108,6 +118,10 @@ public class PublicationServiceImpl implements PublicationService {
             for (int i = 0; i < publication.getRatings().size();i++) {
                 ratingPublicationDao.delete(publication.getRatings().get(i));
             }//ratings of publication
+            transaction.commit();
+            for (String tag : publication.getTags()) {
+                publicationDao.deleteTag(publication.getId(), tag);
+            }
             transaction.commit();
             for (int i = 0; i < publication.getComments().size(); i++) {
                 Comment comment = publication.getComments().get(i);
@@ -122,7 +136,11 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory.close();
             return publication;
         } catch (TransactionException | DaoException | PersistentException e) {
-            transaction.rollback();
+            try {
+                transaction.rollback();
+            } catch (PersistentException ex) {
+                throw new ServiceException(e);
+            }
             throw new ServiceException(e);
         }
     }
@@ -132,7 +150,10 @@ public class PublicationServiceImpl implements PublicationService {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
+            UserDao userDao = transaction.createDao(UserDao.class);
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            CommentService commentService = new CommentServiceImpl();
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             List<Publication> publications =
@@ -140,6 +161,11 @@ public class PublicationServiceImpl implements PublicationService {
             for (Publication publication : publications) {
                 publication.setRatings(ratingPublicationDao
                         .getRatingsByPublicationId(publication.getId()));
+                publication.setUser(userDao.findEntityById(user.getId()));
+                publication.setComments(commentService.selectByPublication(publication));
+                if (publication.getCommunityOwner() != null) {
+                    publication.setCommunityOwner(communityDao.findEntityById(publication.getCommunityOwner().getId()));
+                }
             }
             transactionFactory.close();
             return publications;
@@ -154,6 +180,9 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            CommentService commentService = new CommentServiceImpl();
+            UserDao userDao = transaction.createDao(UserDao.class);
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             List<Publication> publications =
@@ -161,6 +190,9 @@ public class PublicationServiceImpl implements PublicationService {
             for (Publication publication : publications) {
                 publication.setRatings(ratingPublicationDao
                         .getRatingsByPublicationId(publication.getId()));
+                publication.setUser(userDao.findEntityById(community.getUser().getId()));
+                publication.setCommunityOwner(communityDao.findEntityById(publication.getCommunityOwner().getId()));
+                publication.setComments(commentService.selectByPublication(publication));
             }
             transactionFactory.close();
             return publications;
@@ -199,7 +231,7 @@ public class PublicationServiceImpl implements PublicationService {
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             List<Long> ids = publicationDao.findAllIdOfPublications();
             transactionFactory.close();
-            return ids.get(ids.size() - 1) + 1;
+            return ids.size() + 1;
         } catch (PersistentException | TransactionException | DaoException e) {
             throw new ServiceException(e);
         }

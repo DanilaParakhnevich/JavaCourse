@@ -134,8 +134,8 @@ public class RatingCommentDaoImpl implements RatingCommentDao {
 
 
     private void fillingRating(PreparedStatement statement, long id, Rating rating) throws SQLException{
-        statement.setLong(1, id);
-        statement.setLong(2, rating.getUser().getId());
+        statement.setLong(1, rating.getUser().getId());
+        statement.setLong(2, id);
         int value = rating instanceof Like ? 1 : 0;
         statement.setInt(3, value);
     }

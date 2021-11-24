@@ -4,6 +4,7 @@ import by.parakhnevich.keddit.bean.publication.Community;
 import by.parakhnevich.keddit.bean.user.User;
 import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
+import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.impl.CommunityServiceImpl;
 import by.parakhnevich.keddit.service.impl.PublicationServiceImpl;
@@ -24,9 +25,9 @@ public class CommunityCommandPage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
-            CommunityService communityService = new CommunityServiceImpl();
-            UserService userService = new UserServiceImpl();
-            PublicationService publicationService = new PublicationServiceImpl();
+            CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
+            UserService userService = ServiceFactory.getInstance().getUserService();
+            PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
             User user = (User) request.getSession().getAttribute("user");
             user = userService.selectById(user.getId());
             request.getSession().setAttribute("user", user);
@@ -35,7 +36,7 @@ public class CommunityCommandPage implements Command {
             request.setAttribute("community_service", communityService);
             request.setAttribute("publication_service", publicationService);
             request.setAttribute("publications", publicationService.selectByCommunity((Community) request.getAttribute("community")));
-            request.setAttribute("community_service", communityService);
+            request.setAttribute("user_service", userService);
             request.getRequestDispatcher(CommandPage.COMMUNITY_PAGE).forward(request, response);
         } catch (ServiceException e) {
             logger.error(e);

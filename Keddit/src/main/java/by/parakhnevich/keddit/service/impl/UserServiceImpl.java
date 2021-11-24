@@ -291,4 +291,105 @@ public class UserServiceImpl implements UserService {
         }
         return count;
     }
+
+    @Override
+    public boolean hasLikedPublication(Publication publication, User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            RatingPublicationDao ratingPublicationDao = transaction.createDao(RatingPublicationDao.class);
+            List<Rating> ratings = ratingPublicationDao.getRatingsByPublicationId(publication.getId());
+            for (Rating rating : ratings) {
+                if (rating.getClass() == Like.class && rating.getUser().getId() == user.getId()) {
+                    return true;
+                }
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public boolean hasLikedComment(Comment comment, User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
+            List<Rating> ratings = ratingCommentDao.getRatingsByCommentId(comment.getId());
+            for (Rating rating : ratings) {
+                System.out.println(user.getId());
+                System.out.println(comment.getId());
+                System.out.println(rating);
+                if (rating.getClass() == Like.class && rating.getUser().getId() == user.getId()) {
+                    System.out.println(user);
+                    return true;
+                }
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public boolean hasDislikedPublication(Publication publication, User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            RatingPublicationDao ratingPublicationDao = transaction.createDao(RatingPublicationDao.class);
+            List<Rating> ratings = ratingPublicationDao.getRatingsByPublicationId(publication.getId());
+            for (Rating rating : ratings) {
+                if (rating.getClass() == Dislike.class && rating.getUser().getId() == user.getId()) {
+                    return true;
+                }
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public boolean hasDislikedComment(Comment comment, User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
+            List<Rating> ratings = ratingCommentDao.getRatingsByCommentId(comment.getId());
+            for (Rating rating : ratings) {
+                if (rating.getClass() == Dislike.class && rating.getUser().getId() == user.getId()) {
+                    return true;
+                }
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public boolean hasSubscribed(Community community, User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            transaction = transactionFactory.createTransaction();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            UserDao userDao = transaction.createDao(UserDao.class);
+            community = communityDao.findEntityById(community.getId());
+            for (User follower : community.getFollowers()) {
+                follower = userDao.findEntityById(follower.getId());
+                if (follower.equals(user)) {
+                    return true;
+                }
+            }
+            transactionFactory.close();
+            return false;
+        } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

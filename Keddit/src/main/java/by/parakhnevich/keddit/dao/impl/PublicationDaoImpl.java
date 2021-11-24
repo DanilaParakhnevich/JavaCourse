@@ -236,5 +236,6 @@ public class PublicationDaoImpl implements PublicationDao {
         }
         int value = publication.isOnModeration() ? 1 : 0;
         statement.setInt(8, value);
+        statement.setBoolean(9, publication.isOnModeration());
     }
 }
