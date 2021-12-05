@@ -55,6 +55,7 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
             this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            System.out.println(22);
             transaction.commit();
             transactionFactory.close();
             return rating;
@@ -69,7 +70,7 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
-            ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
+            ratingCommentDao.deleteRatingByCommentId(comment.getId(), rating);
             transaction.commit();
             transactionFactory.close();
             return rating;

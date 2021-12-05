@@ -1,7 +1,6 @@
 package by.parakhnevich.keddit.controller.command.action.verify;
 
 import by.parakhnevich.keddit.controller.command.Command;
-import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 
 import javax.servlet.ServletException;
@@ -13,6 +12,6 @@ public class LogoutCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
         request.getSession().invalidate();
-        request.getRequestDispatcher(CommandPage.LOGIN_PAGE).forward(request, response);
+        response.sendRedirect("/keddit.by/controller?command=login_page");
     }
 }

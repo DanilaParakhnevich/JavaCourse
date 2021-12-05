@@ -77,10 +77,17 @@ public class PublicationServiceImpl implements PublicationService {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
-            Publication result = transaction.createDao(PublicationDao.class).update(publication);
+            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            publicationDao.update(publication);
+            transaction.commit();
+            publicationDao.deleteTags(publication.getId());
+            transaction.commit();
+            for (String tag : publication.getTags()) {
+                publicationDao.createTag(publication.getId(), tag);
+            }
             transaction.commit();
             transactionFactory.close();
-            return result;
+            return publication;
         } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
@@ -111,26 +118,18 @@ public class PublicationServiceImpl implements PublicationService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            CommentDao commentDao = transaction.createDao(CommentDao.class);
-            RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
+            CommentService commentService = ServiceFactory.getInstance().getCommentService();
             RatingPublicationDao ratingPublicationDao =
                     transaction.createDao(RatingPublicationDao.class);
             for (int i = 0; i < publication.getRatings().size();i++) {
-                ratingPublicationDao.delete(publication.getRatings().get(i));
+                ratingPublicationDao.deleteRatingByPublicationId(publication.getId(), publication.getRatings().get(i));
             }//ratings of publication
             transaction.commit();
-            for (String tag : publication.getTags()) {
-                publicationDao.deleteTag(publication.getId(), tag);
-            }
+            publicationDao.deleteTags(publication.getId());
             transaction.commit();
             for (int i = 0; i < publication.getComments().size(); i++) {
-                Comment comment = publication.getComments().get(i);
-                for (int j = 0; j < comment.getCountOfRatings(); j++) {
-                    ratingCommentDao.delete(comment.getRating(i));
-                }//delete ratings from comment
-                commentDao.delete(publication.getComments().get(i));
+                commentService.delete(publication.getComments().get(i));
             }//delete comments pf publication
-            transaction.commit();
             publicationDao.delete(publication);
             transaction.commit();
             transactionFactory.close();
@@ -231,8 +230,26 @@ public class PublicationServiceImpl implements PublicationService {
             PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
             List<Long> ids = publicationDao.findAllIdOfPublications();
             transactionFactory.close();
-            return ids.size() + 1;
+            return ids.stream().mapToLong(Long::longValue).max().orElse(0) + 1;
         } catch (PersistentException | TransactionException | DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<Publication> selectByTag(String tag) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
+            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            List<Publication> publications =
+                    publicationDao.findPublicationsByTag(tag);
+            for (Publication publication : publications) {
+                publication = publicationDao.findEntityById(publication.getId());
+            }
+            transactionFactory.close();
+            return publications;
+        } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
     }

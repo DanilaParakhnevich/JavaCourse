@@ -6,9 +6,6 @@ import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.CommunityServiceImpl;
-import by.parakhnevich.keddit.service.impl.PublicationServiceImpl;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
@@ -31,7 +28,6 @@ public class CommunityCommandPage implements Command {
             User user = (User) request.getSession().getAttribute("user");
             user = userService.selectById(user.getId());
             request.getSession().setAttribute("user", user);
-            request.setAttribute("user", user);
             request.setAttribute("community", communityService.selectById(Long.parseLong(request.getParameter("id"))));
             request.setAttribute("community_service", communityService);
             request.setAttribute("publication_service", publicationService);

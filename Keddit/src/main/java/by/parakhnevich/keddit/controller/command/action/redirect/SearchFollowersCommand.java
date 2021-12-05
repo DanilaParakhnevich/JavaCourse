@@ -6,8 +6,6 @@ import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.CommunityServiceImpl;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +26,6 @@ public class SearchFollowersCommand implements Command {
             CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
             User user = (User) request.getSession().getAttribute("user");
             user = userService.selectById(user.getId());
-            request.setAttribute("user", user);
             request.getSession().setAttribute("user", user);
             String text = request.getParameter("text");
             Community community = communityService.selectById(Long.parseLong(request.getParameter("id")));

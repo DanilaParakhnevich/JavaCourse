@@ -25,18 +25,20 @@ public class LikeCommentCommand implements Command {
         Like like = new Like();
         like.setUser(user);
         if (userService.hasDislikedComment(comment, user)) {
+            System.out.println(21);
             Dislike dislike = new Dislike();
             dislike.setUser(user);
             ratingFromCommentService.delete(comment, dislike);
             ratingFromCommentService.add(comment, like);
         }
         else if (userService.hasLikedComment(comment, user)) {
+            System.out.println(22);
             ratingFromCommentService.delete(comment, like);
         }
         else {
+            System.out.println(23);
             ratingFromCommentService.add(comment, like);
         }
-        request.setAttribute("user", user);
         request.getSession().setAttribute("user", user);
         response.sendRedirect(String.valueOf(request.getSession().getAttribute("prev_link")));
     }

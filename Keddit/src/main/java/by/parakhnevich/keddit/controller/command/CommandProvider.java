@@ -1,11 +1,9 @@
 package by.parakhnevich.keddit.controller.command;
 
-import by.parakhnevich.keddit.controller.command.action.edit.CreatePublicationByCommunityCommand;
-import by.parakhnevich.keddit.controller.command.action.edit.CreatePublicationByUserCommand;
+import by.parakhnevich.keddit.controller.command.action.edit.*;
 import by.parakhnevich.keddit.controller.command.action.edit.rating.*;
 import by.parakhnevich.keddit.controller.command.action.redirect.*;
 import by.parakhnevich.keddit.controller.command.action.verify.LoginCommand;
-import by.parakhnevich.keddit.controller.command.action.edit.SignUpCommand;
 import by.parakhnevich.keddit.controller.command.action.verify.LogoutCommand;
 
 import java.util.HashMap;
@@ -42,6 +40,30 @@ public class CommandProvider {
         commands.put(CommandName.SUBSCRIBE_COMMUNITY, new SubscribeCommand());
         commands.put(CommandName.SET_LIKE_COMMENT, new LikeCommentCommand());
         commands.put(CommandName.SET_DISLIKE_COMMENT, new DislikeCommentCommand());
+        commands.put(CommandName.EDIT_PUBLICATION_PAGE, new EditPublicationCommandPage());
+        commands.put(CommandName.EDIT_PUBLICATION, new EditPublicationCommand());
+        commands.put(CommandName.DELETE_USER, new DeleteUserCommand());
+        commands.put(CommandName.DELETE_COMMENT, new DeleteCommentCommand());
+        commands.put(CommandName.DELETE_PUBLICATION, new DeletePublicationCommand());
+        commands.put(CommandName.CREATE_COMMENT, new CreateCommentCommand());
+        commands.put(CommandName.EDIT_USER_PAGE, new EditUserCommandPage());
+        commands.put(CommandName.EDIT_USER, new EditUserCommand());
+        commands.put(CommandName.BLOCK_USER, new BlockUserCommand());
+        commands.put(CommandName.EDIT_ROLE_PAGE, new EditRoleCommandPage());
+        commands.put(CommandName.EDIT_ROLE, new EditRoleCommand());
+        commands.put(CommandName.CHANGE_LANG, new ChangeLanguageCommand());
+        commands.put(CommandName.ON_MODERATION_PAGE, new OnModerationCommandPage());
+        commands.put(CommandName.ACCEPT_PUBLICATION, new AcceptPublicationCommand());
+        commands.put(CommandName.DENY_PUBLICATION, new DenyPublicationCommand());
+        commands.put(CommandName.USER_COMMUNITIES, new UserCommunitiesCommandPage());
+        commands.put(CommandName.CREATE_COMMUNITY_PAGE, new CreateCommunityCommandPage());
+        commands.put(CommandName.CREATE_COMMUNITY, new CreateCommunityCommand());
+        commands.put(CommandName.EDIT_COMMUNITY_PAGE, new EditCommunityCommandPage());
+        commands.put(CommandName.EDIT_COMMUNITY, new EditCommunityCommand());
+        commands.put(CommandName.DELETE_COMMUNITY, new DeleteCommunityCommand());
+        commands.put(CommandName.SEARCH, new SearchCommand());
+        commands.put(CommandName.SEARCH_USER_COMMUNITY, new SearchUserCommunityCommand());
+        commands.put(CommandName.SEARCH_BY_TAG, new SearchByTagCommandPage());
     }
 
     public static CommandProvider getInstance() {

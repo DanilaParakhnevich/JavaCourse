@@ -5,14 +5,28 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
-public interface CommunityDao extends BaseDao<Long, Community> {
-    public List<Community> getCommunitiesByUserId(long id) throws DaoException;
+public interface CommunityDao extends BaseDao {
+    List<Community> findAll() throws DaoException;
 
-    public List<Community> getFollowingCommunitiesByUserId(long id) throws DaoException;
+    Community findEntityById(Long id) throws DaoException;
 
-    public boolean addFollower(long communityId, long followerId) throws DaoException;
+    boolean delete(Community community) throws DaoException;
 
-    public boolean deleteFollower(long communityId, long followerId) throws DaoException;
+    boolean delete(Long id) throws DaoException;
 
-    public boolean deleteByUserId(long id) throws DaoException;
+    boolean create(Community community) throws DaoException;
+
+    Community update(Community community) throws DaoException;
+
+    List<Community> getCommunitiesByUserId(long id) throws DaoException;
+
+    List<Community> getFollowingCommunitiesByUserId(long id) throws DaoException;
+
+    void addFollower(long communityId, long followerId) throws DaoException;
+
+    void deleteFollower(long communityId, long followerId) throws DaoException;
+
+    boolean deleteByUserId(long id) throws DaoException;
+
+    List<Community> getCommunitiesByName(String name) throws DaoException;
 }

@@ -20,13 +20,20 @@ public class SubscribeCommand implements Command {
         User user = userService.selectById(((User) request.getSession().getAttribute("user")).getId());
         CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
         Community community = communityService.selectById(Long.parseLong(request.getParameter("id")));
+        if (community.getUser().getId() == user.getId()) {
+            request.setAttribute("error_message_subscribe", "You cannot unfollow your community");
+            request.setAttribute("community", community);
+            request.setAttribute("user", user);
+            request.getSession().setAttribute("user", user);
+            response.sendRedirect(String.valueOf(request.getSession().getAttribute("prev_link")));
+            return;
+        }
         if (userService.hasSubscribed(community, user)) {
             communityService.deleteFollower(community, user);
         } else {
             communityService.addFollower(community, user);
         }
         request.setAttribute("community", community);
-        request.setAttribute("user", user);
         request.getSession().setAttribute("user", user);
         response.sendRedirect(String.valueOf(request.getSession().getAttribute("prev_link")));
     }

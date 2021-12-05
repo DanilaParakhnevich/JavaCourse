@@ -36,6 +36,11 @@ public class TransactionFactoryImpl implements TransactionFactory {
 
     @Override
     public void close() throws PersistentException {
+        try {
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new PersistentException(e);
+        }
         ConnectionPool.getConnectionPool().closeConnection(connection);
     }
 }

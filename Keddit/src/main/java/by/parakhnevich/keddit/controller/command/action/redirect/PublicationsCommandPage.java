@@ -7,8 +7,6 @@ import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.PublicationServiceImpl;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +28,6 @@ public class PublicationsCommandPage implements Command {
             List<Publication> publications = publicationService.selectAll();
             User user = (User)request.getSession().getAttribute("user");
             request.getSession().setAttribute("user", userService.selectById(user.getId()));
-            request.setAttribute("user", user);
             request.setAttribute("publications", publications);
             request.setAttribute("publication_service", publicationService);
             request.setAttribute("user_service", userService);

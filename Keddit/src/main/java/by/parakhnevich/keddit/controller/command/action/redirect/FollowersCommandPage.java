@@ -30,10 +30,10 @@ public class FollowersCommandPage implements Command {
             request.getSession().setAttribute("user", user);
             request.setAttribute("community", community);
             request.setAttribute("users", users);
-            request.setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.FOLLOWERS).forward(request, response);
         } catch (ServiceException e) {
             logger.error(e);
+            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
         }
     }
 }

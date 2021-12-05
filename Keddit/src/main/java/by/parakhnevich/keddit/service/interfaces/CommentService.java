@@ -8,13 +8,15 @@ import by.parakhnevich.keddit.service.exception.ServiceException;
 import java.util.List;
 
 public interface CommentService extends Service<Comment>{
-    public List<Comment> selectByUser(User user) throws ServiceException;
+    List<Comment> selectByUser(User user) throws ServiceException;
 
-    public List<Comment> selectByPublication(Publication publication) throws ServiceException;
+    List<Comment> selectByPublication(Publication publication) throws ServiceException;
 
-    public int getCountOfLikes(Comment comment) throws ServiceException;
+    int getCountOfLikes(Comment comment) throws ServiceException;
 
-    public int getCountOfDislikes(Comment comment) throws ServiceException;
+    int getCountOfDislikes(Comment comment) throws ServiceException;
+
+    Comment add(Comment comment, Publication publication) throws ServiceException;
 
     long getFreeId() throws ServiceException;
 }

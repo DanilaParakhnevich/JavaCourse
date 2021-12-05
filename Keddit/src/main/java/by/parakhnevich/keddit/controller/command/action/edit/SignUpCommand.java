@@ -72,11 +72,11 @@ public class SignUpCommand implements Command {
             user1.setRole(Role.USER);
             userService.add(user1);
             request.setAttribute("publications", publicationService.selectAll());
-            request.setAttribute("user",user1);
             request.getSession().setAttribute("user", user1);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
         } catch (ServiceException | TransactionException e) {
             logger.error(e);
+            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
         }
     }
 

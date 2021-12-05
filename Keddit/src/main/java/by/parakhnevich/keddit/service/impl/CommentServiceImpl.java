@@ -2,14 +2,13 @@ package by.parakhnevich.keddit.service.impl;
 
 import by.parakhnevich.keddit.bean.publication.*;
 import by.parakhnevich.keddit.bean.user.User;
-import by.parakhnevich.keddit.dao.impl.CommentDaoImpl;
 import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.CommentDao;
 import by.parakhnevich.keddit.dao.interfaces.RatingCommentDao;
 import by.parakhnevich.keddit.dao.interfaces.Transaction;
 import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
-import by.parakhnevich.keddit.dao.interfaces.UserDao;
+import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.interfaces.CommentService;
@@ -33,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             List<Comment> comments = commentDao.findCommentsByUserId(user.getId());
             for (Comment comment : comments) {
+                comment.setUser(user);
                 comment.setRatings(ratingCommentDao.getRatingsByComment(comment));
             }
             transactionFactory.close();
@@ -52,6 +52,7 @@ public class CommentServiceImpl implements CommentService {
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             List<Comment> comments = commentDao.findCommentsByPublicationId(publication.getId());
             for (Comment comment : comments) {
+                comment.setUser(ServiceFactory.getInstance().getUserService().selectById(comment.getUser().getId()));
                 comment.setRatings(ratingCommentDao.getRatingsByComment(comment));
             }
             transactionFactory.close();
@@ -126,12 +127,7 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             CommentDao commentDao = transaction.createDao(CommentDao.class);
-            RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             commentDao.update(comment);
-            transaction.commit();
-            for (int i = 0; i < comment.getCountOfRatings(); i++) {
-                ratingCommentDao.update(comment.getRating(i));
-            }
             transaction.commit();
             transactionFactory.close();
             return comment;
@@ -144,11 +140,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment add(Comment comment) throws ServiceException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Comment add(Comment comment, Publication publication) throws ServiceException {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             CommentDao commentDao = transaction.createDao(CommentDao.class);
-            commentDao.create(comment);
+            commentDao.createCommentByPublicationId(comment, publication.getId());
             transaction.commit();
             transactionFactory.close();
             return comment;
@@ -166,7 +167,7 @@ public class CommentServiceImpl implements CommentService {
             CommentDao commentDao = transaction.createDao(CommentDao.class);
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             for (int i = 0; i < comment.getCountOfRatings(); i++) {
-                ratingCommentDao.delete(comment.getRating(i));
+                ratingCommentDao.deleteRatingByCommentId(comment.getId(), comment.getRating(i));
             }
             transaction.commit();
             commentDao.delete(comment);

@@ -39,7 +39,6 @@ public class LikePublicationCommand implements Command {
         else {
             ratingFromPublicationService.add(publication, like);
         }
-        request.setAttribute("user", user);
         request.getSession().setAttribute("user", user);
         response.sendRedirect(String.valueOf(request.getSession().getAttribute("prev_link")));
     }

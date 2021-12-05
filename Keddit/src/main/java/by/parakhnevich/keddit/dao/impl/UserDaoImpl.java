@@ -138,6 +138,7 @@ public class UserDaoImpl implements UserDao {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_USER)) {
             statement.setLong(8, user.getId());
             fillUserData(user, statement);
+            statement.setLong(9, user.getId());
             statement.executeUpdate();
             return user;
         }

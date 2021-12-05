@@ -6,10 +6,12 @@ import by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl;
 import by.parakhnevich.keddit.dao.interfaces.*;
 import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.PasswordService;
 import by.parakhnevich.keddit.service.interfaces.CommentService;
+import by.parakhnevich.keddit.service.interfaces.CommunityService;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 
@@ -67,21 +69,7 @@ public class UserServiceImpl implements UserService {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
             final UserDao userDao = transaction.createDao(UserDao.class);
-            final PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            final CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             userDao.update(user);
-            transaction.commit();
-            for (int i = 0; i < user.getPublications().size(); i++) {
-                publicationDao.update(user.getPublications().get(i));
-            }
-            transaction.commit();
-            for (int i = 0; i < user.getFollowingCommunities().size(); i++) {
-                communityDao.update(user.getFollowingCommunities().get(i));
-            }
-            transaction.commit();
-            for (int i = 0; i < user.getOwnCommunities().size(); i++) {
-                communityDao.update(user.getOwnCommunities().get(i));
-            }
             transaction.commit();
             transactionFactory.close();
             return user;
@@ -111,30 +99,23 @@ public class UserServiceImpl implements UserService {
         try {
             transactionFactory = new TransactionFactoryImpl();
             this.transaction = transactionFactory.createTransaction();
-            final UserDao userDao = transaction.createDao(UserDao.class);
-            final CommentDao commentDao = transaction.createDao(CommentDao.class);
-            final PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            final CommunityDao communityDao = transaction.createDao(CommunityDao.class);
-            List<Comment> comments = commentDao.findCommentsByUserId(user.getId());
+            UserDao userDao = transaction.createDao(UserDao.class);
+            PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
+            CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
             List<Publication> publications =
-                    publicationDao.findPublicationsByUserId(user.getId());
+                    publicationService.selectByUser(user);
             List<Community> followingCommunities =
                     communityDao.getFollowingCommunitiesByUserId(user.getId());
             List<Community> ownCommunities = communityDao.getCommunitiesByUserId(user.getId());
             for (Community community : followingCommunities) {
-                communityDao.deleteFollower(community.getId(), user.getId());
+                communityService.deleteFollower(community, user);
             }
-            transaction.commit();
             for (Publication publication : publications) {
-                publicationDao.delete(publication);
+                publicationService.delete(publication);
             }
-            transaction.commit();
-            for (Comment comment : comments) {
-                commentDao.delete(comment);
-            }
-            transaction.commit();
             for (Community community : ownCommunities) {
-                communityDao.delete(community);
+                communityService.delete(community);
             }
             transaction.commit();
             userDao.delete(user);
@@ -177,6 +158,7 @@ public class UserServiceImpl implements UserService {
             UserDao userDao = transaction.createDao(UserDao.class);
             if (userDao.findUserByNickname(nickname) != null &&
                     service.isMatches(password, userDao.findUserByNickname(nickname).getPassword())) {
+                transactionFactory.close();
                 return true;
             }
             transactionFactory.close();
@@ -301,6 +283,7 @@ public class UserServiceImpl implements UserService {
             List<Rating> ratings = ratingPublicationDao.getRatingsByPublicationId(publication.getId());
             for (Rating rating : ratings) {
                 if (rating.getClass() == Like.class && rating.getUser().getId() == user.getId()) {
+                    transactionFactory.close();
                     return true;
                 }
             }
@@ -319,11 +302,8 @@ public class UserServiceImpl implements UserService {
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             List<Rating> ratings = ratingCommentDao.getRatingsByCommentId(comment.getId());
             for (Rating rating : ratings) {
-                System.out.println(user.getId());
-                System.out.println(comment.getId());
-                System.out.println(rating);
                 if (rating.getClass() == Like.class && rating.getUser().getId() == user.getId()) {
-                    System.out.println(user);
+                    transactionFactory.close();
                     return true;
                 }
             }
@@ -343,6 +323,7 @@ public class UserServiceImpl implements UserService {
             List<Rating> ratings = ratingPublicationDao.getRatingsByPublicationId(publication.getId());
             for (Rating rating : ratings) {
                 if (rating.getClass() == Dislike.class && rating.getUser().getId() == user.getId()) {
+                    transactionFactory.close();
                     return true;
                 }
             }
@@ -362,6 +343,7 @@ public class UserServiceImpl implements UserService {
             List<Rating> ratings = ratingCommentDao.getRatingsByCommentId(comment.getId());
             for (Rating rating : ratings) {
                 if (rating.getClass() == Dislike.class && rating.getUser().getId() == user.getId()) {
+                    transactionFactory.close();
                     return true;
                 }
             }
@@ -383,6 +365,7 @@ public class UserServiceImpl implements UserService {
             for (User follower : community.getFollowers()) {
                 follower = userDao.findEntityById(follower.getId());
                 if (follower.equals(user)) {
+                    transactionFactory.close();
                     return true;
                 }
             }

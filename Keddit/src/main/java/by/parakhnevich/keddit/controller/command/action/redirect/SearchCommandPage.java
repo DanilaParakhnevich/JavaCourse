@@ -5,7 +5,6 @@ import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +21,6 @@ public class SearchCommandPage implements Command {
             User user = (User) request.getSession().getAttribute("user");
             user = ServiceFactory.getInstance().getUserService().selectById(user.getId());
             request.getSession().setAttribute("user", user);
-            request.setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.SEARCH_PAGE).forward(request,response);
         } catch (ServiceException e) {
             logger.error(e);

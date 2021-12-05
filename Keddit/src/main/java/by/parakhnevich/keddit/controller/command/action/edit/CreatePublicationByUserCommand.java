@@ -37,18 +37,26 @@ public class CreatePublicationByUserCommand implements Command {
             Publication publication = new Publication();
             publication.setUser(user);
             publication.setDate(Timestamp.valueOf(dateCreator.create().replaceAll("/", "-")));
-            String fileName =  load(publication, request, user.getNickname());
+            publication.setHeading(request.getParameter("head"));
+            publication.setTextContent(request.getParameter("body"));
+            for (String tag : request.getParameter("tags").split(",")) {
+                publication.getTags().add(tag.trim());
+            }
+            String fileName =  load(request, user.getNickname());
             if (publication.getHeading().equals("")) {
-                request.setAttribute("error_message_create_publication", "Heading must be");
+                request.setAttribute("error_message_create_publication", "HEAD_ERROR");
                 request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+                return;
             }
             if (publication.getTextContent().equals("")) {
-                request.setAttribute("error_message_create_publication", "Body must be");
+                request.setAttribute("error_message_create_publication", "BODY_ERROR");
                 request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+                return;
             }
             if (publication.getTags().get(0).equals("")) {
-                request.setAttribute("error_message_create_publication", "Minimally one tag must be");
+                request.setAttribute("error_message_create_publication", "TAG_ERROR");
                 request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_USER).forward(request, response);
+                return;
             }
             if (fileName.equals("")) {
                 publication.setPhoto(null);
@@ -60,7 +68,6 @@ public class CreatePublicationByUserCommand implements Command {
             publication.setId(publicationService.getFreeId());
             publicationService.add(publication);
             request.setAttribute("publications", publicationService.selectAll());
-            request.setAttribute("user",user);
             request.getSession().setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
         } catch (ServiceException | TransactionException e) {
@@ -68,7 +75,7 @@ public class CreatePublicationByUserCommand implements Command {
         }
     }
 
-    private String load(Publication publication, HttpServletRequest request, String keyWord) throws ServletException, IOException {
+    private String load(HttpServletRequest request, String keyWord) throws ServletException, IOException {
         Iterator<Part> var3 = request.getParts().iterator();
         String name = generator.generate(keyWord, "");
         String result = "";
@@ -79,18 +86,6 @@ public class CreatePublicationByUserCommand implements Command {
                 InputStreamReader isr = new InputStreamReader(inputStream);
                 (new BufferedReader(isr)).lines().collect(Collectors.joining("\n"));
             }
-            if (part.getName().equals("body")) {
-                publication.setTextContent(convertStreamToString(part.getInputStream()));
-            }
-            if (part.getName().equals("head")) {
-                publication.setHeading(convertStreamToString(part.getInputStream()));
-            }
-            if (part.getName().equals("tags")) {
-                String tags = convertStreamToString(part.getInputStream());
-                for (String tag : tags.trim().split(",")) {
-                    publication.addTag(tag);
-                }
-            }
             if (part.getSubmittedFileName() != null && getFileExtension(part.getSubmittedFileName()).contains(".")) {
                 part.write(name + getFileExtension(part.getSubmittedFileName()));
                 result = name + getFileExtension(part.getSubmittedFileName());
@@ -100,11 +95,6 @@ public class CreatePublicationByUserCommand implements Command {
             return "";
         }
         return result;
-    }
-
-    private String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 
     private static String getFileExtension(String fileName) {

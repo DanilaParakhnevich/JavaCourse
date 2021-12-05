@@ -12,16 +12,18 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 
-public class Mapper {// TODO: 11/19/2021
-    private static final String PATH_TO_PHOTOS = ".src/main/webapp/images/";
+public final class Mapper {
+    private static final String PATH_TO_PHOTOS = "D:\\Projects\\JavaCourse\\Keddit\\src\\main\\webapp\\photos\\";
     public Community mapCommunity(ResultSet resultSet) throws DaoException{
         Community community = new Community();
         try {
             community.setId(resultSet.getLong("id"));
             String photo = resultSet.getString("photo");
             if (photo != null) {
-                community.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\resources\\photos\\" +
+                community.setPhoto(new File(PATH_TO_PHOTOS +
                         photo));
+            } else {
+                community.setPhoto(null);
             }
             community.setName(resultSet.getString("name"));
             String userList = resultSet.getString("user");
@@ -115,8 +117,12 @@ public class Mapper {// TODO: 11/19/2021
             User user = new User();
             user.setId(resultSet.getLong("id_user"));
             comment.setUser(user);
-            comment.setPhoto(new File(PATH_TO_PHOTOS +
-                    resultSet.getString("photo")));
+            if (resultSet.getString("photo") == null) {
+                comment.setPhoto(null);
+            } else {
+                comment.setPhoto(new File(PATH_TO_PHOTOS +
+                        resultSet.getString("photo")));
+            }
             comment.setDate(Timestamp.valueOf(resultSet.getString("date")));
             comment.setContent(resultSet.getString("content"));
             return comment;

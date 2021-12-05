@@ -11,23 +11,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CommunityDaoImpl implements CommunityDao {
     private static final String SQL_SELECT_ALL_COMMUNITIES =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
-                    "INNER JOIN followers ON communities.id = followers.id_community " +
-                    "GROUP BY followers.id_community";
+                    "LEFT JOIN followers ON communities.id = followers.id_community " +
+                    "GROUP BY communities.id";
     private static final String SQL_SELECT_COMMUNITIES_BY_ID =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
-                    "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id=? " +
-                    "GROUP BY followers.id_community";
+                    "LEFT JOIN followers ON communities.id = followers.id_community WHERE communities.id=? " +
+                    "GROUP BY communities.id";
+    private static final String SQL_SELECT_COMMUNITIES_BY_NAME =
+            "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
+                    "LEFT JOIN followers ON communities.id = followers.id_community WHERE communities.name=? " +
+                    "GROUP BY communities.id";
     private static final String SQL_SELECT_COMMUNITY_BY_USER_ID =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
                     "INNER JOIN followers ON communities.id = followers.id_community WHERE communities.id_user=? " +
-                    "GROUP BY followers.id_community";
+                    "GROUP BY communities.id";
     private static final String SQL_SELECT_FOLLOWING_COMMUNITIES_BY_USER_ID =
             "SELECT id, name, photo FROM communities " +
                     "INNER JOIN followers ON communities.id = followers.id_community WHERE followers.id_user=?";
@@ -43,6 +45,7 @@ public class CommunityDaoImpl implements CommunityDao {
     private static final String SQL_DELETE_FOLLOWER = "DELETE FROM followers WHERE id_user = ? AND id_community=?";
 
     private static final String SQL_DELETE_BY_USER_ID = "DELETE FROM communities WHERE id_user = ?";
+    private static final String PATH_TO_PHOTOS = ".src/main/webapp/photos/";
     Mapper mapper = new Mapper();
     Connection connection;
 
@@ -72,7 +75,7 @@ public class CommunityDaoImpl implements CommunityDao {
             Community community = null;
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet != null && resultSet.next()) {
+            if (resultSet.next()) {
                 community = mapper.mapCommunity(resultSet);
             }
             return community;
@@ -111,7 +114,7 @@ public class CommunityDaoImpl implements CommunityDao {
                 community.setId(resultSet.getLong("id"));
                 String photo = resultSet.getString("photo");
                 if (photo != null) {
-                    community.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\resources\\photos\\" +
+                    community.setPhoto(new File(PATH_TO_PHOTOS +
                            photo ));
                 }
                 community.setName(resultSet.getString("name"));
@@ -125,11 +128,11 @@ public class CommunityDaoImpl implements CommunityDao {
     }
 
     @Override
-    public boolean addFollower(long communityId, long followerId) throws DaoException {
+    public void addFollower(long communityId, long followerId) throws DaoException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_FOLLOWER)) {
             preparedStatement.setLong(1, followerId);
             preparedStatement.setLong(2, communityId);
-            return preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -137,11 +140,11 @@ public class CommunityDaoImpl implements CommunityDao {
     }
 
     @Override
-    public boolean deleteFollower(long communityId, long followerId) throws DaoException {
+    public void deleteFollower(long communityId, long followerId) throws DaoException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_FOLLOWER)) {
             preparedStatement.setLong(1, followerId);
             preparedStatement.setLong(2, communityId);
-            return preparedStatement.executeUpdate() == 1;
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -153,6 +156,31 @@ public class CommunityDaoImpl implements CommunityDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_USER_ID)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() == 1;
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<Community> getCommunitiesByName(String name) throws DaoException {
+        try (PreparedStatement preparedStatement =
+                     connection.prepareStatement(SQL_SELECT_COMMUNITIES_BY_NAME)){
+            List<Community> communities = new ArrayList<>();
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet != null && resultSet.next()) {
+                Community community = new Community();
+                community.setId(resultSet.getLong("id"));
+                String photo = resultSet.getString("photo");
+                if (photo != null) {
+                    community.setPhoto(new File(PATH_TO_PHOTOS +
+                            photo ));
+                }
+                community.setName(resultSet.getString("name"));
+                communities.add(community);
+            }
+            return communities;
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -197,6 +225,7 @@ public class CommunityDaoImpl implements CommunityDao {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_COMMUNITY)) {
             statement.setLong(1, community.getId());
             fillingCommunityData(community, statement);
+            statement.setLong(5, community.getId());
             statement.executeUpdate();
             return community;
         }
@@ -209,9 +238,11 @@ public class CommunityDaoImpl implements CommunityDao {
         statement.setLong(1, community.getId());
         statement.setLong(2, community.getUser().getId());
         statement.setString(3, community.getName());
-        File photo = community.getPhoto();
-        if (photo != null) {
-            statement.setString(4, photo.getName());
+        if (community.getPhoto() != null) {
+            statement.setString(4, community.getPhoto().getName());
+        }
+        else {
+            statement.setString(4, null);
         }
     }
 }

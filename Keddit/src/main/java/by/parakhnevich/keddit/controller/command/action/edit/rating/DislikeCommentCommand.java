@@ -38,7 +38,6 @@ public class DislikeCommentCommand implements Command {
         else {
             ratingFromCommentService.add(comment, dislike);
         }
-        request.setAttribute("user", user);
         request.getSession().setAttribute("user", user);
         response.sendRedirect(String.valueOf(request.getSession().getAttribute("prev_link")));
     }

@@ -141,29 +141,4 @@ public class RatingPublicationDaoImpl implements RatingPublicationDao {
         int value = rating instanceof Like ? 1 : 0;
         statement.setInt(3, value);
     }
-
-    @Override
-    public Rating findEntityById(Long id) throws DaoException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean delete(Rating rating) throws DaoException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean delete(Long id) throws DaoException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean create(Rating rating) throws DaoException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating update(Rating rating) throws DaoException {
-        throw new UnsupportedOperationException();
-    }
 }

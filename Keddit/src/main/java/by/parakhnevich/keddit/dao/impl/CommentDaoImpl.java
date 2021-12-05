@@ -162,7 +162,11 @@ public class CommentDaoImpl implements CommentDao {
         statement.setLong(1, comment.getId());
         statement.setLong(2, comment.getUser().getId());
         statement.setLong(3, id);
-        statement.setString(4, comment.getPhoto().getName());
+        if (comment.getPhoto() != null) {
+            statement.setString(4, comment.getPhoto().getName());
+        } else {
+            statement.setString(4, null);
+        }
         statement.setString(5, comment.getContent());
         statement.setString(6, comment.getDate().toString());
     }

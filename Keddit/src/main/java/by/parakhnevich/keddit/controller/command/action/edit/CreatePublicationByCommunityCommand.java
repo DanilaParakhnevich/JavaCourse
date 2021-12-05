@@ -45,9 +45,18 @@ public class CreatePublicationByCommunityCommand implements Command {
         }
         String name = generator.generate(community.getName(), "");
         String fileName =  load(name, request);
-        if (publication.getHeading().equals("") || publication.getTextContent().equals("")
-                || publication.getTags().get(0).equals("")) {
-            request.setAttribute("error_message_create_publication", "All text fields are required");
+        if (publication.getHeading().equals("")) {
+            request.setAttribute("error_message_create_publication", "HEAD_ERROR");
+            request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_COMMUNITY).forward(request, response);
+            return;
+        }
+        if (publication.getTextContent().equals("")) {
+            request.setAttribute("error_message_create_publication", "BODY_ERROR");
+            request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_COMMUNITY).forward(request, response);
+            return;
+        }
+        if (publication.getTags().get(0).equals("")) {
+            request.setAttribute("error_message_create_publication", "TAG_ERROR");
             request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_COMMUNITY).forward(request, response);
             return;
         }
@@ -61,13 +70,14 @@ public class CreatePublicationByCommunityCommand implements Command {
             publication.setId(publicationService.getFreeId());
             publication.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
             publication.setUser(user);
+            publication.setCommunityOwner(community);
             publication.setOnModeration(true);
             publicationService.add(publication);
             request.setAttribute("publications", publicationService.selectAll());
-            request.setAttribute("user",user);
             request.getSession().setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
         } catch (ServiceException | TransactionException e) {
+            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
             logger.error(e);
         }
     }

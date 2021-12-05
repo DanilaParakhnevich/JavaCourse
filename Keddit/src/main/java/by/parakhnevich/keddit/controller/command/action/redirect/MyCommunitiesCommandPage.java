@@ -17,7 +17,6 @@ public class MyCommunitiesCommandPage implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.selectById(((User)(request.getSession().getAttribute("user"))).getId());
-        request.setAttribute("user", user);
         request.getSession().setAttribute("user", user);
         request.setAttribute("own_communities", user.getOwnCommunities());
         request.setAttribute("following_communities", user.getFollowingCommunities());

@@ -8,25 +8,26 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockFilter implements Filter {
-
+    List<CommandName> commandNames = Arrays.asList(CommandName.LOGIN, CommandName.LOGIN_PAGE,
+            CommandName.REGISTRATION_PAGE, CommandName.SIGN_UP);
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain next) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpServletRequest request = (HttpServletRequest) servletRequest;
+
         User user = (User) request.getSession().getAttribute("user");
-        if (user != null && user.isBanned()) {
-            if (request.getParameter("command").equals(CommandName.LOGOUT.toString().toLowerCase(Locale.ROOT)) ||
-            request.getParameter("command").equals(CommandName.LOGIN.toString().toLowerCase(Locale.ROOT))) {
-                request.getSession().invalidate();
-                response.sendRedirect(CommandPage.LOGIN_PAGE);
-            }
-            else {
-                request.getRequestDispatcher(CommandPage.BLOCKED_USER).forward(request, response);
-            }
+        if (user == null && !commandNames.contains(CommandName.valueOf(request.getParameter("command").toUpperCase()))) {
+            request.getRequestDispatcher(CommandPage.LOGIN_PAGE).forward(request, response);
         }
-        filterChain.doFilter(request, response);
+        else if (user != null && user.isBanned() && !commandNames.contains(CommandName.valueOf(request.getParameter("command").toUpperCase()))) {
+            request.getRequestDispatcher(CommandPage.BLOCKED_USER).forward(request, response);
+        }
+        else {
+            next.doFilter(request, response);
+        }
     }
 }

@@ -27,6 +27,10 @@ public class PublicationDaoImpl implements PublicationDao {
             "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
                     "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE id_user=? " +
                     "GROUP BY tags.id_publications";
+    private static final String SQL_SELECT_PUBLICATION_BY_TAG =
+            "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
+                    "FROM publications INNER JOIN tags ON publications.id = tags.id_publications WHERE tags.tag=?" +
+                    "GROUP BY tags.id_publications";
     private static final String SQL_SELECT_ALL_ID_PUBLICATION =  "SELECT id " +
             "FROM publications";
     private static final String SQL_SELECT_PUBLICATION_BY_ID =
@@ -39,7 +43,7 @@ public class PublicationDaoImpl implements PublicationDao {
     private static final String SQL_UPDATE_PUBLICATION = "UPDATE publications SET id = ?, id_user = ?, head = ?, body = ?, " +
             "photos = ?, date = ?, id_community = ? ,is_on_moderation = ? WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM publications WHERE id = ?";
-    private static final String SQL_DELETE_TAG_BY_ID = "DELETE FROM tags WHERE id_publications = ?";
+    private static final String SQL_DELETE_TAGS_BY_ID = "DELETE FROM tags WHERE (id_publications = ?)";
     private static final String SQL_CREATE_TAG = "INSERT INTO tags (id_publications, tag) VALUES (?, ?)";
     Mapper mapper = new Mapper();
     Connection connection;
@@ -113,8 +117,8 @@ public class PublicationDaoImpl implements PublicationDao {
     }
 
     @Override
-    public boolean deleteTag(long id, String tag) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_TAG_BY_ID)) {
+    public boolean deleteTags(long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_TAGS_BY_ID)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
         }
@@ -132,6 +136,23 @@ public class PublicationDaoImpl implements PublicationDao {
                 ids.add(resultSet.getLong("id"));
             }
             return ids;
+        }
+        catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<Publication> findPublicationsByTag(String tag) throws DaoException {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQL_SELECT_PUBLICATION_BY_TAG)) {
+            List<Publication> publications = new ArrayList<>();
+            statement.setString(1, tag);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                publications.add(mapper.mapPublication(resultSet));
+            }
+            return publications;
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -160,7 +181,7 @@ public class PublicationDaoImpl implements PublicationDao {
             Publication publication = null;
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet != null && resultSet.next()) {
+            if (resultSet.next()) {
                 publication = mapper.mapPublication(resultSet);
             }
             return publication;
@@ -174,6 +195,9 @@ public class PublicationDaoImpl implements PublicationDao {
     public boolean delete(Publication publication) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, publication.getId());
+            if (publication.getPhoto() != null) {
+                publication.getPhoto().delete();
+            }
             return statement.executeUpdate() == 1;
         }
         catch (SQLException e) {
@@ -206,7 +230,7 @@ public class PublicationDaoImpl implements PublicationDao {
     @Override
     public Publication update(Publication publication) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PUBLICATION)) {
-            statement.setLong(8, publication.getId());
+            statement.setLong(9, publication.getId());
             fillPublicationData(publication, statement);
             statement.executeUpdate();
             return publication;
@@ -236,6 +260,5 @@ public class PublicationDaoImpl implements PublicationDao {
         }
         int value = publication.isOnModeration() ? 1 : 0;
         statement.setInt(8, value);
-        statement.setBoolean(9, publication.isOnModeration());
     }
 }

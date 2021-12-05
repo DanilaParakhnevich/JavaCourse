@@ -6,9 +6,6 @@ import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
-import by.parakhnevich.keddit.service.impl.CommentServiceImpl;
-import by.parakhnevich.keddit.service.impl.PublicationServiceImpl;
-import by.parakhnevich.keddit.service.impl.UserServiceImpl;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +30,6 @@ public class PublicationCommandPage implements Command {
             request.setAttribute("publication_service", publicationService);
             request.setAttribute("comment_service", ServiceFactory.getInstance().getCommentService());
             request.setAttribute("user_service", userService);
-            request.setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.PUBLICATION_PAGE).forward(request, response);
         } catch (ServiceException e) {
             logger.error(e);

@@ -20,7 +20,6 @@ public class AboutCommandPage implements Command {
             User user = (User) request.getSession().getAttribute("user");
             user = userService.selectById(user.getId());
             request.getSession().setAttribute("user", user);
-            request.setAttribute("user", user);
             request.getRequestDispatcher(CommandPage.ABOUT_PAGE).forward(request, response);
         } catch (ServiceException e) {
             e.printStackTrace();
