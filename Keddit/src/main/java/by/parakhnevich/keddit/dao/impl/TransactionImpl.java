@@ -22,7 +22,7 @@ public class TransactionImpl implements Transaction {
     }
 
     @Override
-    public <T extends BaseDao<?, ?>> T createDao(Class<T> key) throws TransactionException {
+    public <T extends BaseDao> T createDao(Class<T> key) throws TransactionException {
         return switch (key.getName()) {
             case PATH_TO_DAO + "CommentDao" -> (T)new CommentDaoImpl(connection);
             case PATH_TO_DAO + "CommunityDao" -> (T)new CommunityDaoImpl(connection);
