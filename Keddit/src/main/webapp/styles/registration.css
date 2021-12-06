@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
+body {
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --font: "Poppins", sans-serif;
+  --black: #333;
+  --red: #a52a2a;
+  --white: #fff;
+  --grey: #666;
+}
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.btn-reset {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+.link-reset {
+  cursor: pointer;
+  font-family: var(--font);
+  text-decoration: none;
+  transition: 0.5s;
+}
+.main {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 800px;
+  background-image: url(../images/login-and-sign-in-bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.reg {
+  position: relative;
+  top: 50px;
+  margin: 0 auto;
+  width: 500px;
+  height: 580px;
+  background-color: var(--grey);
+  box-shadow: 50px 50px 50px rgba(0, 0, 0, 0.384);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+.reg-content {
+  margin: 0 auto;
+  width: 450px;
+  height: 500px;
+}
+.reg-title {
+  font-size: 26px;
+  padding-bottom: 40px;
+  font-family: var(--font);
+  color: var(--white);
+  margin: 0 auto;
+  display: table;
+}
+.input-item {
+  margin-bottom: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+.item-text {
+  margin: 0;
+  font-size: 20px;
+  font-family: var(--font);
+  color: var(--white);
+}
+.reg-input {
+  border: none;
+  border-bottom: 1px solid var(--white);
+  font-size: 18px;
+  font-family: var(--font);
+  color: var(--white);
+  margin-left: 20px;
+  height: 30px;
+  background-color: transparent;
+  padding: 0;
+  border-bottom: 1px solid var(--white);
+  cursor: pointer;
+}
+.reg-input:focus {
+  outline: none;
+}
+.reg-input::placeholder {
+  font-size: 18px;
+  font-family: var(--font);
+  color: var(--white);
+}
+.pass-item {
+  display: block;
+  margin-bottom: 40px;
+  height: 30px;
+  align-items: center;
+}
+.pass-container {
+  align-items: center;
+  display: flex;
+}
+.pass-text {
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--black);
+  margin: 0;
+}
+.input-item-file {
+  height: 100px;
+  margin-bottom: 10px;
+}
+/* стилизация input file*/
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  margin-right: 20px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--black);
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: transparent;
+  display: inline-block;
+  cursor: pointer; /* "hand" cursor */
+}
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: transparent;
+}
+
+.image-file {
+  height: 100px;
+}
+.reg-submit {
+  position: relative;
+  top: 30px;
+  display: block;
+  margin: 0 auto;
+  font-family: var(--font);
+  color: var(--white);
+  font-size: 18px;
+  background-color: var(--red);
+  height: 53px;
+  width: 130px;
+  border-radius: 6px;
+  transition: 0.9s;
+}
+.reg-submit:hover {
+  transition: 0.9s;
+  opacity: 0.7;
+}
