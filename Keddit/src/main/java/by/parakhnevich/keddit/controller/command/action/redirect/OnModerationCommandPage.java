@@ -17,10 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * The class OnModerationCommandPage that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class OnModerationCommandPage implements Command {
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
-        try {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, TransactionException {
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.selectById(((User) request.getSession().getAttribute("user")).getId());
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
@@ -33,8 +40,5 @@ public class OnModerationCommandPage implements Command {
         request.setAttribute("publications", publications);
         request.getSession().setAttribute("user", user);
         request.getRequestDispatcher(CommandPage.PUBLICATIONS_ON_MODERATION).forward(request, response);
-        } catch (TransactionException e) {
-            e.printStackTrace();
-        }
     }
 }

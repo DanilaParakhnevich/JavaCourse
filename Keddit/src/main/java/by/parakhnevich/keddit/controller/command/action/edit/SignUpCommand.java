@@ -12,8 +12,6 @@ import by.parakhnevich.keddit.service.PhotoNameGenerator;
 import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +23,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The class SignUpCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class SignUpCommand implements Command {
-    Logger logger = LogManager.getLogger(SignUpCommand.class);
-    PhotoNameGenerator generator = new PhotoNameGenerator();
-    DateCreator creator = new DateCreator();
-    PasswordService passwordService = new PasswordService();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final DateCreator creator = new DateCreator();
+    private final PasswordService passwordService = new PasswordService();
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, TransactionException {
         UserService userService = ServiceFactory.getInstance().getUserService();
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
         User user1 = new User();
@@ -47,37 +52,32 @@ public class SignUpCommand implements Command {
             request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
             return;
         }
-        try {
-            List<User> users = userService.selectAll();
-            for (User user : users) {
-                if (user.getNickname().equals(user1.getNickname())) {
-                    request.setAttribute("error_message_sign_up", "User with this nickname is already exist");
-                    request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
-                    return;
-                }
-                else if (user.getMail().equals(user1.getMail())) {
-                    request.setAttribute("error_message_sign_up", "User with this mail is already exist");
-                    request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
-                    return;
-                }
+        List<User> users = userService.selectAll();
+        for (User user : users) {
+            if (user.getNickname().equals(user1.getNickname())) {
+                request.setAttribute("error_message_sign_up", "User with this nickname is already exist");
+                request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
+                return;
             }
-            if (!fileName.contains(".")) {
-                user1.setPhoto(null);
+            else if (user.getMail().equals(user1.getMail())) {
+                request.setAttribute("error_message_sign_up", "User with this mail is already exist");
+                request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
+                return;
             }
-            else {
-                user1.setPhoto(new File(".src/main/webapp/photos/" + fileName));
-            }
-            user1.setId(userService.getFreeId());
-            user1.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
-            user1.setRole(Role.USER);
-            userService.add(user1);
-            request.setAttribute("publications", publicationService.selectAll());
-            request.getSession().setAttribute("user", user1);
-            request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
-        } catch (ServiceException | TransactionException e) {
-            logger.error(e);
-            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
         }
+        if (!fileName.contains(".")) {
+            user1.setPhoto(null);
+        }
+        else {
+            user1.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+        }
+        user1.setId(userService.getFreeId());
+        user1.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
+        user1.setRole(Role.USER);
+        userService.add(user1);
+        request.setAttribute("publications", publicationService.selectAll());
+        request.getSession().setAttribute("user", user1);
+        request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
     }
 
     private String load(String name, HttpServletRequest request) throws ServletException, IOException {

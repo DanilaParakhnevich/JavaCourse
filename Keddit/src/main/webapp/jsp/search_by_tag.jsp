@@ -106,7 +106,7 @@
             <ul class="main-post-list list-reset">
                 <jsp:useBean id="publications" scope="request" type="java.util.List"/>
                 <c:if test="${publications.size() == 0}">
-                    <p class="header-right-text"><c:out value="Список пуст"/></p>
+                    <p class="header-right-text"><fmt:message key="NOT_FOUND"/></p>
                 </c:if>
                 <c:if test="${publications.size() != 0}">
                     <c:forEach var="publication" items="${publications}">

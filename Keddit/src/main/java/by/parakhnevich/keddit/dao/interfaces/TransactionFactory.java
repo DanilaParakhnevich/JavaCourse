@@ -2,8 +2,12 @@ package by.parakhnevich.keddit.dao.interfaces;
 
 import by.parakhnevich.keddit.dao.exception.PersistentException;
 
+/**
+ * The interface Transaction factory.
+ * @author Danila Parakhnevich
+ */
 public interface TransactionFactory {
-    public Transaction createTransaction() throws PersistentException;
+    Transaction createTransaction() throws PersistentException;
 
-    public void close() throws PersistentException;
+    void close() throws PersistentException;
 }

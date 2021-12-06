@@ -9,8 +9,6 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,40 +18,42 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The class CreateCommunityCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class CreateCommunityCommand implements Command {
-    Logger logger = LogManager.getLogger(CreateCommunityCommand.class);
-    PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
         CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
         UserService userService = ServiceFactory.getInstance().getUserService();
-        try {
-            User user = (User) request.getSession().getAttribute("user");
-            user = userService.selectById(user.getId());
-            Community community = new Community();
-            community.setUser(user);
-            community.setName(request.getParameter("name"));
-            String fileName =  load(request, user.getNickname());
-            if (community.getName().equals("")) {
-                request.setAttribute("error_message_create_community", "HEAD_ERROR");
-                request.setAttribute("community", community);
-                request.getRequestDispatcher(CommandPage.CREATE_COMMUNITY).forward(request, response);
-                return;
-            }
-            if (fileName.equals("")) {
-                community.setPhoto(null);
-            }
-            else {
-                community.setPhoto(new File(".src/main/webapp/photos/" + fileName));
-            }
-            community.setId(communityService.getFreeId());
-            communityService.add(community);
-            communityService.addFollower(community, user);
-            request.getSession().setAttribute("user", user);
-            response.sendRedirect("/keddit.by/controller?command=user_communities&id=" + user.getId());
-        } catch (ServiceException e) {
-            logger.error(e);
+        User user = (User) request.getSession().getAttribute("user");
+        user = userService.selectById(user.getId());
+        Community community = new Community();
+        community.setUser(user);
+        community.setName(request.getParameter("name"));
+        String fileName =  load(request, user.getNickname());
+        if (community.getName().equals("")) {
+            request.setAttribute("error_message_create_community", "HEAD_ERROR");
+            request.getRequestDispatcher(CommandPage.CREATE_COMMUNITY).forward(request, response);
+            return;
         }
+        if (fileName.equals("")) {
+            community.setPhoto(null);
+        }
+        else {
+            community.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+        }
+        community.setId(communityService.getFreeId());
+        communityService.add(community);
+        communityService.addFollower(community, user);
+        request.getSession().setAttribute("user", user);
+        response.sendRedirect("/keddit.by/controller?command=user_communities&id=" + user.getId());
     }
 
     private String load(HttpServletRequest request, String keyWord) throws ServletException, IOException {

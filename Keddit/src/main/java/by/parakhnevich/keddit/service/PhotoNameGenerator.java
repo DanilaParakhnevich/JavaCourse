@@ -2,8 +2,17 @@ package by.parakhnevich.keddit.service;
 
 import java.util.UUID;
 
+/**
+ * The type Photo name generator.
+ */
 public class PhotoNameGenerator {
-    //part is name of user or a group , format is a format for ex .jpg or .jpeg
+    /**
+     * Generate string.
+     *
+     * @param part   the part
+     * @param format the format
+     * @return the string
+     */
     public String generate(String part, String format) {
         return UUID.randomUUID() + part + format;
     }

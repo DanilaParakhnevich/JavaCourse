@@ -1,5 +1,11 @@
 package by.parakhnevich.keddit.controller.command;
 
+/**
+ * The class CommandPage that contains names of all
+ * the pages for Commands.
+ * @see by.parakhnevich.keddit.controller.command.Command
+ * @author Danila Parakhnevich
+ */
 public class CommandPage {
     private CommandPage() {}
 

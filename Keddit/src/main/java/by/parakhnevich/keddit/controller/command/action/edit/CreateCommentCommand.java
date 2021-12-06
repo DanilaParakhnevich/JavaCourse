@@ -11,8 +11,6 @@ import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.CommentService;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,42 +21,45 @@ import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The class CreateCommentCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class CreateCommentCommand implements Command {
-    Logger logger = LogManager.getLogger(CreateCommentCommand.class);
-    PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
         CommentService commentService = ServiceFactory.getInstance().getCommentService();
         UserService userService = ServiceFactory.getInstance().getUserService();
         DateCreator dateCreator = new DateCreator();
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
-        try {
-            User user = (User) request.getSession().getAttribute("user");
-            user = userService.selectById(user.getId());
-            Comment comment = new Comment();
-            comment.setUser(user);
-            comment.setDate(Timestamp.valueOf(dateCreator.create().replaceAll("/", "-")));
-            comment.setContent(request.getParameter("body"));
-            String fileName =  load(request, user.getNickname());
-            if (comment.getContent().equals("")) {
-                response.sendRedirect((String) request.getSession().getAttribute("prev_link"));
-                return;
-            }
-            if (fileName.equals("")) {
-                comment.setPhoto(null);
-            }
-            else {
-                comment.setPhoto(new File(".src/main/webapp/photos/" + fileName));
-            }
-            comment.setId(commentService.getFreeId());
-            Publication publication =
-                    publicationService.selectById(((Publication) request.getSession().getAttribute("publication")).getId());
-            commentService.add(comment, publication);
-            request.getSession().setAttribute("user", user);
+        User user = (User) request.getSession().getAttribute("user");
+        user = userService.selectById(user.getId());
+        Comment comment = new Comment();
+        comment.setUser(user);
+        comment.setDate(Timestamp.valueOf(dateCreator.create().replaceAll("/", "-")));
+        comment.setContent(request.getParameter("body"));
+        String fileName =  load(request, user.getNickname());
+        if (comment.getContent().equals("")) {
             response.sendRedirect((String) request.getSession().getAttribute("prev_link"));
-        } catch (ServiceException e) {
-            logger.error(e);
+            return;
         }
+        if (fileName.equals("")) {
+            comment.setPhoto(null);
+        }
+        else {
+            comment.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+        }
+        comment.setId(commentService.getFreeId());
+        Publication publication =
+                publicationService.selectById(((Publication) request.getSession().getAttribute("publication")).getId());
+        commentService.add(comment, publication);
+        request.getSession().setAttribute("user", user);
+        response.sendRedirect((String) request.getSession().getAttribute("prev_link"));
     }
 
     private String load(HttpServletRequest request, String keyWord) throws ServletException, IOException {

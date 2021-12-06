@@ -17,10 +17,13 @@ import by.parakhnevich.keddit.service.interfaces.UserService;
 
 import java.util.List;
 
+/**
+ * @see UserService
+ */
 public class UserServiceImpl implements UserService {
     private Transaction transaction = null;
     private TransactionFactoryImpl transactionFactory = null;
-    PasswordService service = new PasswordService();
+    private final PasswordService service = new PasswordService();
 
 
     @Override
@@ -163,27 +166,6 @@ public class UserServiceImpl implements UserService {
             }
             transactionFactory.close();
             return false;
-        } catch (PersistentException | TransactionException | DaoException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    @Override
-    public User selectByMail(String mail) throws ServiceException {
-        try {
-            transactionFactory = new TransactionFactoryImpl();
-            transaction = transactionFactory.createTransaction();
-            UserDao userDao = transaction.createDao(UserDao.class);
-            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
-            User user = userDao.findUserByMail(mail);
-            if (user != null) {
-                user.setOwnCommunities(communityDao.getCommunitiesByUserId(user.getId()));
-                user.setFollowingCommunities(communityDao.getFollowingCommunitiesByUserId(user.getId()));
-                user.setPublications(publicationDao.findPublicationsByUserId(user.getId()));
-            }
-            transactionFactory.close();
-            return user;
         } catch (PersistentException | TransactionException | DaoException e) {
             throw new ServiceException(e);
         }

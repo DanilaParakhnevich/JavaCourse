@@ -4,23 +4,35 @@ import by.parakhnevich.keddit.dao.interfaces.BaseDao;
 import by.parakhnevich.keddit.dao.interfaces.Transaction;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * The type Transaction.
+ * @see by.parakhnevich.keddit.dao.interfaces.Transaction
+ */
 public class TransactionImpl implements Transaction {
-    private static final Logger logger = LogManager.getLogger(TransactionImpl.class);
     private static final String EXCEPTION_MESSAGE = "Unknown data service";
     private static final String PATH_TO_DAO = "by.parakhnevich.keddit.dao.interfaces.";
-    Connection connection;
+    private final Connection connection;
 
+    /**
+     * Instantiates a new Transaction.
+     *
+     * @param connection the connection
+     * @throws SQLException the sql exception
+     */
     public TransactionImpl(Connection connection) throws SQLException {
         this.connection = connection;
         connection.setAutoCommit(false);
     }
 
+    /**
+     * Creates a DAO-object instead of key
+     *
+     * @throws TransactionException the transaction exception
+     */
     @Override
     public <T extends BaseDao> T createDao(Class<T> key) throws TransactionException {
         return switch (key.getName()) {
@@ -34,22 +46,30 @@ public class TransactionImpl implements Transaction {
         };
     }
 
+    /**
+     * Makes commit
+     *
+     * @throws PersistentException the persistent exception
+     */
     @Override
     public void commit() throws PersistentException {
         try {
             connection.commit();
         } catch (SQLException e) {
-            logger.error(e);
             throw new PersistentException(e);
         }
     }
 
+    /**
+     * Makes rollback
+     *
+     * @throws PersistentException the persistent exception
+     */
     @Override
     public void rollback() throws PersistentException {
         try {
             connection.rollback();
         } catch (SQLException e) {
-            logger.error(e);
             throw new PersistentException(e);
         }
     }

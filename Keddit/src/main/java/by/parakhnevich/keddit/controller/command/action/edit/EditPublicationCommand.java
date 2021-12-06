@@ -10,8 +10,6 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,48 +20,50 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The class EditPublicationCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class EditPublicationCommand implements Command {
-    Logger logger = LogManager.getLogger(EditPublicationCommand.class);
-        PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, PersistentException {
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
         UserService userService = ServiceFactory.getInstance().getUserService();
         Publication publication = publicationService.selectById(Long.parseLong(request.getParameter("id")));
         User user = userService.selectById(((User)request.getSession().getAttribute("user")).getId());
-        try {
-            if (user.getId() != publication.getUser().getId() && !user.getRole().toString().equals("ADMIN")) {
-                request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
-                return;
-            }
-            publication.setTextContent(request.getParameter("body"));
-            publication.setHeading(request.getParameter("head"));
-            String tags = request.getParameter("tags");
-            String fileName =  load(publication, request, user.getNickname());
-            if (publication.getHeading().equals("") && publication.getTextContent().equals("") && tags.equals("") && fileName.equals("")) {
-                request.setAttribute("error_message_create_publication", "COMMUNITY_EDIT_ERROR");
-                request.setAttribute("publication", publication);
-                request.getRequestDispatcher(CommandPage.EDIT_PUBLICATION).forward(request, response);
-                return;
-            }
-            if (fileName.equals("")) {
-                publication.setPhoto(null);
-            }
-            else {
-                publication.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\webapp\\photos\\" + fileName));
-            }
-            publication.setTags(new ArrayList<>());
-            for (String tag : tags.trim().split(",")) {
-                publication.addTag(tag);
-            }
-
-            publicationService.update(publication);
-            request.getSession().setAttribute("user", user);
-            response.sendRedirect((String) request.getSession().getAttribute("prev_link"));
-        } catch (PersistentException e) {
-            logger.error(e);
+        if (user.getId() != publication.getUser().getId() && !user.getRole().toString().equals("ADMIN")) {
             request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
+            return;
         }
+        publication.setTextContent(request.getParameter("body"));
+        publication.setHeading(request.getParameter("head"));
+        String tags = request.getParameter("tags");
+        String fileName =  load(publication, request, user.getNickname());
+        if (publication.getHeading().equals("") && publication.getTextContent().equals("") && tags.equals("") && fileName.equals("")) {
+            request.setAttribute("error_message_create_publication", "COMMUNITY_EDIT_ERROR");
+            request.setAttribute("publication", publication);
+            request.getRequestDispatcher(CommandPage.EDIT_PUBLICATION).forward(request, response);
+            return;
+        }
+        if (fileName.equals("")) {
+            publication.setPhoto(null);
+        }
+        else {
+            publication.setPhoto(new File("D:\\Projects\\JavaCourse\\Keddit\\src\\main\\webapp\\photos\\" + fileName));
+        }
+        publication.setTags(new ArrayList<>());
+        for (String tag : tags.trim().split(",")) {
+            publication.addTag(tag);
+        }
+
+        publicationService.update(publication);
+        request.getSession().setAttribute("user", user);
+        response.sendRedirect((String) request.getSession().getAttribute("prev_link"));
     }
 
     private String load(Publication publication, HttpServletRequest request, String keyWord) throws ServletException, IOException {

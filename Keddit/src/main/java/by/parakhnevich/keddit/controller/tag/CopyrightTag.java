@@ -8,6 +8,10 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
+/**
+ * The tag for copyrighting in jsp pages.
+ * @author Danila Parakhnevich
+ */
 public class CopyrightTag extends TagSupport {
 
     private final Logger logger = LogManager.getLogger(CopyrightTag.class);

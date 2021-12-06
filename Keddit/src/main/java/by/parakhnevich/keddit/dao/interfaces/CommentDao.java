@@ -5,6 +5,9 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
+/**
+ * @see BaseDao
+ */
 public interface CommentDao extends BaseDao {
     List<Comment> findAll() throws DaoException;
 
@@ -22,7 +25,5 @@ public interface CommentDao extends BaseDao {
 
     List<Comment> findCommentsByUserId(long id) throws DaoException;
 
-    boolean createCommentByPublicationId(Comment comment, long id) throws DaoException;
-
-    boolean deleteByUserId(long id) throws DaoException;
+    void createCommentByPublicationId(Comment comment, long id) throws DaoException;
 }

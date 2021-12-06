@@ -6,13 +6,16 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
+/**
+ * @see RatingDao
+ */
 public interface RatingPublicationDao extends RatingDao{
-    public List<Rating> getRatingsByPublicationId(long id) throws DaoException;
+    List<Rating> getRatingsByPublicationId(long id) throws DaoException;
 
-    public List<Rating> getRatingsByPublication(Publication publication) throws DaoException;
+    List<Rating> getRatingsByPublication(Publication publication) throws DaoException;
 
-    public boolean addRatingByPublicationId(long id, Rating rating) throws DaoException;
+    void addRatingByPublicationId(long id, Rating rating) throws DaoException;
 
-    public boolean deleteRatingByPublicationId(long id, Rating rating) throws DaoException;
+    void deleteRatingByPublicationId(long id, Rating rating) throws DaoException;
 
 }

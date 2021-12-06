@@ -1,5 +1,11 @@
 package by.parakhnevich.keddit.controller.command;
 
+/**
+ * The enum CommandName that contains names of all
+ * the commands for Controller.
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @author Danila Parakhnevich
+ */
 public enum CommandName {
     NO_SUCH_COMMAND,
 

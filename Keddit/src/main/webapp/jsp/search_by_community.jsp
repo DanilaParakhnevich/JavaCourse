@@ -107,7 +107,7 @@
                 <li class="community-user-item">
                     <jsp:useBean id="communities" scope="request" type="java.util.List"/>
                     <c:if test="${communities.size() == 0}">
-                        <p class="header-right-text"><c:out value="Сообществ не найдено"/></p>
+                        <p class="header-right-text"><fmt:message key="NOT_FOUND"/></p>
                     </c:if>
                     <c:forEach var="community" items="${communities}">
                         <c:if test="${community.photo == null}">

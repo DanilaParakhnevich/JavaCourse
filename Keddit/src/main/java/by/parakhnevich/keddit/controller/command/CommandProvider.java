@@ -9,9 +9,17 @@ import by.parakhnevich.keddit.controller.command.action.verify.LogoutCommand;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The class CommandProvider that provide commands to
+ * controller depending on command names.
+ * @see CommandName
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @see Command
+ * @author Danila Parakhnevich
+ */
 public class CommandProvider {
-    private static CommandProvider instance = new CommandProvider();
-    Map<CommandName, Command> commands;
+    private static final CommandProvider instance = new CommandProvider();
+    private Map<CommandName, Command> commands;
 
 
     private CommandProvider(){
@@ -66,10 +74,21 @@ public class CommandProvider {
         commands.put(CommandName.SEARCH_BY_TAG, new SearchByTagCommandPage());
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public static CommandProvider getInstance() {
         return instance;
     }
 
+    /**
+     * Gets command.
+     *
+     * @param commandName the command name
+     * @return the command
+     */
     public Command getCommand(String commandName) {
         CommandName name = CommandName.valueOf(commandName.toUpperCase());
         if (name != null) {

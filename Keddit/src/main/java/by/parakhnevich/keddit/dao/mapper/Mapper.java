@@ -12,8 +12,19 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 
+/**
+ * The class Mapper that map Entity objects instead of ResultSet.
+ */
 public final class Mapper {
     private static final String PATH_TO_PHOTOS = "D:\\Projects\\JavaCourse\\Keddit\\src\\main\\webapp\\photos\\";
+
+    /**
+     * Map community.
+     *
+     * @param resultSet the result set
+     * @return the community
+     * @throws DaoException the dao exception
+     */
     public Community mapCommunity(ResultSet resultSet) throws DaoException{
         Community community = new Community();
         try {
@@ -44,6 +55,13 @@ public final class Mapper {
         }
     }
 
+    /**
+     * Map user.
+     *
+     * @param resultSet the result set
+     * @return the user
+     * @throws DaoException the dao exception
+     */
     public User mapUser(ResultSet resultSet) throws DaoException {
         User user = new User();
         try {
@@ -55,15 +73,9 @@ public final class Mapper {
             int isBanned = resultSet.getInt("is_banned");
             user.setBanned(isBanned == 1);
             switch (resultSet.getInt("role")) {
-                case 1:
-                    user.setRole(Role.valueOf("USER"));
-                    break;
-                case 2:
-                    user.setRole(Role.valueOf("MODERATOR"));
-                    break;
-                default:
-                    user.setRole(Role.valueOf("ADMIN"));
-                    break;
+                case 1 -> user.setRole(Role.valueOf("USER"));
+                case 2 -> user.setRole(Role.valueOf("MODERATOR"));
+                default -> user.setRole(Role.valueOf("ADMIN"));
             }
             if (resultSet.getString("photo") != null) {
                 user.setPhoto(new File(PATH_TO_PHOTOS + resultSet.getString("photo")));
@@ -75,6 +87,13 @@ public final class Mapper {
         return user;
     }
 
+    /**
+     * Map publication.
+     *
+     * @param resultSet the result set
+     * @return the publication
+     * @throws DaoException the dao exception
+     */
     public Publication mapPublication(ResultSet resultSet) throws DaoException {
         Publication publication = new Publication();
         try{
@@ -110,6 +129,13 @@ public final class Mapper {
         return publication;
     }
 
+    /**
+     * Map comment.
+     *
+     * @param resultSet the result set
+     * @return the comment
+     * @throws DaoException the dao exception
+     */
     public Comment mapComment(ResultSet resultSet) throws DaoException{
         try {
             Comment comment = new Comment();
@@ -132,6 +158,13 @@ public final class Mapper {
         }
     }
 
+    /**
+     * Map rating.
+     *
+     * @param resultSet the result set
+     * @return the rating
+     * @throws DaoException the dao exception
+     */
     public Rating mapRating(ResultSet resultSet) throws DaoException{
         try {
             Rating rating;

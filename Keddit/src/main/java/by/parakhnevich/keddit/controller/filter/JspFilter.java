@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 
+/**
+ * This filter denies access for users to .jsp files directly
+ * @author Danila Parakhnevich
+ */
 public class JspFilter implements Filter {
     public void  doFilter(ServletRequest request, ServletResponse response,
                           FilterChain chain) throws ServletException, IOException {

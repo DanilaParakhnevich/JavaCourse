@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This filter is block access for blocked or unauthorized users.
+ * @author Danila Parakhnevich
+ */
 public class BlockFilter implements Filter {
     List<CommandName> commandNames = Arrays.asList(CommandName.LOGIN, CommandName.LOGIN_PAGE,
             CommandName.REGISTRATION_PAGE, CommandName.SIGN_UP);

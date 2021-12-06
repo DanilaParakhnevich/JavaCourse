@@ -10,18 +10,23 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.CommentService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The class DeleteCommentCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class DeleteCommentCommand implements Command {
-   Logger logger = LogManager.getLogger(DeleteCommentCommand.class);
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, PersistentException {
         CommentService commentService = ServiceFactory.getInstance().getCommentService();
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.selectById(((User)(request.getSession().getAttribute("user"))).getId());
@@ -30,13 +35,9 @@ public class DeleteCommentCommand implements Command {
             request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
             return;
         }
-        try {
-            commentService.delete(comment);
-            if (comment.getPhoto() != null) {
-                comment.getPhoto().delete();
-            }
-        } catch (PersistentException e) {
-            logger.error(e);
+        commentService.delete(comment);
+        if (comment.getPhoto() != null) {
+            comment.getPhoto().delete();
         }
         request.getSession().setAttribute("user", user);
         response.sendRedirect((String) request.getSession().getAttribute("prev_link"));

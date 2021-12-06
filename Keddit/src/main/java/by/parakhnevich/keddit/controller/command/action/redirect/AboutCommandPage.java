@@ -12,17 +12,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The class AboutCommandPage that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class AboutCommandPage implements Command {
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        try {
-            UserService userService = new UserServiceImpl();
-            User user = (User) request.getSession().getAttribute("user");
-            user = userService.selectById(user.getId());
-            request.getSession().setAttribute("user", user);
-            request.getRequestDispatcher(CommandPage.ABOUT_PAGE).forward(request, response);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+        UserService userService = new UserServiceImpl();
+        User user = (User) request.getSession().getAttribute("user");
+        user = userService.selectById(user.getId());
+        request.getSession().setAttribute("user", user);
+        request.getRequestDispatcher(CommandPage.ABOUT_PAGE).forward(request, response);
     }
 }

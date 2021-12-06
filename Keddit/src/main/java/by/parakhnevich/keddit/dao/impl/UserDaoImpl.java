@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * @see UserDao
+ */
 public class UserDaoImpl implements UserDao {
     private static final String SQL_SELECT_ALL_USERS =
             "SELECT id, mail, password, nickname, date, photo, role , is_banned FROM users";

@@ -10,16 +10,19 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
+import by.parakhnevich.keddit.service.interfaces.CommentService;
 import by.parakhnevich.keddit.service.interfaces.RatingFromPublicationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * @see RatingFromPublicationService
+ */
 public class RatingFromPublicationServiceImpl implements RatingFromPublicationService {
-    Logger logger = LogManager.getLogger(RatingFromPublicationServiceImpl.class);
-    Transaction transaction = null;
-    TransactionFactoryImpl transactionFactory = null;
+    private Transaction transaction = null;
+    private TransactionFactoryImpl transactionFactory = null;
 
     @Override
     public List<Rating> selectByUser(User user) throws ServiceException {
@@ -97,24 +100,5 @@ public class RatingFromPublicationServiceImpl implements RatingFromPublicationSe
         } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
-    }
-    @Override
-    public Rating selectById(long id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating update(Rating rating) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating add(Rating rating) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating delete(Rating rating) {
-        throw new UnsupportedOperationException();
     }
 }

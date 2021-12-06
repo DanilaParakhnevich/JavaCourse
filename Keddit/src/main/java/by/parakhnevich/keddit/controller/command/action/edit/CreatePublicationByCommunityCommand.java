@@ -12,8 +12,6 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +22,20 @@ import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The class CreatePublicationByCommunityCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class CreatePublicationByCommunityCommand implements Command {
-    Logger logger = LogManager.getLogger(CreatePublicationByCommunityCommand.class);
-    PhotoNameGenerator generator = new PhotoNameGenerator();
-    DateCreator creator = new DateCreator();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final DateCreator creator = new DateCreator();
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, TransactionException {
         User user = (User) request.getSession().getAttribute("user");
         UserService userService = ServiceFactory.getInstance().getUserService();
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
@@ -60,26 +65,21 @@ public class CreatePublicationByCommunityCommand implements Command {
             request.getRequestDispatcher(CommandPage.CREATE_PUBLICATION_BY_COMMUNITY).forward(request, response);
             return;
         }
-        try {
-            if (!fileName.contains(".")) {
-                publication.setPhoto(null);
-            }
-            else {
-                publication.setPhoto(new File(".src/main/webapp/photos/" + fileName));
-            }
-            publication.setId(publicationService.getFreeId());
-            publication.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
-            publication.setUser(user);
-            publication.setCommunityOwner(community);
-            publication.setOnModeration(true);
-            publicationService.add(publication);
-            request.setAttribute("publications", publicationService.selectAll());
-            request.getSession().setAttribute("user", user);
-            request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
-        } catch (ServiceException | TransactionException e) {
-            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
-            logger.error(e);
+        if (!fileName.contains(".")) {
+            publication.setPhoto(null);
         }
+        else {
+            publication.setPhoto(new File(".src/main/webapp/photos/" + fileName));
+        }
+        publication.setId(publicationService.getFreeId());
+        publication.setDate(Timestamp.valueOf(creator.create().replaceAll("/", "-")));
+        publication.setUser(user);
+        publication.setCommunityOwner(community);
+        publication.setOnModeration(true);
+        publicationService.add(publication);
+        request.setAttribute("publications", publicationService.selectAll());
+        request.getSession().setAttribute("user", user);
+        request.getRequestDispatcher(CommandPage.PUBLICATIONS).forward(request, response);
     }
 
     private String load(String name, HttpServletRequest request) throws ServletException, IOException {

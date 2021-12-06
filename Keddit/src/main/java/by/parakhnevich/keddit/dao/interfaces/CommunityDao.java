@@ -5,6 +5,9 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
+/**
+ * @see BaseDao
+ */
 public interface CommunityDao extends BaseDao {
     List<Community> findAll() throws DaoException;
 
@@ -25,8 +28,6 @@ public interface CommunityDao extends BaseDao {
     void addFollower(long communityId, long followerId) throws DaoException;
 
     void deleteFollower(long communityId, long followerId) throws DaoException;
-
-    boolean deleteByUserId(long id) throws DaoException;
 
     List<Community> getCommunitiesByName(String name) throws DaoException;
 }

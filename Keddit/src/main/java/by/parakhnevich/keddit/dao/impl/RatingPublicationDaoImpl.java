@@ -3,6 +3,7 @@ package by.parakhnevich.keddit.dao.impl;
 import by.parakhnevich.keddit.bean.publication.Like;
 import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.bean.publication.Rating;
+import by.parakhnevich.keddit.dao.interfaces.CommentDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.RatingPublicationDao;
 import by.parakhnevich.keddit.dao.exception.DaoException;
@@ -14,6 +15,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see RatingPublicationDao
+ */
 public class RatingPublicationDaoImpl implements RatingPublicationDao {
     private static final String SQL_SELECT_ALL_RATINGS =
             "SELECT id_user, is_like FROM like_publications";
@@ -21,8 +25,6 @@ public class RatingPublicationDaoImpl implements RatingPublicationDao {
             "SELECT id_user, is_like FROM like_publications WHERE id_publication=?";
     private static final String SQL_SELECT_RATING_BY_USER_ID =
             "SELECT id_user, is_like FROM like_publications WHERE id_user=?";
-    private static final String SQL_DELETE_RATING_BY_USER_ID =
-            "DELETE FROM like_publications WHERE id_user=?";
     private static final String SQL_CREATE_RATING =
             "INSERT INTO like_publications  (id_user, id_publication, is_like)" +
                     " VALUES (?, ?, ?)";
@@ -85,10 +87,10 @@ public class RatingPublicationDaoImpl implements RatingPublicationDao {
     }
 
     @Override
-    public boolean addRatingByPublicationId(long id, Rating rating) throws DaoException {
+    public void addRatingByPublicationId(long id, Rating rating) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_RATING)) {
             fillingRating(statement, id, rating);
-            return statement.executeUpdate() == 1;
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -96,22 +98,11 @@ public class RatingPublicationDaoImpl implements RatingPublicationDao {
     }
 
     @Override
-    public boolean deleteRatingByPublicationId(long id, Rating rating) throws DaoException {
+    public void deleteRatingByPublicationId(long id, Rating rating) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ID)) {
             statement.setLong(1, rating.getUser().getId());
             statement.setLong(2, id);
-            return statement.executeUpdate() == 1;
-        }
-        catch (SQLException e) {
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
-    public boolean deleteRatingsByUserId(long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_RATING_BY_USER_ID)) {
-            statement.setLong(1, id);
-            return statement.executeUpdate() == 1;
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);

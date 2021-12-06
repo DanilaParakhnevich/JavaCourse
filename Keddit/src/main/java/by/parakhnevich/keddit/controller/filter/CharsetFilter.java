@@ -11,6 +11,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This filter translates all the information into UTF-8 standard.
+ * @author Danila Parakhnevich
+ */
 public class CharsetFilter implements Filter {
     Logger logger = LogManager.getLogger(CharsetFilter.class);
     @Override

@@ -10,8 +10,6 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.CommunityService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,11 +19,18 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
+/**
+ * The class EditCommunityCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class EditCommunityCommand implements Command {
-    Logger logger = LogManager.getLogger(EditCommunityCommand.class);
-    PhotoNameGenerator generator = new PhotoNameGenerator();
+    private final PhotoNameGenerator generator = new PhotoNameGenerator();
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, PersistentException {
         CommunityService communityService = ServiceFactory.getInstance().getCommunityService();
         UserService userService = ServiceFactory.getInstance().getUserService();
         Community community = communityService.selectById(Long.parseLong(request.getParameter("id")));
@@ -47,12 +52,7 @@ public class EditCommunityCommand implements Command {
             }
             community.setPhoto(new File(".src/main/webapp/photos/" + fileName));
         }
-        try {
-            communityService.update(community);
-        } catch (PersistentException e) {
-            logger.error(e);
-            request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
-        }
+        communityService.update(community);
         request.getSession().setAttribute("user", user);
         response.sendRedirect("/keddit.by/controller?command=publications");
     }

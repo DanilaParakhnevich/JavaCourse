@@ -2,6 +2,7 @@ package by.parakhnevich.keddit.dao.impl;
 
 import by.parakhnevich.keddit.bean.publication.Publication;
 import by.parakhnevich.keddit.dao.exception.DaoException;
+import by.parakhnevich.keddit.dao.interfaces.CommentDao;
 import by.parakhnevich.keddit.dao.mapper.Mapper;
 import by.parakhnevich.keddit.dao.interfaces.PublicationDao;
 
@@ -12,6 +13,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see PublicationDao
+ */
 public class PublicationDaoImpl implements PublicationDao {
     private static final String SQL_SELECT_ALL_PUBLICATIONS =
             "SELECT id, id_user, head, body, photos, date, id_community, is_on_moderation, GROUP_CONCAT(tags.tag) as tag " +
@@ -105,11 +109,11 @@ public class PublicationDaoImpl implements PublicationDao {
     }
 
     @Override
-    public boolean createTag(long id, String tag) throws DaoException {
+    public void createTag(long id, String tag) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_TAG)) {
             statement.setLong(1, id);
             statement.setString(2, tag);
-            return statement.executeUpdate() == 1;
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);
@@ -117,10 +121,10 @@ public class PublicationDaoImpl implements PublicationDao {
     }
 
     @Override
-    public boolean deleteTags(long id) throws DaoException {
+    public void deleteTags(long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_TAGS_BY_ID)) {
             statement.setLong(1, id);
-            return statement.executeUpdate() == 1;
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);

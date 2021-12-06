@@ -17,6 +17,9 @@ import by.parakhnevich.keddit.service.interfaces.RatingFromPublicationService;
 
 import java.util.List;
 
+/**
+ * @see CommunityService
+ */
 public class CommunityServiceImpl implements CommunityService {
     private Transaction transaction = null;
     private TransactionFactoryImpl transactionFactory = null;
@@ -41,6 +44,58 @@ public class CommunityServiceImpl implements CommunityService {
                 community.setUser(user);
                 community.setPublications(publicationDao
                         .findPublicationsByCommunityId(community.getId()));
+                community.setFollowers(userDao
+                        .findUsersByFollowedCommunity(community));
+            }
+            transactionFactory.close();
+            return communities;
+        } catch (TransactionException | DaoException | PersistentException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<Community> selectByName(String name) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            List<Community> communities = communityDao.getCommunitiesByName(name);
+            for (Community community : communities) {
+                community = communityDao.findEntityById(community.getId());
+            }
+            transactionFactory.close();
+            return communities;
+        } catch (TransactionException | DaoException | PersistentException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<Community> selectByUser(User user) throws ServiceException {
+        try {
+            transactionFactory = new TransactionFactoryImpl();
+            this.transaction = transactionFactory.createTransaction();
+            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
+            UserDao userDao = transaction.createDao(UserDao.class);
+            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
+            List<Community> communities = communityDao.findAll();
+            communities.removeIf(a -> a.getUser().getId() != user.getId());
+            RatingFromPublicationService ratingFromPublicationService = new RatingFromPublicationServiceImpl();
+            for (Community community : communities) {
+                User user1 = userDao.findEntityById(community.getUser().getId());
+                user1.setOwnCommunities(communityDao
+                        .getCommunitiesByUserId(user1.getId()));
+                user1.setFollowingCommunities(communityDao
+                        .getFollowingCommunitiesByUserId(user1.getId()));
+                user1.setPublications(publicationDao
+                        .findPublicationsByUserId(user1.getId()));
+                community.setUser(user1);
+                community.setPublications(publicationDao
+                        .findPublicationsByCommunityId(community.getId()));
+                for (Publication publication : community.getPublications()) {
+                    publication.setRatings(ratingFromPublicationService.selectByPublication(publication));
+                }
                 community.setFollowers(userDao
                         .findUsersByFollowedCommunity(community));
             }
@@ -183,58 +238,6 @@ public class CommunityServiceImpl implements CommunityService {
             count -= publicationService.getCountOfDislikes(publication);
         }
         return count;
-    }
-
-    @Override
-    public List<Community> selectByUser(User user) throws ServiceException {
-        try {
-            transactionFactory = new TransactionFactoryImpl();
-            this.transaction = transactionFactory.createTransaction();
-            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
-            UserDao userDao = transaction.createDao(UserDao.class);
-            PublicationDao publicationDao = transaction.createDao(PublicationDao.class);
-            List<Community> communities = communityDao.findAll();
-            communities.removeIf(a -> a.getUser().getId() != user.getId());
-            RatingFromPublicationService ratingFromPublicationService = new RatingFromPublicationServiceImpl();
-            for (Community community : communities) {
-                User user1 = userDao.findEntityById(community.getUser().getId());
-                user1.setOwnCommunities(communityDao
-                        .getCommunitiesByUserId(user1.getId()));
-                user1.setFollowingCommunities(communityDao
-                        .getFollowingCommunitiesByUserId(user1.getId()));
-                user1.setPublications(publicationDao
-                        .findPublicationsByUserId(user1.getId()));
-                community.setUser(user1);
-                community.setPublications(publicationDao
-                        .findPublicationsByCommunityId(community.getId()));
-                for (Publication publication : community.getPublications()) {
-                    publication.setRatings(ratingFromPublicationService.selectByPublication(publication));
-                }
-                community.setFollowers(userDao
-                        .findUsersByFollowedCommunity(community));
-            }
-            transactionFactory.close();
-            return communities;
-        } catch (TransactionException | DaoException | PersistentException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    @Override
-    public List<Community> selectByName(String name) throws ServiceException {
-        try {
-            transactionFactory = new TransactionFactoryImpl();
-            this.transaction = transactionFactory.createTransaction();
-            CommunityDao communityDao = transaction.createDao(CommunityDao.class);
-            List<Community> communities = communityDao.getCommunitiesByName(name);
-            for (Community community : communities) {
-                community = communityDao.findEntityById(community.getId());
-            }
-            transactionFactory.close();
-            return communities;
-        } catch (TransactionException | DaoException | PersistentException e) {
-            throw new ServiceException(e);
-        }
     }
 
     @Override

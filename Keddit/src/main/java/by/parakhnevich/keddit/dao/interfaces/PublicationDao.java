@@ -5,6 +5,9 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
+/**
+ * @see BaseDao
+ */
 public interface PublicationDao extends BaseDao {
     List<Publication> findAll() throws DaoException;
 
@@ -24,9 +27,9 @@ public interface PublicationDao extends BaseDao {
 
     List<Publication> findPublicationsByCommunityId(long id) throws DaoException;
 
-    boolean createTag(long id, String tag) throws DaoException;
+    void createTag(long id, String tag) throws DaoException;
 
-    boolean deleteTags(long id) throws DaoException;
+    void deleteTags(long id) throws DaoException;
 
     List<Long> findAllIdOfPublications() throws DaoException;
 

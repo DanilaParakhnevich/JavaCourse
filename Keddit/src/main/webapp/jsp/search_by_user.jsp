@@ -102,25 +102,27 @@
                     </div>
                 </form>
             </div>
-            <jsp:useBean id="user_to_find" scope="request" class="by.parakhnevich.keddit.bean.user.User"/>
             <ul class="community-user-list list-reset">
-                <li clas  s="community-user-item">
-                    <c:if test="${user_to_find.id == 0}">
-                        <p class="header-right-text"><fmt:message key="FOL_NOT_FOUND"/></p>
+                <li class="community-user-item">
+                    <jsp:useBean id="users" scope="request" type="java.util.List"/>
+                    <c:if test="${users.size() == 0}">
+                        <p class="header-right-text"><fmt:message key="NOT_FOUND"/></p>
                     </c:if>
-                    <c:if test="${user_to_find.id != 0}">
-                        <c:if test="${user_to_find.photo == null}">
-                            <a href="?command=user_page&id=${user_to_find.id}" class="header-right-link link-reset header-right-link-user">
-                                <img src="${path}/photos/unnamed-avatar.png" class="image-file" id="image2" />
-                                <p class="header-right-text"><c:out value="${user_to_find.nickname}"/></p>
-                            </a>
-                        </c:if>
-                        <c:if test="${user_to_find.photo != null}">
-                            <a href="?command=user_page&id=${user_to_find.id}" class="header-right-link link-reset header-right-link-user">
-                                <img src="${path}/photos/${user_to_find.photo.name}" class="image-file" id="image3" />
-                                <p class="header-right-text"><c:out value="${user_to_find.nickname}"/></p>
-                            </a>
-                        </c:if>
+                    <c:if test="${users.size() != 0}">
+                        <c:forEach items="${users}" var="user_to_find">
+                            <c:if test="${user_to_find.photo == null}">
+                                <a href="?command=user_page&id=${user_to_find.id}" class="header-right-link link-reset header-right-link-user">
+                                    <img src="${path}/photos/unnamed-avatar.png" class="image-file" id="image2" />
+                                    <p class="header-right-text"><c:out value="${user_to_find.nickname}"/></p>
+                                </a>
+                            </c:if>
+                            <c:if test="${user_to_find.photo != null}">
+                                <a href="?command=user_page&id=${user_to_find.id}" class="header-right-link link-reset header-right-link-user">
+                                    <img src="${path}/photos/${user_to_find.photo.name}" class="image-file" id="image3" />
+                                    <p class="header-right-text"><c:out value="${user_to_find.nickname}"/></p>
+                                </a>
+                            </c:if>
+                        </c:forEach>
                     </c:if>
                 </li>
             </ul>

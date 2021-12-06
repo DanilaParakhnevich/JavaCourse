@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see CommentDao
+ */
 public class CommentDaoImpl implements CommentDao {
     private static final String SQL_SELECT_ALL_COMMENTS =
             "SELECT id, id_user, id_publications, photo, content, date FROM comments";
@@ -27,7 +30,6 @@ public class CommentDaoImpl implements CommentDao {
     private static final String SQL_UPDATE_COMMENT = "UPDATE comments SET id = ?, id_user = ?, photo = ?, " +
             "content = ?, date = ? WHERE id = ?";
     private static final String SQL_REMOVE_BY_ID = "DELETE FROM comments WHERE id = ?";
-    private static final String SQL_REMOVE_BY_USER_ID = "DELETE FROM comments WHERE id_user = ?";
     private final Mapper mapper = new Mapper();
     Connection connection;
 
@@ -46,7 +48,6 @@ public class CommentDaoImpl implements CommentDao {
             return comments;
         }
         catch (SQLException e) {
-            logger.error(e);
             throw new DaoException(e);
         }
     }
@@ -63,7 +64,6 @@ public class CommentDaoImpl implements CommentDao {
             return comment;
         }
         catch (SQLException e) {
-            logger.error(e);
             throw new DaoException(e);
         }
     }
@@ -91,21 +91,10 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public boolean createCommentByPublicationId(Comment comment, long id) throws DaoException {
+    public void createCommentByPublicationId(Comment comment, long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_COMMENT)) {
             fillCommentData(comment, id, statement);
-            return statement.executeUpdate() == 1;
-        }
-        catch (SQLException e) {
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
-    public boolean deleteByUserId(long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_BY_USER_ID)) {
-            statement.setLong(1, id);
-            return statement.executeUpdate() == 1;
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new DaoException(e);

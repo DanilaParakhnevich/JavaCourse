@@ -7,12 +7,46 @@ import by.parakhnevich.keddit.service.exception.ServiceException;
 
 import java.util.List;
 
+
+/**
+ * @see Service
+ */
 public interface RatingFromCommentService extends Service<Rating> {
-    public List<Rating> selectByUser(User user) throws ServiceException;
+    /**
+     * Select by user list.
+     *
+     * @param user the user
+     * @return the list
+     * @throws ServiceException the service exception
+     */
+    List<Rating> selectByUser(User user) throws ServiceException;
 
-    public List<Rating> selectByComment(Comment comment) throws ServiceException;
+    /**
+     * Select by comment list.
+     *
+     * @param comment the comment
+     * @return the list
+     * @throws ServiceException the service exception
+     */
+    List<Rating> selectByComment(Comment comment) throws ServiceException;
 
-    public Rating add(Comment comment, Rating rating) throws ServiceException;
+    /**
+     * Add rating.
+     *
+     * @param comment the comment
+     * @param rating  the rating
+     * @return the rating
+     * @throws ServiceException the service exception
+     */
+    Rating add(Comment comment, Rating rating) throws ServiceException;
 
-    public Rating delete(Comment comment, Rating rating) throws ServiceException;
+    /**
+     * Delete rating.
+     *
+     * @param comment the comment
+     * @param rating  the rating
+     * @return the rating
+     * @throws ServiceException the service exception
+     */
+    Rating delete(Comment comment, Rating rating) throws ServiceException;
 }

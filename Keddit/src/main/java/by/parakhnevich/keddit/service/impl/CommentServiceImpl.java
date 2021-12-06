@@ -12,16 +12,15 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.interfaces.CommentService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * @see CommentService
+ */
 public class CommentServiceImpl implements CommentService {
     private Transaction transaction = null;
     private TransactionFactoryImpl transactionFactory = null;
-    Logger logger = LogManager.getLogger(CommentServiceImpl.class);
-
 
     @Override
     public List<Comment> selectByUser(User user) throws ServiceException {
@@ -38,7 +37,6 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory.close();
             return comments;
         } catch (TransactionException | DaoException | PersistentException e) {
-            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -58,7 +56,6 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory.close();
             return comments;
         } catch (TransactionException | DaoException | PersistentException e) {
-            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -99,7 +96,6 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory.close();
             return comments;
         } catch (TransactionException | DaoException | PersistentException e) {
-            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -116,7 +112,6 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory.close();
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
-            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -133,14 +128,8 @@ public class CommentServiceImpl implements CommentService {
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
             transaction.rollback();
-            logger.error(e);
             throw new ServiceException(e);
         }
-    }
-
-    @Override
-    public Comment add(Comment comment) throws ServiceException {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -154,7 +143,6 @@ public class CommentServiceImpl implements CommentService {
             transactionFactory.close();
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
-            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -176,7 +164,6 @@ public class CommentServiceImpl implements CommentService {
             return comment;
         } catch (TransactionException | DaoException | PersistentException e) {
             transaction.rollback();
-            logger.error(e);
             throw new ServiceException(e);
         }
     }

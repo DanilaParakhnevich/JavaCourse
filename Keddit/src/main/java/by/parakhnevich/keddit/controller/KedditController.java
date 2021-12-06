@@ -5,6 +5,8 @@ import by.parakhnevich.keddit.controller.command.Command;
 import by.parakhnevich.keddit.controller.command.CommandName;
 import by.parakhnevich.keddit.controller.command.CommandPage;
 import by.parakhnevich.keddit.controller.command.CommandProvider;
+import by.parakhnevich.keddit.dao.exception.PersistentException;
+import by.parakhnevich.keddit.dao.exception.TransactionException;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +21,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The servlet-controller for Controller Pattern using commands.
+ * @see Command
+ * @author Danila Parakhnevich
+ */
 @WebServlet("/controller")
 @MultipartConfig(location = "D:\\Projects\\JavaCourse\\Keddit\\src\\main\\webapp\\photos\\")
 public class KedditController extends HttpServlet {
@@ -58,11 +65,19 @@ public class KedditController extends HttpServlet {
             request.getRequestDispatcher(CommandPage.BLOCKED_USER).forward(request, response);
         }
         else {
+            try {
             if (commandName != null) {
                 logger.debug(commandName);
+                Command command = CommandProvider.getInstance().getCommand(commandName);
+                command.execute(request, response);
             }
-            Command command = CommandProvider.getInstance().getCommand(commandName);
-            command.execute(request, response);
+            else {
+                throw new PersistentException("Unknown command name");
+            }
+            } catch (PersistentException | TransactionException e) {
+                logger.error(e);
+                request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
+            }
         }
     }
 }

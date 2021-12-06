@@ -6,6 +6,9 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 
 import java.util.List;
 
+/**
+ * @see BaseDao
+ */
 public interface UserDao extends BaseDao {
     List<User> findAll() throws DaoException;
 

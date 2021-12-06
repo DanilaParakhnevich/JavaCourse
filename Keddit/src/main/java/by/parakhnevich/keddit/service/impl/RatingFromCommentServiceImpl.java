@@ -10,16 +10,19 @@ import by.parakhnevich.keddit.dao.exception.DaoException;
 import by.parakhnevich.keddit.dao.exception.PersistentException;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.dao.exception.TransactionException;
+import by.parakhnevich.keddit.service.interfaces.CommentService;
 import by.parakhnevich.keddit.service.interfaces.RatingFromCommentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * @see RatingFromCommentService
+ */
 public class RatingFromCommentServiceImpl implements RatingFromCommentService {
-    Logger logger = LogManager.getLogger(RatingFromCommentServiceImpl.class);
-    Transaction transaction = null;
-    TransactionFactoryImpl transactionFactory = null;
+    private Transaction transaction = null;
+    private TransactionFactoryImpl transactionFactory = null;
 
     @Override
     public List<Rating> selectByUser(User user) throws ServiceException {
@@ -55,7 +58,6 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
             this.transaction = transactionFactory.createTransaction();
             RatingCommentDao ratingCommentDao = transaction.createDao(RatingCommentDao.class);
             ratingCommentDao.addRatingByCommentId(comment.getId(), rating);
-            System.out.println(22);
             transaction.commit();
             transactionFactory.close();
             return rating;
@@ -91,25 +93,5 @@ public class RatingFromCommentServiceImpl implements RatingFromCommentService {
         } catch (TransactionException | DaoException | PersistentException e) {
             throw new ServiceException(e);
         }
-    }
-
-    @Override
-    public Rating selectById(long id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating update(Rating rating) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating add(Rating rating) throws ServiceException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Rating delete(Rating rating) {
-        throw new UnsupportedOperationException();
     }
 }

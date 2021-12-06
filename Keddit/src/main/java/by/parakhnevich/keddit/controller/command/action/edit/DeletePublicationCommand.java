@@ -10,18 +10,23 @@ import by.parakhnevich.keddit.service.ServiceFactory;
 import by.parakhnevich.keddit.service.exception.ServiceException;
 import by.parakhnevich.keddit.service.interfaces.PublicationService;
 import by.parakhnevich.keddit.service.interfaces.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The class DeletePublicationCommand that is Command for
+ * Controller Pattern.
+ * @see Command
+ * @see by.parakhnevich.keddit.controller.command.CommandProvider
+ * @see by.parakhnevich.keddit.controller.KedditController
+ * @author Danila Parakhnevich
+ */
 public class DeletePublicationCommand implements Command {
-    Logger logger = LogManager.getLogger(DeletePublicationCommand.class);
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, ServiceException, PersistentException {
         PublicationService publicationService = ServiceFactory.getInstance().getPublicationService();
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.selectById(((User)(request.getSession().getAttribute("user"))).getId());
@@ -30,13 +35,9 @@ public class DeletePublicationCommand implements Command {
             request.getRequestDispatcher(CommandPage.ERROR_PAGE).forward(request, response);
             return;
         }
-        try {
-            publicationService.delete(publication);
-            if (publication.getPhoto() != null) {
-                publication.getPhoto().delete();
-            }
-        } catch (PersistentException e) {
-            logger.error(e);
+        publicationService.delete(publication);
+        if (publication.getPhoto() != null) {
+            publication.getPhoto().delete();
         }
         request.getSession().setAttribute("user", user);
         response.sendRedirect("/keddit.by/controller?command=publications");

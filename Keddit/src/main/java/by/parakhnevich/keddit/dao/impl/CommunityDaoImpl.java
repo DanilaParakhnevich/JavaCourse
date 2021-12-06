@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @see CommunityDao
+ */
 public class CommunityDaoImpl implements CommunityDao {
     private static final String SQL_SELECT_ALL_COMMUNITIES =
             "SELECT id, communities.id_user, name, photo, GROUP_CONCAT(followers.id_user) as user FROM communities " +
@@ -44,7 +47,6 @@ public class CommunityDaoImpl implements CommunityDao {
                     " VALUES (?, ?)";
     private static final String SQL_DELETE_FOLLOWER = "DELETE FROM followers WHERE id_user = ? AND id_community=?";
 
-    private static final String SQL_DELETE_BY_USER_ID = "DELETE FROM communities WHERE id_user = ?";
     private static final String PATH_TO_PHOTOS = ".src/main/webapp/photos/";
     Mapper mapper = new Mapper();
     Connection connection;
@@ -145,17 +147,6 @@ public class CommunityDaoImpl implements CommunityDao {
             preparedStatement.setLong(1, followerId);
             preparedStatement.setLong(2, communityId);
             preparedStatement.executeUpdate();
-        }
-        catch (SQLException e) {
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
-    public boolean deleteByUserId(long id) throws DaoException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BY_USER_ID)) {
-            preparedStatement.setLong(1, id);
-            return preparedStatement.executeUpdate() == 1;
         }
         catch (SQLException e) {
             throw new DaoException(e);

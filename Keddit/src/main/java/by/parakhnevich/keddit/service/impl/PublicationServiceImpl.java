@@ -14,6 +14,9 @@ import by.parakhnevich.keddit.service.interfaces.PublicationService;
 
 import java.util.List;
 
+/**
+ * @see PublicationService
+ */
 public class PublicationServiceImpl implements PublicationService {
     private Transaction transaction = null;
     private TransactionFactoryImpl transactionFactory = null;

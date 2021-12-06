@@ -8,63 +8,131 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The entity Community.
+ * @see Entity
+ * @author Danila Parakhnevich
+ */
 public class Community implements Entity {
     private long id;
-    String name;
-    User user;
-    List<User> followers;
-    List<Publication> publications;
-    File photo;
+    private String name;
+    private User user;
+    private List<User> followers;
+    private List<Publication> publications;
+    private File photo;
 
+    /**
+     * Instantiates a new Community.
+     */
     public Community() {
         followers = new ArrayList<>();
         publications = new ArrayList<>();
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets user.
+     *
+     * @return the user
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets user.
+     *
+     * @param user the user
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Gets photo.
+     *
+     * @return the photo
+     */
     public File getPhoto() {
         return photo;
     }
 
+    /**
+     * Sets photo.
+     *
+     * @param photo the photo
+     */
     public void setPhoto(File photo) {
         this.photo = photo;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(long id) {
         this.id = id;
     }
 
+    /**
+     * Sets publications.
+     *
+     * @param publications the publications
+     */
     public void setPublications(List<Publication> publications) {
         this.publications = publications;
     }
 
+    /**
+     * Sets followers.
+     *
+     * @param followers the followers
+     */
     public void setFollowers(List<User> followers) {
         this.followers = followers;
     }
 
+    /**
+     * Gets followers.
+     *
+     * @return the followers
+     */
     public List<User> getFollowers() {
         return followers;
     }
 
+    /**
+     * Gets publications.
+     *
+     * @return the publications
+     */
     public List<Publication> getPublications() {
         return publications;
     }

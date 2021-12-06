@@ -5,13 +5,31 @@ import by.parakhnevich.keddit.bean.user.User;
 
 import java.util.Objects;
 
+/**
+ * The abstract class Rating that inherited by 2 classes
+ * to differ likes and dislikes
+ * @see Like
+ * @see Dislike
+ * @see Entity
+ * @author Danila Parakhnevich
+ */
 public abstract class Rating implements Entity {
     protected User user;
 
+    /**
+     * Sets user.
+     *
+     * @param user the user
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Gets user.
+     *
+     * @return the user
+     */
     public User getUser() {
         return user;
     }

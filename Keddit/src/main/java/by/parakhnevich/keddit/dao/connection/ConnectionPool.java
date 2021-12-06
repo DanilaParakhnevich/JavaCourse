@@ -14,6 +14,13 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * This class is a data access pattern, whose main
+ * purpose is to reduce the overhead involved in performing
+ * database connections and read/write database operations.
+ * @author Danila Parakhnevich
+ * @see by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl
+ * */
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
     private Integer maxSize;
@@ -50,6 +57,12 @@ public class ConnectionPool {
         initPool();
     }
 
+    /**
+     * Gets connection pool.
+     *
+     * @return the connection pool
+     * @throws PersistentException the persistent exception
+     */
     public static ConnectionPool getConnectionPool() throws PersistentException {
         if (connectionPool == null) {
             connectionPool = new ConnectionPool();
@@ -58,6 +71,13 @@ public class ConnectionPool {
         return connectionPool;
     }
 
+    /**
+     * Gets connection.
+     * If all the connections are used throw exception (look below)
+     *
+     * @return the connection
+     * @throws PersistentException the persistent exception
+     */
     public Connection getConnection() throws PersistentException {
         Connection connection = null;
         while (connection == null) {
@@ -82,6 +102,11 @@ public class ConnectionPool {
         return connection;
     }
 
+    /**
+     * Close connection.
+     *
+     * @param connection the connection
+     */
     public void closeConnection(Connection connection) {
         usedConnections.remove(connection);
         freeConnections.add(connection);
@@ -110,6 +135,11 @@ public class ConnectionPool {
         }
     }
 
+    /**
+     * Init pool.
+     *
+     * @throws PersistentException the persistent exception
+     */
     public void initPool() throws PersistentException {
         destroy();
         for (int i = 0; i < maxSize; i++) {
@@ -117,6 +147,9 @@ public class ConnectionPool {
         }
     }
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         usedConnections.addAll(freeConnections);
         freeConnections.clear();

@@ -7,12 +7,45 @@ import by.parakhnevich.keddit.service.exception.ServiceException;
 
 import java.util.List;
 
+/**
+ * @see Service
+ */
 public interface RatingFromPublicationService extends Service<Rating> {
-    public List<Rating> selectByUser(User user) throws ServiceException;
+    /**
+     * Select by user list.
+     *
+     * @param user the user
+     * @return the list
+     * @throws ServiceException the service exception
+     */
+    List<Rating> selectByUser(User user) throws ServiceException;
 
-    public List<Rating> selectByPublication(Publication publication) throws ServiceException;
+    /**
+     * Select by publication list.
+     *
+     * @param publication the publication
+     * @return the list
+     * @throws ServiceException the service exception
+     */
+    List<Rating> selectByPublication(Publication publication) throws ServiceException;
 
-    public Rating add(Publication publication, Rating rating) throws ServiceException;
+    /**
+     * Add rating.
+     *
+     * @param publication the publication
+     * @param rating      the rating
+     * @return the rating
+     * @throws ServiceException the service exception
+     */
+    Rating add(Publication publication, Rating rating) throws ServiceException;
 
-    public Rating delete(Publication publication, Rating rating) throws ServiceException;
+    /**
+     * Delete rating.
+     *
+     * @param publication the publication
+     * @param rating      the rating
+     * @return the rating
+     * @throws ServiceException the service exception
+     */
+    Rating delete(Publication publication, Rating rating) throws ServiceException;
 }
