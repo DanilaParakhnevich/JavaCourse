@@ -48,19 +48,24 @@ public class SignUpCommand implements Command {
         user1.setMail(request.getParameter("mail"));
         String fileName =  load(name, request);
         if (user1.getNickname().equals("") || user1.getPassword().equals("") || user1.getMail().equals("")) {
-            request.setAttribute("error_message_sign_up", "All text fields are required");
+            request.setAttribute("error_message_sign_up", "ALL_FIELDS");
+            request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
+            return;
+        }
+        if (user1.getNickname().length() > 20) {
+            request.setAttribute("error_message_sign_up", "REG_PROBLEM_LENGTH");
             request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
             return;
         }
         List<User> users = userService.selectAll();
         for (User user : users) {
             if (user.getNickname().equals(user1.getNickname())) {
-                request.setAttribute("error_message_sign_up", "User with this nickname is already exist");
+                request.setAttribute("error_message_sign_up", "REG_PROBLEM_NICK");
                 request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
                 return;
             }
             else if (user.getMail().equals(user1.getMail())) {
-                request.setAttribute("error_message_sign_up", "User with this mail is already exist");
+                request.setAttribute("error_message_sign_up", "REG_PROBLEM_MAIL");
                 request.getRequestDispatcher(CommandPage.REGISTRATION_PAGE).forward(request, response);
                 return;
             }

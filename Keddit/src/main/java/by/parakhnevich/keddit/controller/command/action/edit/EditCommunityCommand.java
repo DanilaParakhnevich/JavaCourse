@@ -41,6 +41,11 @@ public class EditCommunityCommand implements Command {
         }
         community.setName(request.getParameter("name"));
         String fileName =  load(request, user.getNickname());
+        if (community.getName().length() > 35) {
+            request.setAttribute("error_message_edit_community", "COMMUNITY_PROBLEM_NAME");
+            request.getRequestDispatcher(CommandPage.EDIT_COMMUNITY).forward(request, response);
+            return;
+        }
         if (community.getName().equals("") && fileName.equals("")) {
             request.setAttribute("error_message_edit_community", "COMMUNITY_EDIT_ERROR");
             request.getRequestDispatcher(CommandPage.EDIT_COMMUNITY).forward(request, response);

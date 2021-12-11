@@ -21,7 +21,6 @@ to them, comment them ,create communities and join them
 |accept\deny publications on moderation| * | * | |
 |edit foreign community| * | | | 
 |edit foreign publication| * | | |
-|edit foreign user| * | | |
 |delete foreign community| * | | | 
 |delete foreign publication| * | | |
 |delete foreign user| * | | |

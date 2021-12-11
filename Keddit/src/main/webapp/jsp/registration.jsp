@@ -50,7 +50,7 @@
             </li>
           </ul>
           <c:if test="${error_message_sign_up != null}">
-            <p class="message_error">${error_message_sign_up}</p>
+            <p class="message_error"><fmt:message key="${error_message_sign_up}"/></p>
           </c:if>
           <input class="reg-submit btn-reset" type="submit" value=<fmt:message key="REGISTRATION_BUTTON"/>>
         </form>

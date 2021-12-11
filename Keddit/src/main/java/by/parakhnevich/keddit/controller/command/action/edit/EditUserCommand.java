@@ -40,6 +40,11 @@ public class EditUserCommand implements Command {
             user.setMail(mail);
         }
         if (!nickname.equals("")) {
+            if (user.getNickname().length() > 20) {
+                request.setAttribute("error_message_sign_up", "REG_PROBLEM_LENGTH");
+                request.getRequestDispatcher(CommandPage.EDIT_USER).forward(request, response);
+                return;
+            }
             user.setNickname(nickname);
         }
         List<User> users;

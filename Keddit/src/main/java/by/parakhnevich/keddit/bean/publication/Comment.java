@@ -185,7 +185,6 @@ public class Comment implements Entity {
         return "Comment{" +
                 "id=" + id +
                 ", user=" + user +
-                ", photo=" + photo.getAbsolutePath() +
                 ", content='" + content + '\'' +
                 ", ratings=" + ratings +
                 ", date='" + date + '\'' +

@@ -142,7 +142,7 @@ public class Community implements Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Community community = (Community) o;
-        return id == community.id && Objects.equals(user, community.user) && Objects.equals(followers, community.followers) && Objects.equals(publications, community.publications) && Objects.equals(photo, community.photo);
+        return id == community.id && name.equals(community.name) && Objects.equals(photo, community.photo);
     }
 
     @Override

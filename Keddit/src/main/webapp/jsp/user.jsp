@@ -146,7 +146,6 @@
               </li>
               <a class="community-item">
               <c:if test="${user.role.toString().equals('ADMIN')}">
-                    <a href="?command=edit_user_page&id=${user_owner.id}" class="community-btn link-reset"><fmt:message key="EDIT"/></a>
                   <a href="?command=delete_user&id=${user_owner.id}" class="community-btn link-reset"><fmt:message key="DELETE"/> </a>
                   <c:if test="${user_owner.banned}">
                       <a href="?command=block_user&id=${user_owner.id}" class="community-btn link-reset"><fmt:message key="UNBLOCK"/> </a>

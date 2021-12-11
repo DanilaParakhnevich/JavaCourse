@@ -249,7 +249,7 @@ public class Publication implements Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(ratings, that.ratings) && Objects.equals(comments, that.comments) && Objects.equals(photo, that.photo);
+        return id == that.id && Objects.equals(communityOwner, that.communityOwner) && Objects.equals(heading, that.heading) && Objects.equals(textContent, that.textContent) && Objects.equals(date, that.date) && Objects.equals(tags, that.tags) && Objects.equals(photo, that.photo);
     }
 
     @Override
