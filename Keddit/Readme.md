@@ -27,9 +27,10 @@ to them, comment them ,create communities and join them
 |delete foreign user| * | | |
 |change role| * | | |
 |ban\unban users| * | | |
-<br/>	
+
 # Database tables
-![](https://sun9-36.userapi.com/impg/G0VJSNK0Wjy31-jI3HDFDeZ3adARUlAVBPFYtQ/-jW3Hv8Iz6o.jpg?size=1778x1776&quality=96&sign=d03df1e86d78b4db16d7c009767d40b7&type=album)
+![](src/main/resources/scheme/keddit.png)
+
 ## Analogs:
 * YaPlakal
 * Pikabu
