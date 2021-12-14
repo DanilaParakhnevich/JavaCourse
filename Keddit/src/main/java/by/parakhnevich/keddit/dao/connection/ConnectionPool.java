@@ -13,14 +13,17 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class is a data access pattern, whose main
  * purpose is to reduce the overhead involved in performing
  * database connections and read/write database operations.
+ *
  * @author Danila Parakhnevich
  * @see by.parakhnevich.keddit.dao.impl.TransactionFactoryImpl
- * */
+ */
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
     private Integer maxSize;
@@ -35,7 +38,7 @@ public class ConnectionPool {
             " of database connections is exceeded";
     private static final String IMPOSSIBLE_CONNECTION = "It's impossible to execute connection";
     private static final Logger logger = LogManager.getLogger(ConnectionPool.class);
-
+    private static final Lock locker = new ReentrantLock();
 
     private ConnectionPool() throws PersistentException {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -64,10 +67,12 @@ public class ConnectionPool {
      * @throws PersistentException the persistent exception
      */
     public static ConnectionPool getConnectionPool() throws PersistentException {
+        locker.lock();
         if (connectionPool == null) {
             connectionPool = new ConnectionPool();
             return connectionPool;
         }
+        locker.unlock();
         return connectionPool;
     }
 
@@ -80,6 +85,7 @@ public class ConnectionPool {
      */
     public Connection getConnection() throws PersistentException {
         Connection connection = null;
+        locker.lock();
         while (connection == null) {
             try {
                 if (!freeConnections.isEmpty()) {
@@ -96,6 +102,8 @@ public class ConnectionPool {
             } catch (SQLException | InterruptedException e) {
                 logger.error(IMPOSSIBLE_CONNECTION);
                 throw new PersistentException(IMPOSSIBLE_CONNECTION);
+            } finally {
+                locker.unlock();
             }
         }
         usedConnections.add(connection);
@@ -108,11 +116,12 @@ public class ConnectionPool {
      * @param connection the connection
      */
     public void closeConnection(Connection connection) {
-        usedConnections.remove(connection);
-        freeConnections.add(connection);
+        if (connection != null && usedConnections.remove(connection)) {
+            freeConnections.add(connection);
+        }
     }
 
-    private Connection createNewConnection() throws PersistentException{
+    private Connection createNewConnection() throws PersistentException {
         try {
             Class.forName(driverName);
             return DriverManager.getConnection(url, username, password);
@@ -121,15 +130,16 @@ public class ConnectionPool {
         }
     }
 
-    private void makeAvailable(Connection connection) throws PersistentException{
+    private void makeAvailable(Connection connection) throws PersistentException {
         try {
             if (isConnectionAvailable(connection)) {
-            return;
+                return;
             }
-            usedConnections.remove(connection);
-            connection.close();
-            connection = createNewConnection();
-            usedConnections.add(connection);
+            if (usedConnections.remove(connection)) {
+                connection.close();
+                connection = createNewConnection();
+                usedConnections.add(connection);
+            }
         } catch (SQLException e) {
             throw new PersistentException(e);
         }
