@@ -67,12 +67,10 @@ public class ConnectionPool {
      * @throws PersistentException the persistent exception
      */
     public static ConnectionPool getConnectionPool() throws PersistentException {
-        locker.lock();
         if (connectionPool == null) {
             connectionPool = new ConnectionPool();
             return connectionPool;
         }
-        locker.unlock();
         return connectionPool;
     }
 
