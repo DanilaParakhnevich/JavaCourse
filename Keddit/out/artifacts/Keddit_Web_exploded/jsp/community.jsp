@@ -156,7 +156,7 @@
                           </a>
                         </c:if>
                       </c:if>
-                      <a href="?command=publication_page&id=${publication.id}" class="open-post-link link-reset">Open post</a>
+                      <a href="?command=publication_page&id=${publication.id}" class="open-post-link link-reset"><fmt:message key="OPEN_POST"/> </a>
                     </div>
                     <div class="post-img">
                       <c:if test="${publication.photo != null}">

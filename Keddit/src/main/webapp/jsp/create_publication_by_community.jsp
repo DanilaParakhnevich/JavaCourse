@@ -81,7 +81,7 @@
           <ul class="create-post-list list-reset">
             <li class="create-post-item">
               <h2 class="create-post-item-text"><fmt:message key="TITLE"/></h2>
-              <input class="create-post-item-input btn-reset" name="head" type="text" maxlength="20">
+              <input class="create-post-item-input btn-reset" name="head" type="text" maxlength="140">
             </li>
             <li class="create-post-item">
               <h2 class="create-post-item-text"><fmt:message key="CAPTION"/></h2>
